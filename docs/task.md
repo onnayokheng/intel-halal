@@ -49,7 +49,7 @@
 ### Git & Deployment
 - [x] Buat repo GitHub (https://github.com/onnayokheng/intel-halal)
 - [x] Initial commit + push ke main
-- [ ] Deploy ke Vercel
+- [x] Deploy ke Vercel (https://intelhalal.vercel.app)
 
 ---
 

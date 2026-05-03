@@ -1,4 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/db";
+import { productCache } from "@/db/schema";
+import { eq, gt } from "drizzle-orm";
 
 const GEMINI_URL =
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
@@ -28,6 +31,20 @@ FORMAT OUTPUT:
 - Jika Gambar HANYA berupa Barcode: Coba identifikasi produk dari angka barcode tersebut.
 `;
 
+// ── Step 1: ekstrak nama produk / barcode dari gambar (call AI murah) ──
+const EXTRACT_PROMPT = `
+Lihat gambar ini. Ekstrak HANYA salah satu dari berikut (pilih yang paling relevan):
+1. Jika ada barcode/JAN code: kembalikan HANYA angka barcode-nya (contoh: 4901085022245)
+2. Jika ada nama produk dalam huruf latin/kanji: kembalikan nama produk yang paling spesifik (contoh: "Yamazaki Lemon Cake" atau "ヤマザキ レモンケーキ")
+3. Jika tidak ada keduanya: kembalikan "UNKNOWN"
+
+Jawab dengan 1 baris teks saja, tanpa penjelasan tambahan.
+`;
+
+function normalizeKey(raw: string): string {
+  return raw.trim().toLowerCase().replace(/\s+/g, " ").slice(0, 200);
+}
+
 export async function POST(req: NextRequest) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
@@ -47,6 +64,51 @@ export async function POST(req: NextRequest) {
       inlineData: { mimeType: img.mimeType, data: img.base64Data },
     }));
 
+    // ── Step 1: ekstrak lookup key ──
+    let lookupKey: string | null = null;
+    try {
+      const extractRes = await fetch(`${GEMINI_URL}?key=${apiKey}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: EXTRACT_PROMPT }, ...imageParts] }],
+          generationConfig: { temperature: 0, maxOutputTokens: 64 },
+        }),
+      });
+      const extractData = await extractRes.json();
+      const raw = extractData.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+      const key = normalizeKey(raw);
+      if (key && key !== "unknown") lookupKey = key;
+    } catch {
+      // extraction gagal → lanjut tanpa cache
+    }
+
+    // ── Step 2: cek cache ──
+    if (lookupKey && process.env.DATABASE_URL) {
+      const cached = await db
+        .select()
+        .from(productCache)
+        .where(
+          eq(productCache.lookupKey, lookupKey) &&
+          gt(productCache.expiresAt, new Date())
+        )
+        .limit(1);
+
+      if (cached.length > 0) {
+        // update hit count
+        await db
+          .update(productCache)
+          .set({ hitCount: cached[0].hitCount + 1 })
+          .where(eq(productCache.id, cached[0].id));
+
+        return NextResponse.json({
+          result: cached[0].resultHtml,
+          fromCache: true,
+        });
+      }
+    }
+
+    // ── Step 3: full AI analysis ──
     const payload = {
       contents: [{ parts: [{ text: SYSTEM_PROMPT }, ...imageParts] }],
       generationConfig: { temperature: 0.3, maxOutputTokens: 4096 },
@@ -59,12 +121,38 @@ export async function POST(req: NextRequest) {
     });
 
     const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.error?.message || "Gemini API error");
-    }
+    if (!response.ok) throw new Error(data.error?.message || "Gemini API error");
 
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
-    return NextResponse.json({ result: text });
+
+    // ── Step 4: simpan ke cache ──
+    if (lookupKey && text && process.env.DATABASE_URL) {
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + 90);
+
+      // detect status from text
+      const status = text.includes("STATUS_HARAM") ? "haram"
+        : text.includes("STATUS_SYUBHAT") || text.includes("STATUS_DOUBTFUL") ? "syubhat"
+        : text.includes("STATUS_HALAL") ? "halal"
+        : "idle";
+
+      try {
+        await db.insert(productCache).values({
+          lookupKey,
+          resultHtml: text,
+          status,
+          hitCount: 1,
+          expiresAt,
+        }).onConflictDoUpdate({
+          target: productCache.lookupKey,
+          set: { resultHtml: text, status, expiresAt, hitCount: 1 },
+        });
+      } catch {
+        // cache write gagal → tidak masalah, hasil tetap dikembalikan
+      }
+    }
+
+    return NextResponse.json({ result: text, fromCache: false });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json({ error: message }, { status: 500 });
