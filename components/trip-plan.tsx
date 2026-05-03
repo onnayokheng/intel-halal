@@ -164,8 +164,8 @@ export default function TripPlan() {
 
         {/* Result */}
         {resultHtml && !isLoading && (
-          <div className="animate-fade-up" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <div dangerouslySetInnerHTML={{ __html: resultHtml }} style={{ width: "100%" }} />
+          <div className="animate-fade-up" style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+            <div className="trip-content" dangerouslySetInnerHTML={{ __html: resultHtml }} />
             <button
               onClick={reset}
               className="tap"

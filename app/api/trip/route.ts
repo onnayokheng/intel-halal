@@ -19,31 +19,40 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Origin and destination required" }, { status: 400 });
     }
 
+    const mapsBase = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&travelmode=transit`;
+
     const prompt = `
-Kamu adalah "Pemandu Perjalanan Jepang" yang sangat ramah, asyik, dan komunikatif.
-Pengguna ingin melakukan perjalanan:
-- Titik Asal: "${origin}"
-- Tujuan Akhir: "${destination}"
+Kamu adalah "Pemandu Perjalanan Jepang" yang ramah dan komunikatif.
+Pengguna ingin melakukan perjalanan dari "${origin}" ke "${destination}".
 
 TUGAS:
-Berikan MAKSIMAL 3 alternatif rute perjalanan yang hanya menggunakan transportasi umum di Jepang (Kereta, Subway, Bus, atau Jalan Kaki).
+Berikan MAKSIMAL 3 alternatif rute menggunakan transportasi umum Jepang (Kereta, Subway, Bus, Jalan Kaki).
 
-URUTAN PENYAJIAN:
+URUTAN:
 1. Rute Tercepat
 2. Rute Termurah
-3. Rute Santai / Pemandangan (jika ada)
+3. Rute Santai / Pemandangan (jika relevan)
 
-GAYA BAHASA:
-Gunakan gaya "story-telling" seolah-olah memandu mereka. Sebutkan nama jalur, stasiun transit, estimasi waktu, dan biayanya.
+GAYA: Story-telling santai. Sebutkan nama jalur, stasiun transit, estimasi waktu, dan biaya.
 
-FORMAT OUTPUT (HTML MURNI, tanpa markdown):
-Untuk setiap rute buat struktur:
+FORMAT OUTPUT — HTML MURNI (tanpa markdown \`\`\`html), gunakan PERSIS template ini untuk setiap rute:
 
-<div style="background:#f0fdf4;border:1px solid #a7f3d0;border-radius:16px;padding:20px;margin-bottom:24px;">
-  <h4 style="color:#047857;font-size:1.1rem;font-weight:800;margin:0 0 12px;border-bottom:2px solid #34d399;padding-bottom:8px;">Alternatif 1: Rute Tercepat</h4>
-  <div style="color:#374151;line-height:1.7;font-size:0.9rem;margin-bottom:16px;">[cerita perjalanan]</div>
-  <a href="https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&travelmode=transit" target="_blank" style="display:block;text-align:center;background:#059669;color:white;padding:12px;border-radius:12px;font-weight:bold;text-decoration:none;">Buka di Google Maps</a>
+<div class="route-card">
+  <div class="route-card-header">
+    <span class="route-label">Alternatif 1</span>
+    <h4 class="route-title">Rute Tercepat</h4>
+  </div>
+  <div class="route-meta">
+    <span class="route-tag">⏱ ~XX menit</span>
+    <span class="route-tag">¥ XXX</span>
+  </div>
+  <div class="route-body">
+    [narasi story-telling perjalanan di sini, 2-4 paragraf singkat]
+  </div>
+  <a href="${mapsBase}" target="_blank" class="route-map-btn">Buka di Google Maps →</a>
 </div>
+
+Ulangi template di atas untuk setiap alternatif rute. Jangan tambahkan HTML atau teks di luar template.
 `;
 
     const payload = {

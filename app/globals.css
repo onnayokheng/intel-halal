@@ -157,6 +157,89 @@ body {
 .ai-content em     { color: #6B6A63; }
 .ai-content a      { color: #B85C3C; text-decoration: underline; }
 
+/* ── Trip Plan route cards ── */
+.route-card {
+  background: #fff;
+  border: 0.5px solid #D8D2C4;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 1px 0 rgba(43,32,15,.05), 0 8px 24px -10px rgba(43,32,15,.14);
+  margin-bottom: 16px;
+}
+.route-card-header {
+  padding: 18px 18px 12px;
+  border-bottom: 1px solid #E8E3D6;
+}
+.route-label {
+  display: block;
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: #9B998F;
+  margin-bottom: 4px;
+}
+.route-title {
+  margin: 0;
+  font-family: var(--font-fraunces), serif;
+  font-feature-settings: 'ss01' on;
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -0.4px;
+  color: #1B1B19;
+  line-height: 1.1;
+}
+.route-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 12px 18px;
+  border-bottom: 1px solid #F0EBE0;
+}
+.route-tag {
+  display: inline-flex;
+  align-items: center;
+  background: #EFEBE2;
+  color: #3D3D3A;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+.route-body {
+  padding: 16px 18px;
+  font-size: 13.5px;
+  line-height: 1.72;
+  color: #3D3D3A;
+}
+.route-body p {
+  margin: 0 0 10px;
+}
+.route-body p:last-child {
+  margin-bottom: 0;
+}
+.route-body strong {
+  font-weight: 700;
+  color: #1B1B19;
+}
+.route-map-btn {
+  display: block;
+  margin: 0 18px 18px;
+  text-align: center;
+  background: #2C4A3E;
+  color: #fff !important;
+  padding: 14px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none !important;
+  letter-spacing: 0.2px;
+  transition: background 150ms ease;
+}
+
 /* ── Animations ── */
 @keyframes fadeUp   { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeIn   { from { opacity: 0; } to { opacity: 1; } }
