@@ -49,7 +49,7 @@ FORMAT OUTPUT — HTML MURNI (tanpa markdown \`\`\`html), gunakan PERSIS templat
   <div class="route-body">
     [narasi story-telling perjalanan di sini, 2-4 paragraf singkat]
   </div>
-  <a href="${mapsBase}" target="_blank" class="route-map-btn">Buka di Google Maps →</a>
+  <a href="${mapsBase}" target="_blank" rel="noopener noreferrer" class="route-map-btn">Buka di Google Maps →</a>
 </div>
 
 Ulangi template di atas untuk setiap alternatif rute. Jangan tambahkan HTML atau teks di luar template.

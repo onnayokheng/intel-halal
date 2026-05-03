@@ -22,7 +22,9 @@ export default function TripPlan() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Terjadi kesalahan");
-      setResultHtml(DOMPurify.sanitize(data.result));
+      setResultHtml(DOMPurify.sanitize(data.result, {
+        ADD_ATTR: ["target", "rel"],
+      }));
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Gagal menyusun rute. Pastikan koneksi stabil.");
     } finally {
