@@ -55,14 +55,15 @@
 
 ## Fase 2 — Backend & Cache
 
-- [ ] Setup Neon Postgres (`labs_intelhalal`) via Vercel
-- [ ] Install drizzle-orm + neon driver
-- [ ] Buat schema tabel `product_cache`
-- [ ] Migrasi schema ke Neon
-- [ ] Update `api/analyze/route.ts`: cek cache sebelum hit Gemini
-- [ ] Implementasi cache write setelah hasil AI diterima
-- [ ] Implementasi 90-day expiry (auto-expire via `expires_at`)
-- [ ] Test cache hit (barcode yang sama → tidak hit Gemini)
+- [x] Setup Neon Postgres (`labs_intelhalal`) via Vercel
+- [x] Install drizzle-orm + @neondatabase/serverless + drizzle-kit
+- [x] Buat schema tabel `product_cache`
+- [x] Push schema ke Neon (`pnpm db:push`)
+- [x] Update `api/analyze/route.ts`: cek cache sebelum hit Gemini
+- [x] Implementasi cache write setelah hasil AI diterima
+- [x] Implementasi 90-day expiry (auto-expire via `expires_at`)
+- [ ] Tambah `DATABASE_URL` di Vercel environment variables
+- [ ] Test cache hit (produk yang sama → tidak hit Gemini)
 - [ ] Test cache miss (produk baru → hit Gemini → simpan)
 
 ---
