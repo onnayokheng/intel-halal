@@ -64,7 +64,7 @@
 - [x] Implementasi 90-day expiry (auto-expire via `expires_at`)
 - [x] Tambah `DATABASE_URL` di Vercel environment variables
 - [x] Test cache miss — `fromCache: false` di response production ✓
-- [ ] Test cache hit (scan produk yang sama kedua kali → `fromCache: true`)
+- [x] Test cache hit — scan produk sama lebih cepat, DB lookup berhasil ✓
 
 ---
 
