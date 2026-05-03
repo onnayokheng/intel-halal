@@ -38,13 +38,18 @@
 - [x] Brand bar: fixed position + top spacing
 
 ### QA Fase 1
-- [ ] Test Cek Halal end-to-end (kamera, galeri, barcode)
-- [ ] Test Bea Impor (kalkulasi + kurs realtime)
+- [x] Test Cek Halal end-to-end (kamera, galeri, barcode)
+- [x] Test Bea Impor (kalkulasi + kurs realtime)
 - [x] Test Trip Plan API — response AI OK (Shinjuku → Tokyo Tower)
 - [x] Test Analyze API — status tag + HTML response OK
-- [ ] Test Find Place (deteksi lokasi + buka Google Maps)
-- [ ] Cek mobile view di browser (max-w-[430px])
+- [x] Test Find Place (deteksi lokasi + buka Google Maps)
+- [x] Cek mobile view di browser (max-w-[430px])
 - [x] Verifikasi API key tidak expose di client (server-side only via API route)
+
+### Git & Deployment
+- [x] Buat repo GitHub (https://github.com/onnayokheng/intel-halal)
+- [x] Initial commit + push ke main
+- [ ] Deploy ke Vercel
 
 ---
 
