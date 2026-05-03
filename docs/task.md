@@ -62,9 +62,9 @@
 - [x] Update `api/analyze/route.ts`: cek cache sebelum hit Gemini
 - [x] Implementasi cache write setelah hasil AI diterima
 - [x] Implementasi 90-day expiry (auto-expire via `expires_at`)
-- [ ] Tambah `DATABASE_URL` di Vercel environment variables
-- [ ] Test cache hit (produk yang sama → tidak hit Gemini)
-- [ ] Test cache miss (produk baru → hit Gemini → simpan)
+- [x] Tambah `DATABASE_URL` di Vercel environment variables
+- [x] Test cache miss — `fromCache: false` di response production ✓
+- [ ] Test cache hit (scan produk yang sama kedua kali → `fromCache: true`)
 
 ---
 
