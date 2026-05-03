@@ -8,42 +8,50 @@
 ## Fase 1 — Frontend
 
 ### Setup Project
-- [ ] Init Next.js 15 (TypeScript, App Router, Tailwind)
-- [ ] Install dependencies (lucide-react, dompurify, @types/dompurify)
-- [ ] Konfigurasi Tailwind dengan Agentic design tokens
-- [ ] Setup font Playfair Display + JetBrains Mono (next/font/google)
-- [ ] Buat `globals.css` dengan CSS variables Agentic
-- [ ] Buat `.env.local` template + `.gitignore`
+- [x] Init Next.js (TypeScript, App Router, Tailwind)
+- [x] Install dependencies (lucide-react, dompurify)
+- [x] Konfigurasi design tokens (earthy palette — paper, forest, terracotta, amber)
+- [x] Setup font Fraunces + Plus Jakarta Sans + JetBrains Mono
+- [x] Buat `globals.css` dengan CSS variables + AI prose styles
+- [x] Buat `.env.local` template + `.gitignore`
 
 ### Layout & Navigation
-- [ ] Buat `app/layout.tsx` (font, metadata, mobile viewport)
-- [ ] Buat `components/bottom-nav.tsx` (4 tab: Cek Halal, Bea Impor, Trip Plan, Find Place)
-- [ ] Buat `app/page.tsx` (tab controller, keep-alive pattern)
+- [x] Buat `app/layout.tsx` (font, metadata, mobile viewport)
+- [x] Buat `components/brand-bar.tsx` (eight-point star logo + wordmark, fixed top)
+- [x] Buat `components/bottom-nav.tsx` (floating frosted-glass pill, 4 tab)
+- [x] Buat `app/page.tsx` (tab controller, keep-alive pattern)
 
 ### API Routes (server-side proxy)
-- [ ] Buat `app/api/analyze/route.ts` (proxy Gemini untuk Cek Halal)
-- [ ] Buat `app/api/trip/route.ts` (proxy Gemini untuk Trip Plan)
+- [x] Buat `app/api/analyze/route.ts` (proxy Gemini untuk Cek Halal)
+- [x] Buat `app/api/trip/route.ts` (proxy Gemini untuk Trip Plan)
 
 ### Komponen Fitur
-- [ ] Buat `components/cek-halal.tsx` (redesign dengan Agentic style)
-- [ ] Buat `components/bea-impor.tsx` (redesign dengan Agentic style)
-- [ ] Buat `components/trip-plan.tsx` (redesign dengan Agentic style)
-- [ ] Buat `components/find-place.tsx` (redesign dengan Agentic style)
+- [x] Buat `components/cek-halal.tsx` (earthy design, verdict cards, camera overlay)
+- [x] Buat `components/bea-impor.tsx` (pure rule-based, tanpa AI)
+- [x] Buat `components/trip-plan.tsx` (story-telling route, AI via proxy)
+- [x] Buat `components/find-place.tsx` (2-col category grid, sub-category pills, tanpa AI)
+
+### Design
+- [x] Implementasi Claude Design (earthy palette dari design file)
+- [x] Rapihkan 3 kolom scan source (Kamera / Barcode / Galeri) — equal height
+- [x] Rapihkan AI result prose (bullet dots, spacing, h4 label, padding)
+- [x] Brand bar: fixed position + top spacing
 
 ### QA Fase 1
 - [ ] Test Cek Halal end-to-end (kamera, galeri, barcode)
 - [ ] Test Bea Impor (kalkulasi + kurs realtime)
-- [ ] Test Trip Plan (input → hasil AI)
+- [x] Test Trip Plan API — response AI OK (Shinjuku → Tokyo Tower)
+- [x] Test Analyze API — status tag + HTML response OK
 - [ ] Test Find Place (deteksi lokasi + buka Google Maps)
 - [ ] Cek mobile view di browser (max-w-[430px])
-- [ ] Verifikasi API key tidak expose di client (DevTools → Network)
+- [x] Verifikasi API key tidak expose di client (server-side only via API route)
 
 ---
 
 ## Fase 2 — Backend & Cache
 
 - [ ] Setup Neon Postgres (`labs_intelhalal`) via Vercel
-- [ ] Install drizzle-orm / prisma + neon driver
+- [ ] Install drizzle-orm + neon driver
 - [ ] Buat schema tabel `product_cache`
 - [ ] Migrasi schema ke Neon
 - [ ] Update `api/analyze/route.ts`: cek cache sebelum hit Gemini

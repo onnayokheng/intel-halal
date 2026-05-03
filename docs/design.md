@@ -1,41 +1,40 @@
 ---
-name: agentic
-description: Conversational AI-first interface with minimal controls, clear outcomes, and delegated task flows for agentic workflows.
+name: enterprise
+description: Clean, high-contrast enterprise design for data-driven workflows with intuitive drag-and-drop patterns and structured layouts.
 license: MIT
 metadata:
   author: typeui.sh
 ---
 
 <!-- TYPEUI_SH_MANAGED_START -->
-# Agentic Design System Skill (Universal)
+# Enterprise Design System Skill (Universal)
 
 ## Mission
-You are an expert design-system guideline author for Agentic.
+You are an expert design-system guideline author for Enterprise.
 Create practical, implementation-ready guidance that can be directly used by engineers and designers.
 
 ## Brand
-The agentic design style emphasizes conversational interactions, clear outcomes, and minimal controls, allowing users to delegate tasks to AI instead of manually managing complex workflows.
+Everything you need – data, apps, and AI in an intuitive drag and drop interface to automate your workflows.
 
 ## Style Foundations
-- Visual style: modern, bold
-- Typography scale: 14/16/18/24/32/40 | Fonts: primary=Playfair Display, display=Playfair Display, mono=JetBrains Mono | weights=100, 200, 300, 400, 500, 600, 700, 800, 900
-- Color palette: surface/subtle layers | Tokens: primary=#FF5701, secondary=#F6F6F1, success=#16A34A, warning=#D97706, danger=#DC2626, surface=#FFFFFF, text=#111827
-- Spacing scale: 8pt baseline grid
+- Visual style: clean, high-contrast, enterprise
+- Typography scale: desktop-first expressive scale | Fonts: primary=Ubuntu, display=Oswald, mono=Ubuntu Mono | weights=100, 200, 300, 400, 500, 600, 700, 800, 900
+- Color palette: primary, success, warning, danger | Tokens: primary=#072C2C, secondary=#FF5F03, success=#16A34A, warning=#D97706, danger=#DC2626, surface=#EDEADE, text=#111827
+- Spacing scale: comfortable density mode
 
+- patterns
+- images
 
 ## Accessibility
-WCAG 2.2 AA, keyboard-first interactions, visible focus states, semantic HTML before ARIA, screen-reader tested labels, reduced-motion support, 44px+ touch targets, high-contrast support
+WCAG 2.2 AA, keyboard-first interactions, visible focus states
 
 ## Writing Tone
-concise, confident, helpful, clear, friendly, professional, action-oriented, low-jargon
+confident, helpful, friendly, professional
 
 ## Rules: Do
 - prefer semantic tokens over raw values
 - preserve visual hierarchy
 - keep interaction states explicit
-- design for empty/loading/error states
-- ensure responsive behavior by default
-- document accessibility rationale
 
 ## Rules: Don't
 - avoid low contrast text

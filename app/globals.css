@@ -1,26 +1,195 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* ── Intel Halal Design System — Earthy Palette ── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-paper:        #F7F5F0;
+  --color-paper-2:      #EFEBE2;
+  --color-paper-3:      #E5DFD2;
+  --color-ink:          #1B1B19;
+  --color-ink-2:        #3D3D3A;
+  --color-ink-3:        #6B6A63;
+  --color-ink-4:        #9B998F;
+  --color-line:         #D8D2C4;
+  --color-line-soft:    #E8E3D6;
+  --color-forest:       #2C4A3E;
+  --color-forest-2:     #1F362D;
+  --color-forest-soft:  #D8E2DA;
+  --color-terra:        #B85C3C;
+  --color-terra-2:      #93462C;
+  --color-terra-soft:   #F1DACB;
+  --color-amber:        #C8923A;
+  --color-amber-soft:   #F0E2C2;
+
+  /* Verdict */
+  --color-halal-bg:      #DFE8DA;
+  --color-halal-fg:      #2C4A3E;
+  --color-halal-strong:  #1F362D;
+  --color-dubious-bg:    #F4E4BF;
+  --color-dubious-fg:    #7A5A1F;
+  --color-dubious-strong:#5A4116;
+  --color-haram-bg:      #F1D5C7;
+  --color-haram-fg:      #93462C;
+  --color-haram-strong:  #6B2F1D;
+
+  --font-sans:    var(--font-jakarta);
+  --font-display: var(--font-fraunces);
+  --font-mono:    var(--font-jetbrains);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ── CSS vars for complex gradient/shadow use ── */
+:root {
+  --shadow-soft: 0 1px 0 rgba(43,32,15,.04), 0 6px 18px -8px rgba(43,32,15,.10);
+  --shadow-card: 0 1px 0 rgba(43,32,15,.05), 0 8px 24px -10px rgba(43,32,15,.14);
+  --shadow-pop:  0 1px 0 rgba(43,32,15,.05), 0 18px 40px -16px rgba(43,32,15,.22);
+}
+
+/* ── Base ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior: none;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  background: radial-gradient(1200px 800px at 50% 20%, #E8E0CE 0%, #D6CFBE 60%, #CDC5B1 100%);
+  background-attachment: fixed;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  color: #1B1B19;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overscroll-behavior: none;
 }
+
+/* ── Mobile shell ── */
+#mobile-shell {
+  max-width: 430px;
+  min-height: 100dvh;
+  margin: 0 auto;
+  background: #F7F5F0;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ── Geometric star bg texture ── */
+.star-bg {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'><path d='M20 4 L24 16 L36 20 L24 24 L20 36 L16 24 L4 20 L16 16 Z' fill='none' stroke='%232C4A3E' stroke-opacity='0.06' stroke-width='1'/></svg>");
+  background-size: 40px 40px;
+}
+
+/* ── Fraunces feature settings ── */
+.serif {
+  font-family: var(--font-fraunces), 'Times New Roman', serif;
+  font-feature-settings: 'ss01' on, 'ss02' on;
+}
+.mono { font-family: var(--font-jetbrains), ui-monospace, monospace; }
+
+/* ── AI prose content ── */
+.ai-content {
+  font-size: 0.875rem;
+  line-height: 1.7;
+  color: #3D3D3A;
+}
+.ai-content h3 {
+  font-family: var(--font-fraunces), serif;
+  font-feature-settings: 'ss01' on;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  color: #1B1B19;
+  margin: 0 0 1rem;
+}
+.ai-content h4 {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: #9B998F;
+  border-bottom: 1px solid #E8E3D6;
+  padding-bottom: 6px;
+  margin: 1.5rem 0 0.875rem;
+}
+.ai-content h4:first-child { margin-top: 0; }
+.ai-content p {
+  margin: 0 0 0.875rem;
+  color: #3D3D3A;
+}
+.ai-content p:last-child { margin-bottom: 0; }
+.ai-content ul, .ai-content ol {
+  margin: 0 0 0.875rem;
+  padding-left: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ai-content ul li, .ai-content ol li {
+  padding-left: 1.25rem;
+  position: relative;
+  line-height: 1.65;
+}
+.ai-content ul li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #2C4A3E;
+  opacity: 0.5;
+}
+.ai-content ol { counter-reset: ai-list; }
+.ai-content ol li { counter-increment: ai-list; }
+.ai-content ol li::before {
+  content: counter(ai-list);
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--font-jetbrains), monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #9B998F;
+  line-height: 1.65;
+}
+.ai-content strong { font-weight: 700; color: #1B1B19; }
+.ai-content em     { color: #6B6A63; }
+.ai-content a      { color: #B85C3C; text-decoration: underline; }
+
+/* ── Animations ── */
+@keyframes fadeUp   { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn   { from { opacity: 0; } to { opacity: 1; } }
+@keyframes spin     { to { transform: rotate(360deg); } }
+@keyframes scanline { 0% { top: 8%; } 50% { top: 88%; } 100% { top: 8%; } }
+@keyframes pulse    { 0%, 100% { opacity: .5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
+@keyframes locating { 0%, 100% { transform: scale(1);   opacity: .4; } 50% { transform: scale(2.2); opacity: 0; } }
+@keyframes shimmer  { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+
+.animate-fade-up    { animation: fadeUp 320ms cubic-bezier(.2,.7,.2,1) both; }
+.animate-fade-in    { animation: fadeIn 240ms ease-out both; }
+.animate-scanline   { animation: scanline 2.4s ease-in-out infinite; }
+.animate-spin-slow  { animation: spin .9s linear infinite; }
+.animate-pulse-ring { animation: pulse 1.6s ease-in-out infinite; }
+.animate-locating   { animation: locating 1.4s ease-in-out infinite; }
+
+.shimmer {
+  background: linear-gradient(90deg, #EFEBE2 0%, #E5DFD2 50%, #EFEBE2 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+.delay-1 { animation-delay: 60ms; }
+.delay-2 { animation-delay: 120ms; }
+.delay-3 { animation-delay: 180ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up, .animate-fade-in, .animate-scanline,
+  .animate-spin-slow, .animate-pulse-ring, .animate-locating, .shimmer {
+    animation: none;
+  }
+}
+
+/* Active/tap feedback */
+.tap { transition: transform 120ms ease, opacity 140ms ease; }
+.tap:active { transform: scale(0.97); }
