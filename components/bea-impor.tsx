@@ -200,21 +200,21 @@ export default function BeaImpor() {
           <div className="animate-fade-up" style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {/* Total box */}
             <div style={{
-              background: result.totalTax === 0 ? "#DFE8DA" : "#F1D5C7",
-              border: `0.5px solid ${result.totalTax === 0 ? "rgba(44,74,62,0.18)" : "rgba(147,70,44,0.22)"}`,
+              background: "#DFE8DA",
+              border: "0.5px solid rgba(44,74,62,0.18)",
               borderRadius: 18, padding: "22px 22px", textAlign: "center",
               boxShadow: "var(--shadow-card)",
             }}>
-              <div className="mono" style={{ fontSize: 10.5, fontWeight: 600, letterSpacing: 1.4, color: result.totalTax === 0 ? "#2C4A3E" : "#93462C", opacity: 0.7, marginBottom: 8 }}>
+              <div className="mono" style={{ fontSize: 10.5, fontWeight: 600, letterSpacing: 1.4, color: "#2C4A3E", opacity: 0.7, marginBottom: 8 }}>
                 ESTIMASI PAJAK
               </div>
               <div className="serif" style={{
                 fontSize: 36, fontWeight: 600, letterSpacing: -0.8,
-                color: result.totalTax === 0 ? "#1F362D" : "#6B2F1D", lineHeight: 1,
+                color: "#1F362D", lineHeight: 1,
               }}>
                 {result.totalTax === 0 ? "Bebas Pajak" : formatRp(result.totalTax)}
               </div>
-              <div style={{ fontSize: 13, marginTop: 8, color: result.totalTax === 0 ? "#2C4A3E" : "#93462C" }}>
+              <div style={{ fontSize: 13, marginTop: 8, color: "#2C4A3E" }}>
                 {result.totalTax === 0
                   ? "Harga di bawah limit $500 — aman!"
                   : `Kena pajak dari selisih $${result.taxableUsd.toFixed(2)}`}
