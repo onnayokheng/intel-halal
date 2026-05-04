@@ -278,7 +278,7 @@ export default function CekHalal({ isActive, onShowPaywall }: { isActive: boolea
         onShowPaywall?.();
         return;
       }
-      if (!res.ok) throw new Error(t("common.errorGeneral"));
+      if (!res.ok) throw new Error(data.error || t("common.errorGeneral"));
       const { status: parsed, cleaned } = parseStatus(data.result);
       setStatus(parsed);
       const sanitized = DOMPurify.sanitize(cleaned);

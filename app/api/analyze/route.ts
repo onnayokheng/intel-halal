@@ -168,7 +168,13 @@ export async function POST(req: NextRequest) {
     });
 
     const data = await response.json();
-    if (!response.ok) throw new Error(data.error?.message || "Gemini API error");
+    if (!response.ok) {
+      const status = response.status === 429 || response.status === 503 ? 503 : 500;
+      const msg = response.status === 503 || (data.error?.message ?? "").toLowerCase().includes("demand")
+        ? "AI sedang sibuk, coba lagi dalam beberapa saat."
+        : (data.error?.message || "Gemini API error");
+      return NextResponse.json({ error: msg }, { status });
+    }
 
     const text = data.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
 
