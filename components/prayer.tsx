@@ -258,8 +258,8 @@ function LocationStrip({
       >
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
           style={{ animation: isRefreshing ? "spin .9s linear infinite" : "none" }}>
-          <path d="M3 12a9 9 0 1 0 3-6.7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-          <path d="M3 4v5h5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M21 12a9 9 0 1 1-3-6.7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+          <path d="M21 4v5h-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       </button>
     </div>
