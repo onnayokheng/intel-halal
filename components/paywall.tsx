@@ -55,7 +55,7 @@ export default function Paywall({ onClose }: { onClose: () => void }) {
         {/* Plan cards */}
         <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 18 }}>
           {PLANS.map((plan) => {
-            const info = tObj(`paywall.plans.${plan}`) as { label: string; price: string; desc: string };
+            const info = tObj(`paywall.plans.${plan}`) as { label: string; price: string; originalPrice: string; desc: string };
             const is30 = plan === "30day";
             return (
               <div
@@ -100,6 +100,13 @@ export default function Paywall({ onClose }: { onClose: () => void }) {
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                   <div style={{ textAlign: "right" }}>
+                    <div className="mono" style={{
+                      fontSize: 11, fontWeight: 500,
+                      color: is30 ? "rgba(255,255,255,0.5)" : "#9B998F",
+                      textDecoration: "line-through", marginBottom: 2,
+                    }}>
+                      {info.originalPrice}
+                    </div>
                     <div className="mono" style={{
                       fontSize: 16, fontWeight: 700,
                       color: is30 ? "#fff" : "#1B1B19", letterSpacing: -0.3,

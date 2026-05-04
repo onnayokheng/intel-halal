@@ -527,8 +527,8 @@
     "choose": "Pilih Paket",
     "soon": "Segera",
     "plans": {
-      "7day":  { "label": "7 Hari",  "price": "Rp 15.000", "desc": "Akses penuh selama 7 hari" },
-      "30day": { "label": "1 Bulan", "price": "Rp 35.000", "desc": "Akses penuh selama 30 hari" }
+      "7day":  { "label": "7 Hari",  "price": "Rp 15.000", "originalPrice": "Rp 25.000", "desc": "Akses penuh selama 7 hari" },
+      "30day": { "label": "1 Bulan", "price": "Rp 35.000", "originalPrice": "Rp 100.000", "desc": "Akses penuh selama 30 hari" }
     }
   },
   "common": {
