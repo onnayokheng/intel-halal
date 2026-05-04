@@ -5,7 +5,7 @@ import {
   HIJRI_MONTHS_ID, PRAYER_LABELS_ID, PRAYER_ARABIC, PRAYER_ORDER,
   type PrayerKey, type PrayerData, type PrayerComputed,
   fetchPrayerTimes, getCurrentLocation, reverseGeocode,
-  findCurrentPrayer, formatRemaining, formatActiveRemaining,
+  findCurrentPrayer, formatRemaining,
 } from "@/lib/prayer";
 
 const HISAB_METHODS = [
@@ -167,10 +167,7 @@ export default function PrayerSchedule() {
             />
 
             {view === "active-prayer" && computed.active
-              ? <ActivePrayerBanner
-                  prayer={computed.active}
-                  remaining={formatActiveRemaining(computed.active.date, now)}
-                />
+              ? <ActivePrayerBanner prayer={computed.active} />
               : <NextPrayerHero prayer={computed.next} remainingMs={computed.remainingMs} />
             }
 
@@ -303,7 +300,7 @@ function NextPrayerHero({ prayer, remainingMs }: { prayer: PrayerComputed; remai
   );
 }
 
-function ActivePrayerBanner({ prayer, remaining }: { prayer: PrayerComputed; remaining: string }) {
+function ActivePrayerBanner({ prayer }: { prayer: PrayerComputed }) {
   return (
     <div style={{
       background: "#2C4A3E", borderRadius: 18, overflow: "hidden", position: "relative",
@@ -331,7 +328,7 @@ function ActivePrayerBanner({ prayer, remaining }: { prayer: PrayerComputed; rem
         }}>
           <span style={{ width: 6, height: 6, borderRadius: 99, background: "#fff" }} className="animate-pulse-ring" />
           <span className="mono" style={{ fontSize: 12, fontWeight: 600, color: "#fff", letterSpacing: 0.3 }}>
-            Berakhir dalam {remaining}
+            Sholat di awal waktu lebih utama
           </span>
         </div>
       </div>

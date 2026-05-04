@@ -148,12 +148,3 @@ export const formatRemaining = (ms: number): string => {
   return `${secs} detik`;
 };
 
-export const formatActiveRemaining = (
-  activeStart: Date, now: Date, windowMin = 30,
-): string => {
-  const activeEnd = new Date(activeStart.getTime() + windowMin * 60_000);
-  const remaining = activeEnd.getTime() - now.getTime();
-  if (remaining < 0) return "0 menit";
-  const mins = Math.ceil(remaining / 60_000);
-  return `${mins} menit`;
-};
