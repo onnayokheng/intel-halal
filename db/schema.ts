@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, integer, timestamp, boolean, primaryKey } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, integer, timestamp, boolean } from "drizzle-orm/pg-core";
 
 // ── Product cache ─────────────────────────────────────────────
 export const productCache = pgTable("product_cache", {
@@ -16,13 +16,15 @@ export type NewProductCache = typeof productCache.$inferInsert;
 
 // ── Auth tables (better-auth) ─────────────────────────────────
 export const user = pgTable("user", {
-  id:            text("id").primaryKey(),
-  name:          text("name").notNull(),
-  email:         text("email").notNull().unique(),
-  emailVerified: boolean("email_verified").notNull(),
-  image:         text("image"),
-  createdAt:     timestamp("created_at").notNull(),
-  updatedAt:     timestamp("updated_at").notNull(),
+  id:              text("id").primaryKey(),
+  name:            text("name").notNull(),
+  email:           text("email").notNull().unique(),
+  emailVerified:   boolean("email_verified").notNull(),
+  image:           text("image"),
+  createdAt:       timestamp("created_at").notNull(),
+  updatedAt:       timestamp("updated_at").notNull(),
+  // Freemium: trial 12 jam sejak signup, di-set otomatis via databaseHooks
+  trialExpiresAt:  timestamp("trial_expires_at"),
 });
 
 export const session = pgTable("session", {
@@ -61,12 +63,21 @@ export const verification = pgTable("verification", {
   updatedAt:  timestamp("updated_at"),
 });
 
-// ── Scan quota (free tier: 3 scans/day) ──────────────────────
-export const scanQuota = pgTable("scan_quota", {
-  userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
-  date:   text("date").notNull(),   // YYYY-MM-DD
-  count:  integer("count").default(0).notNull(),
-}, (t) => [primaryKey({ columns: [t.userId, t.date] })]);
+// ── Subscription (freemium) ───────────────────────────────────
+// plan: '7day' = Rp 15.000 | '30day' = Rp 35.000
+// status: 'pending' → 'active' (setelah payment confirm) | 'expired' | 'cancelled'
+export const subscription = pgTable("subscription", {
+  id:         text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  userId:     text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  plan:       text("plan").notNull(),        // '7day' | '30day'
+  amountIdr:  integer("amount_idr").notNull(), // 15000 | 35000
+  status:     text("status").notNull().default("pending"),
+  paymentRef: text("payment_ref"),           // Midtrans order_id / transaction_id
+  startsAt:   timestamp("starts_at"),
+  expiresAt:  timestamp("expires_at"),
+  createdAt:  timestamp("created_at").defaultNow().notNull(),
+});
 
-export type User = typeof user.$inferSelect;
-export type ScanQuota = typeof scanQuota.$inferSelect;
+export type User         = typeof user.$inferSelect;
+export type Subscription = typeof subscription.$inferSelect;
+export type NewSubscription = typeof subscription.$inferInsert;
