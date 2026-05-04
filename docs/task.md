@@ -93,7 +93,18 @@
 
 ### Bottom Nav v2
 - [x] 5 tab dengan center FAB (Cek Halal jadi terracotta button menonjol)
-- [x] Default tab: Sholat
+- [x] Default tab: Cek Halal (reverted dari Sholat)
+
+### i18n (Internasionalisasi)
+- [x] Ekstrak semua string UI ke `locales/id.json`
+- [x] Buat `locales/en.json` terjemahan lengkap
+- [x] Utility `t()`, `ta()`, `tObj()` di `lib/i18n.ts`
+- [x] Language toggle (ID/EN) di BrandBar
+- [x] Persistent locale di localStorage
+- [x] Fix bug: toggle sinkron setelah refresh
+- [x] Find Place subcategories translatable
+- [x] AI responses (Cek Halal & Trip Plan) mengikuti bahasa yang dipilih
+- [x] Countdown timer "jam/menit/detik" translatable
 
 ---
 
