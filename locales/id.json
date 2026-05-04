@@ -531,6 +531,18 @@
       "30day": { "label": "1 Bulan", "price": "Rp 35.000", "originalPrice": "Rp 100.000", "desc": "Akses penuh selama 30 hari" }
     }
   },
+  "history": {
+    "btn": "Riwayat Scan",
+    "title": "Riwayat Scan",
+    "clearAll": "Hapus Semua",
+    "deleteItem": "Hapus dari Riwayat",
+    "empty": "Belum ada riwayat scan",
+    "emptyDesc": "Hasil scan akan tersimpan otomatis di sini",
+    "timeMinutes": "menit lalu",
+    "timeHours": "jam lalu",
+    "timeDays": "hari lalu",
+    "confirmClear": "Hapus semua riwayat?"
+  },
   "common": {
     "retry": "Coba Lagi",
     "reset": "Mulai Baru",

@@ -6,6 +6,8 @@ import { useState, useRef, useEffect } from "react";
 import DOMPurify from "dompurify";
 import { compressImage, parseStatus } from "@/lib/utils";
 import KamusKanji from "@/components/kanji";
+import ScanHistory from "@/components/scan-history";
+import { getHistory, saveToHistory, type HistoryItem } from "@/lib/history";
 
 type Status = "idle" | "halal" | "syubhat" | "haram";
 
@@ -183,7 +185,11 @@ export default function CekHalal({ isActive, onShowPaywall }: { isActive: boolea
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [cameraMode, setCameraMode]     = useState<"general" | "barcode">("general");
   const [activeSource, setActiveSource] = useState<"camera" | "barcode" | "gallery" | null>(null);
-  const [kamusOpen, setKamusOpen]       = useState(false);
+  const [kamusOpen, setKamusOpen]         = useState(false);
+  const [historyOpen, setHistoryOpen]     = useState(false);
+  const [historyItems, setHistoryItems]   = useState<HistoryItem[]>([]);
+
+  useEffect(() => { setHistoryItems(getHistory()); }, []);
 
   const streamRef       = useRef<MediaStream | null>(null);
   const videoRef        = useRef<HTMLVideoElement>(null);
@@ -275,7 +281,13 @@ export default function CekHalal({ isActive, onShowPaywall }: { isActive: boolea
       if (!res.ok) throw new Error(t("common.errorGeneral"));
       const { status: parsed, cleaned } = parseStatus(data.result);
       setStatus(parsed);
-      setResultHtml(DOMPurify.sanitize(cleaned));
+      const sanitized = DOMPurify.sanitize(cleaned);
+      setResultHtml(sanitized);
+      if (parsed !== "idle") {
+        saveToHistory({ status: parsed, resultHtml: sanitized, thumbnailDataUrl: images[0]?.dataUrl ?? "" })
+          .then(() => setHistoryItems(getHistory()))
+          .catch(() => null);
+      }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : t("cekHalal.camera.errorProcess"));
     } finally {
@@ -385,6 +397,22 @@ export default function CekHalal({ isActive, onShowPaywall }: { isActive: boolea
           </div>
         )}
 
+        {/* Riwayat Scan — tampil sebelum onboarding, hanya jika ada history */}
+        {historyItems.length > 0 && images.length === 0 && !resultHtml && !isAnalyzing && (
+          <button
+            onClick={() => setHistoryOpen(true)}
+            className="tap"
+            style={{
+              background: "none", border: "none", width: "100%",
+              textAlign: "right", cursor: "pointer",
+              fontFamily: "var(--font-jakarta)", fontSize: 13, fontWeight: 600,
+              color: "#2C4A3E", padding: "0 0 4px",
+            }}
+          >
+            {t("history.btn")} →
+          </button>
+        )}
+
         {/* Onboarding */}
         {images.length === 0 && !resultHtml && !isAnalyzing && (
           <div style={{
@@ -461,6 +489,15 @@ export default function CekHalal({ isActive, onShowPaywall }: { isActive: boolea
 
         {/* Kamus overlay */}
         {kamusOpen && <KamusKanji onClose={() => setKamusOpen(false)} />}
+
+        {/* History overlay */}
+        {historyOpen && (
+          <ScanHistory
+            items={historyItems}
+            onClose={() => setHistoryOpen(false)}
+            onItemsChange={(updated) => setHistoryItems(updated)}
+          />
+        )}
 
         {/* Image previews */}
         {images.length > 0 && !isAnalyzing && !resultHtml && (
