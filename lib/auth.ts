@@ -1,7 +1,15 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { db } from "@/db";
+import { Pool, neonConfig } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-serverless";
+import ws from "ws";
 import * as schema from "@/db/schema";
+
+// WebSocket required for Pool (transaction support) in Node.js runtime
+neonConfig.webSocketConstructor = ws;
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL! });
+const authDb = drizzle({ client: pool, schema });
 
 const TRIAL_HOURS = 12;
 
@@ -9,7 +17,7 @@ export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
   secret:  process.env.BETTER_AUTH_SECRET,
 
-  database: drizzleAdapter(db, {
+  database: drizzleAdapter(authDb, {
     provider: "pg",
     schema: {
       user:         schema.user,
@@ -31,7 +39,7 @@ export const auth = betterAuth({
       trialExpiresAt: {
         type:     "date",
         required: false,
-        input:    false, // user tidak bisa set sendiri
+        input:    false,
       },
     },
   },
