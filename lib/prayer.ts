@@ -73,13 +73,6 @@ export const fetchPrayerTimes = async (
   };
 };
 
-export const fetchQibla = async (lat: number, lng: number): Promise<number> => {
-  const res = await fetch(`https://api.aladhan.com/v1/qibla/${lat}/${lng}`);
-  if (!res.ok) throw new Error("Gagal mengambil arah kiblat");
-  const json = await res.json();
-  return json.data.direction;
-};
-
 /** Browser GPS — promise wrapper around navigator.geolocation */
 export const getCurrentLocation = (): Promise<{ lat: number; lng: number }> =>
   new Promise((resolve, reject) => {
@@ -160,29 +153,4 @@ export const formatActiveRemaining = (
   if (remaining < 0) return "0 menit";
   const mins = Math.ceil(remaining / 60_000);
   return `${mins} menit`;
-};
-
-/** Compass heading utilities — supports iOS webkitCompassHeading + Android alpha */
-type CompassEvent = DeviceOrientationEvent & { webkitCompassHeading?: number };
-
-export const extractCompassHeading = (e: CompassEvent): number | null => {
-  if (e.webkitCompassHeading != null) return e.webkitCompassHeading;
-  if (e.alpha != null) return 360 - e.alpha; // Android: alpha is counter-clockwise
-  return null;
-};
-
-export const compassNeedsPermission = (): boolean => {
-  const DOE = (window as unknown as { DeviceOrientationEvent?: { requestPermission?: () => Promise<string> } }).DeviceOrientationEvent;
-  return typeof DOE?.requestPermission === "function";
-};
-
-export const requestCompassPermission = async (): Promise<boolean> => {
-  const DOE = (window as unknown as { DeviceOrientationEvent?: { requestPermission?: () => Promise<string> } }).DeviceOrientationEvent;
-  if (!DOE?.requestPermission) return true;
-  try {
-    const result = await DOE.requestPermission();
-    return result === "granted";
-  } catch {
-    return false;
-  }
 };
