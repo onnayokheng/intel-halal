@@ -124,10 +124,35 @@ export default function PaymentHistory({ onClose }: { onClose: () => void }) {
               {/* Detail rows */}
               <div style={{ display: "flex", flexDirection: "column", gap: 5, borderTop: "0.5px solid #F0EBE0", paddingTop: 12 }}>
                 <Row label="Tanggal beli" value={formatDate(row.createdAt)} />
-                {row.startsAt  && <Row label="Mulai"        value={formatDate(row.startsAt)} />}
-                {row.expiresAt && <Row label="Berakhir"     value={formatDate(row.expiresAt)} />}
-                {row.paymentRef && <Row label="Ref" value={row.paymentRef} mono />}
+                {row.startsAt  && <Row label="Mulai"    value={formatDate(row.startsAt)} />}
+                {row.expiresAt && <Row label="Berakhir" value={formatDate(row.expiresAt)} />}
+                {row.paymentRef && <Row label="Ref"     value={row.paymentRef} mono />}
               </div>
+
+              {/* Cancel button — only for pending */}
+              {row.status === "pending" && (
+                <button
+                  onClick={async () => {
+                    const res = await fetch("/api/payment/cancel", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ subscriptionId: row.id }),
+                    }).catch(() => null);
+                    if (res?.ok) {
+                      setRows((prev) => prev.map((r) => r.id === row.id ? { ...r, status: "cancelled" } : r));
+                    }
+                  }}
+                  className="tap"
+                  style={{
+                    background: "none", border: "none", cursor: "pointer",
+                    marginTop: 10, padding: "6px 0", width: "100%", textAlign: "center",
+                    fontFamily: "var(--font-jakarta)", fontSize: 12.5, fontWeight: 500,
+                    color: "#B85C3C", textDecoration: "underline", textUnderlineOffset: 3,
+                  }}
+                >
+                  Batalkan Transaksi
+                </button>
+              )}
             </div>
           );
         })}
