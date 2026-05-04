@@ -15,7 +15,14 @@ export async function POST(req: NextRequest) {
 
   const { merchant_ref, reference, status, paid_at } = body;
 
-  // Acknowledge semua status (pending, expired, cancel) tapi hanya proses success
+  // Handle expired / cancel → update status di DB
+  if (status === "expired" || status === "cancel") {
+    await db.update(subscription)
+      .set({ status: "cancelled" })
+      .where(eq(subscription.id, merchant_ref));
+    return NextResponse.json({ ok: true });
+  }
+
   if (status !== "success") {
     return NextResponse.json({ ok: true });
   }

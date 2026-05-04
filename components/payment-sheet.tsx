@@ -139,9 +139,35 @@ export default function PaymentSheet({ plan, onClose, onSuccess }: {
                 ref: {payment.reference}
               </div>
             </div>
-            <button onClick={onClose} className="tap" style={{ marginTop: 16, width: "100%", height: 48, background: "transparent", border: "0.5px solid #D8D2C4", borderRadius: 14, cursor: "pointer", fontFamily: "var(--font-jakarta)", fontSize: 14, fontWeight: 600, color: "#6B6A63" }}>
-              Bayar Nanti
-            </button>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 16 }}>
+              <button onClick={onClose} className="tap" style={{
+                width: "100%", height: 48, background: "transparent",
+                border: "0.5px solid #D8D2C4", borderRadius: 14, cursor: "pointer",
+                fontFamily: "var(--font-jakarta)", fontSize: 14, fontWeight: 600, color: "#6B6A63",
+              }}>
+                Bayar Nanti
+              </button>
+              <button
+                onClick={async () => {
+                  setState("loading");
+                  await fetch("/api/payment/cancel", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ subscriptionId: payment.subscriptionId }),
+                  }).catch(() => null);
+                  onClose();
+                }}
+                className="tap"
+                style={{
+                  width: "100%", background: "none", border: "none",
+                  padding: "8px 0", cursor: "pointer",
+                  fontFamily: "var(--font-jakarta)", fontSize: 13, fontWeight: 500,
+                  color: "#B85C3C", textDecoration: "underline", textUnderlineOffset: 3,
+                }}
+              >
+                Batalkan Transaksi
+              </button>
+            </div>
           </>
         )}
 
