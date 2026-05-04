@@ -80,10 +80,6 @@ export default function KamusKanji({ onClose }: { onClose: () => void }) {
   const [filter, setFilter] = useState<"all" | Verdict>("all");
   const [activeCat, setActiveCat] = useState<string | null>(null);
   const [activeEntry, setActiveEntry] = useState<string | null>(null);
-  const [favorites, setFavorites] = useState<Record<string, boolean>>({});
-
-  const toggleFav = (id: string) => setFavorites((f) => ({ ...f, [id]: !f[id] }));
-
   const onQueryChange = (q: string) => {
     setQuery(q);
     if (q.trim().length > 0 && view === "browse") setView("list");
@@ -173,8 +169,6 @@ export default function KamusKanji({ onClose }: { onClose: () => void }) {
         {view === "detail" && detailEntry ? (
           <KanjiDetail
             entry={detailEntry}
-            isFav={!!favorites[detailEntry.id]}
-            onFav={() => toggleFav(detailEntry.id)}
             onOpenRelated={(rkanji) => {
               const target = getEntries().find((e) => e.kanji === rkanji);
               if (target) openEntry(target.id);
@@ -460,11 +454,9 @@ function EmptyState({ onScan }: { onScan: () => void }) {
 }
 
 function KanjiDetail({
-  entry, isFav, onFav, onOpenRelated,
+  entry, onOpenRelated,
 }: {
   entry: Entry;
-  isFav: boolean;
-  onFav: () => void;
   onOpenRelated: (k: string) => void;
 }) {
   const meta = getVerdictMeta(entry.verdict);
@@ -599,26 +591,6 @@ function KanjiDetail({
         </div>
       )}
 
-      {/* Favorite */}
-      <button
-        onClick={onFav}
-        className="tap"
-        style={{
-          height: 52, width: "100%",
-          background: isFav ? "#2C4A3E" : "#fff",
-          color: isFav ? "#fff" : "#1B1B19",
-          border: isFav ? "none" : "1px solid #D8D2C4",
-          borderRadius: 14, fontSize: 15, fontWeight: 600, cursor: "pointer",
-          display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-          boxShadow: isFav ? "0 8px 18px -8px rgba(44,74,62,0.55)" : "0 1px 0 rgba(43,32,15,.04), 0 6px 18px -8px rgba(43,32,15,.10)",
-        }}
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill={isFav ? "#fff" : "none"}>
-          <path d="M12 21s-7-4.5-7-10.5A4.5 4.5 0 0112 6a4.5 4.5 0 017 4.5C19 16.5 12 21 12 21z"
-                stroke={isFav ? "#fff" : "#1B1B19"} strokeWidth="1.7" strokeLinejoin="round"/>
-        </svg>
-        {isFav ? t("kanji.favAdded") : t("kanji.favAdd")}
-      </button>
     </div>
   );
 }
