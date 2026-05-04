@@ -74,7 +74,15 @@
 - [x] Komponen `prayer.tsx` — location strip, next prayer hero, prayer list, qibla compass, settings sheet
 - [x] States: loading / denied / located / active-prayer
 - [x] Set sebagai default tab (home)
-- [ ] Integrasi API real (aladhan.com untuk waktu sholat akurat berdasar GPS)
+- [x] Integrasi Aladhan API: prayer times + qibla degrees real
+- [x] GPS auto-detect + reverse geocode (Nominatim)
+- [x] Hijri date dinamis dengan bulan Indonesia
+- [x] localStorage cache per (tanggal, hisab, lokasi)
+- [x] Real-time countdown (update 1 detik)
+- [x] Auto-detect active prayer window (30 menit)
+- [x] Live compass via DeviceOrientation API (iOS permission flow + Android)
+- [x] Distance ke Mekkah (Haversine)
+- [x] Cardinal direction Bahasa Indonesia
 
 ### Kamus Kanji Halal
 - [x] Komponen `kanji.tsx` sebagai modal overlay (bukan tab)
