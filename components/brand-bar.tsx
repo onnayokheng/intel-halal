@@ -188,16 +188,11 @@ function UserSheet({ name, email, image, accessInfo, onClose }: {
 
         {/* Logout */}
         <button onClick={handleLogout} className="tap" style={{
-          width: "100%", height: 52, border: "none",
-          background: "#F1D5C7", color: "#6B2F1D",
-          borderRadius: 14, cursor: "pointer",
-          fontFamily: "var(--font-jakarta)", fontSize: 14, fontWeight: 600,
-          display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+          background: "none", border: "none", padding: "8px 0",
+          color: "#B85C3C", cursor: "pointer",
+          fontFamily: "var(--font-jakarta)", fontSize: 14, fontWeight: 500,
+          textDecoration: "underline", textUnderlineOffset: 3,
         }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M16 17l5-5-5-5M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
           Logout
         </button>
       </div>
