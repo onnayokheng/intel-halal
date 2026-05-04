@@ -99,6 +99,10 @@ function UserSheet({ name, email, image, onClose }: {
   const initials = name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 
   const handleLogout = async () => {
+    if (process.env.NEXT_PUBLIC_DEV_SKIP_AUTH === "true") {
+      // Dev mode: just close the sheet
+      onClose(); return;
+    }
     await signOut({ fetchOptions: { onSuccess: () => window.location.reload() } });
   };
 
@@ -203,7 +207,9 @@ export default function BrandBar({ onUpgrade }: { onUpgrade?: () => void }) {
 
   const devSkip = process.env.NEXT_PUBLIC_DEV_SKIP_AUTH === "true";
   const hasUser = devSkip || !!session?.user;
-  const user = session?.user;
+  const user = devSkip
+    ? { name: "Dev User", email: "dev@intelhalal.app", image: null }
+    : session?.user ?? null;
 
   return (
     <>
