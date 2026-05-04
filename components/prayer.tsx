@@ -1,14 +1,13 @@
 "use client";
 
-import { useState } from "react";
-
-const PRAYERS = [
-  { id: "subuh",   label: "Subuh",   arabic: "الفجر",  time: "03:24" },
-  { id: "dzuhur",  label: "Dzuhur",  arabic: "الظهر",  time: "11:34" },
-  { id: "ashar",   label: "Ashar",   arabic: "العصر",  time: "15:18" },
-  { id: "maghrib", label: "Maghrib", arabic: "المغرب", time: "18:42" },
-  { id: "isya",    label: "Isya",    arabic: "العشاء", time: "20:14" },
-];
+import { useState, useEffect, useRef, useCallback } from "react";
+import {
+  HIJRI_MONTHS_ID, PRAYER_LABELS_ID, PRAYER_ARABIC, PRAYER_ORDER,
+  type PrayerKey, type PrayerData, type PrayerComputed,
+  fetchPrayerTimes, fetchQibla, getCurrentLocation, reverseGeocode,
+  findCurrentPrayer, formatRemaining, formatActiveRemaining,
+  extractCompassHeading, compassNeedsPermission, requestCompassPermission,
+} from "@/lib/prayer";
 
 const HISAB_METHODS = [
   { id: "kemenag",  label: "Kemenag RI",          meta: "Subuh 20° · Isya 18°" },
@@ -16,18 +15,150 @@ const HISAB_METHODS = [
   { id: "egyptian", label: "Egyptian Authority",  meta: "Subuh 19.5° · Isya 17.5°" },
 ];
 
-type State = "loading" | "denied" | "located" | "active-prayer";
+interface CacheEntry {
+  prayerData: PrayerData;
+  qiblaDeg: number;
+  locationName: string;
+  lat: number;
+  lng: number;
+}
+
+const cacheKey = (date: Date, hisab: string) => {
+  const dd = String(date.getDate()).padStart(2, "0");
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  return `intel-halal-prayer-${date.getFullYear()}-${mm}-${dd}-${hisab}`;
+};
 
 export default function PrayerSchedule() {
-  const [state, setState] = useState<State>("located");
-  const [showSettings, setShowSettings] = useState(false);
   const [hisab, setHisab] = useState("kemenag");
+  const [showSettings, setShowSettings] = useState(false);
 
-  const nextPrayer = PRAYERS.find((p) => p.id === "maghrib")!;
-  const retry = () => {
-    setState("loading");
-    setTimeout(() => setState("located"), 1800);
+  const [coords, setCoords]             = useState<{ lat: number; lng: number } | null>(null);
+  const [locationName, setLocationName] = useState<string>("");
+  const [prayerData, setPrayerData]     = useState<PrayerData | null>(null);
+  const [qiblaDeg, setQiblaDeg]         = useState<number | null>(null);
+  const [error, setError]               = useState<string | null>(null);
+  const [isLoading, setIsLoading]       = useState(true);
+
+  const [now, setNow] = useState<Date>(new Date());
+
+  const [compassHeading, setCompassHeading] = useState<number | null>(null);
+  const [needsCompassPerm, setNeedsCompassPerm] = useState(false);
+  const compassActiveRef = useRef(false);
+
+  // ─── Load prayer data (cache → API) ───
+  const loadData = useCallback(async (lat: number, lng: number, method: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const today = new Date();
+      const key = cacheKey(today, method);
+
+      // try cache
+      const cached = typeof window !== "undefined" ? localStorage.getItem(key) : null;
+      if (cached) {
+        try {
+          const entry: CacheEntry = JSON.parse(cached);
+          // verify same coordinates (within ~1km tolerance via 2-decimal rounding)
+          if (
+            entry.prayerData.fetchedAt === todayStr() &&
+            Math.abs(entry.lat - lat) < 0.01 &&
+            Math.abs(entry.lng - lng) < 0.01
+          ) {
+            setPrayerData(entry.prayerData);
+            setQiblaDeg(entry.qiblaDeg);
+            setLocationName(entry.locationName);
+            setIsLoading(false);
+            return;
+          }
+        } catch { /* corrupted cache, refetch */ }
+      }
+
+      const [data, qibla, name] = await Promise.all([
+        fetchPrayerTimes(lat, lng, method, today),
+        fetchQibla(lat, lng),
+        reverseGeocode(lat, lng),
+      ]);
+
+      setPrayerData(data);
+      setQiblaDeg(qibla);
+      setLocationName(name);
+
+      const entry: CacheEntry = { prayerData: data, qiblaDeg: qibla, locationName: name, lat, lng };
+      try { localStorage.setItem(key, JSON.stringify(entry)); } catch { /* quota */ }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Gagal memuat data");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // ─── On mount: get GPS → load data ───
+  const detectAndLoad = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const c = await getCurrentLocation();
+      setCoords(c);
+      await loadData(c.lat, c.lng, hisab);
+    } catch (err) {
+      const msg = err instanceof GeolocationPositionError
+        ? "Izin lokasi diperlukan untuk akurasi"
+        : err instanceof Error ? err.message : "Lokasi tidak terdeteksi";
+      setError(msg);
+      setIsLoading(false);
+    }
+  }, [hisab, loadData]);
+
+  useEffect(() => { detectAndLoad(); /* run once on mount */ }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ─── When hisab changes, refetch (if we already have coords) ───
+  useEffect(() => {
+    if (coords) loadData(coords.lat, coords.lng, hisab);
+  }, [hisab]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ─── Tick every second for countdown ───
+  useEffect(() => {
+    const t = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(t);
+  }, []);
+
+  // ─── Compass listener ───
+  const attachCompass = useCallback(() => {
+    if (compassActiveRef.current) return;
+    compassActiveRef.current = true;
+    const handler = (e: DeviceOrientationEvent) => {
+      const h = extractCompassHeading(e as DeviceOrientationEvent & { webkitCompassHeading?: number });
+      if (h != null) setCompassHeading(h);
+    };
+    window.addEventListener("deviceorientationabsolute", handler as EventListener, true);
+    window.addEventListener("deviceorientation", handler, true);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (compassNeedsPermission()) {
+      setNeedsCompassPerm(true);
+    } else {
+      attachCompass();
+    }
+  }, [attachCompass]);
+
+  const enableCompass = async () => {
+    const granted = await requestCompassPermission();
+    if (granted) {
+      setNeedsCompassPerm(false);
+      attachCompass();
+    }
   };
+
+  // ─── Derived: which state to render ───
+  const computed = prayerData ? findCurrentPrayer(prayerData.timings, now) : null;
+  const state: "loading" | "denied" | "located" | "active-prayer" =
+    isLoading                                ? "loading"
+    : error                                  ? "denied"
+    : computed?.active                       ? "active-prayer"
+    : "located";
 
   return (
     <div style={{ minHeight: "100dvh", paddingBottom: 96, overflowY: "auto", position: "relative" }}>
@@ -38,7 +169,7 @@ export default function PrayerSchedule() {
             Jadwal Sholat
           </h1>
           <p style={{ margin: 0, color: "#6B6A63", fontSize: 13.5, lineHeight: 1.45 }}>
-            Waktu sholat & arah kiblat berdasarkan lokasi kamu di Jepang.
+            Waktu sholat & arah kiblat berdasarkan lokasi kamu.
           </p>
         </div>
         <button
@@ -62,22 +193,47 @@ export default function PrayerSchedule() {
       <div style={{ padding: "0 22px", display: "flex", flexDirection: "column", gap: 14 }}>
 
         {state === "loading" && <LoadingCard />}
-        {state === "denied" && <DeniedCard onRetry={retry} />}
+        {state === "denied" && <DeniedCard onRetry={detectAndLoad} message={error ?? undefined} />}
 
-        {(state === "located" || state === "active-prayer") && (
+        {(state === "located" || state === "active-prayer") && prayerData && computed && (
           <>
-            <LocationStrip />
-            {state === "active-prayer"
-              ? <ActivePrayerBanner prayer={{ label: "Maghrib", time: "18:42", remaining: "23 menit" }} />
-              : <NextPrayerHero prayer={nextPrayer} remaining="2 jam 14 menit" />
+            <LocationStrip
+              location={locationName}
+              gregorianDate={prayerData.gregorianDate}
+              hijriDay={prayerData.hijriDay}
+              hijriMonth={prayerData.hijriMonth}
+              hijriYear={prayerData.hijriYear}
+            />
+
+            {state === "active-prayer" && computed.active
+              ? <ActivePrayerBanner
+                  prayer={computed.active}
+                  remaining={formatActiveRemaining(computed.active.date, now)}
+                />
+              : <NextPrayerHero prayer={computed.next} remainingMs={computed.remainingMs} />
             }
-            <PrayerList activeId={state === "active-prayer" ? "maghrib" : null} nextId="maghrib" />
-            <QiblaCompass degrees={293} />
+
+            <PrayerList
+              timings={prayerData.timings}
+              now={now}
+              activeId={computed.active?.id ?? null}
+              nextId={computed.next.id}
+            />
+
+            {qiblaDeg !== null && (
+              <QiblaCompass
+                degrees={qiblaDeg}
+                heading={compassHeading}
+                needsPermission={needsCompassPerm}
+                onEnable={enableCompass}
+                lat={coords?.lat}
+                lng={coords?.lng}
+              />
+            )}
+
             <FootnoteRow hisabLabel={HISAB_METHODS.find((m) => m.id === hisab)!.label} />
           </>
         )}
-
-        <StateSwitcher state={state} setState={setState} />
       </div>
 
       {showSettings && (
@@ -91,24 +247,44 @@ export default function PrayerSchedule() {
   );
 }
 
-function LocationStrip() {
+// ─────── helpers ───────
+function todayStr() {
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+// ─────── sub-components ───────
+
+function LocationStrip({
+  location, gregorianDate, hijriDay, hijriMonth, hijriYear,
+}: {
+  location: string;
+  gregorianDate: string;
+  hijriDay: string;
+  hijriMonth: number;
+  hijriYear: string;
+}) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "2px 4px" }}>
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
         <path d="M12 22s7-6.5 7-12a7 7 0 10-14 0c0 5.5 7 12 7 12z" fill="#2C4A3E"/>
         <circle cx="12" cy="10" r="2.4" fill="#fff"/>
       </svg>
-      <div style={{ flex: 1, fontSize: 13, fontWeight: 600, color: "#1B1B19" }}>
-        Shinjuku, Tokyo, Japan
+      <div style={{ flex: 1, fontSize: 13, fontWeight: 600, color: "#1B1B19", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+        {location}
       </div>
-      <div className="mono" style={{ fontSize: 10.5, color: "#6B6A63", letterSpacing: 0.6 }}>
-        4 Mei 2026 · 17 Dzulqa&apos;dah 1447
+      <div className="mono" style={{ fontSize: 10.5, color: "#6B6A63", letterSpacing: 0.6, textAlign: "right", flexShrink: 0 }}>
+        {gregorianDate}<br />
+        {hijriDay} {HIJRI_MONTHS_ID[hijriMonth] || ""} {hijriYear}
       </div>
     </div>
   );
 }
 
-function NextPrayerHero({ prayer, remaining }: { prayer: { label: string; time: string }; remaining: string }) {
+function NextPrayerHero({ prayer, remainingMs }: { prayer: PrayerComputed; remainingMs: number }) {
   return (
     <div style={{
       background: "#fff", border: "0.5px solid #E8E3D6", borderRadius: 18,
@@ -137,7 +313,7 @@ function NextPrayerHero({ prayer, remaining }: { prayer: { label: string; time: 
         }}>
           <span style={{ width: 6, height: 6, borderRadius: 99, background: "#2C4A3E" }} className="animate-pulse-ring" />
           <span className="mono" style={{ fontSize: 12, fontWeight: 600, color: "#1F362D", letterSpacing: 0.3 }}>
-            {remaining} lagi
+            {formatRemaining(remainingMs)} lagi
           </span>
         </div>
       </div>
@@ -145,11 +321,10 @@ function NextPrayerHero({ prayer, remaining }: { prayer: { label: string; time: 
   );
 }
 
-function ActivePrayerBanner({ prayer }: { prayer: { label: string; time: string; remaining: string } }) {
+function ActivePrayerBanner({ prayer, remaining }: { prayer: PrayerComputed; remaining: string }) {
   return (
     <div style={{
-      background: "#2C4A3E", border: "none", borderRadius: 18,
-      overflow: "hidden", position: "relative",
+      background: "#2C4A3E", borderRadius: 18, overflow: "hidden", position: "relative",
       boxShadow: "0 1px 0 rgba(43,32,15,.05), 0 8px 24px -10px rgba(43,32,15,.14)",
     }}>
       <div className="star-bg" style={{ position: "absolute", inset: 0, opacity: 0.18, pointerEvents: "none", filter: "invert(1)" }} />
@@ -174,7 +349,7 @@ function ActivePrayerBanner({ prayer }: { prayer: { label: string; time: string;
         }}>
           <span style={{ width: 6, height: 6, borderRadius: 99, background: "#fff" }} className="animate-pulse-ring" />
           <span className="mono" style={{ fontSize: 12, fontWeight: 600, color: "#fff", letterSpacing: 0.3 }}>
-            Berakhir dalam {prayer.remaining}
+            Berakhir dalam {remaining}
           </span>
         </div>
       </div>
@@ -182,18 +357,37 @@ function ActivePrayerBanner({ prayer }: { prayer: { label: string; time: string;
   );
 }
 
-function PrayerList({ activeId, nextId }: { activeId: string | null; nextId: string }) {
-  const nextIdx = PRAYERS.findIndex((p) => p.id === nextId);
+function PrayerList({
+  timings, now, activeId, nextId,
+}: {
+  timings: Record<PrayerKey, string>;
+  now: Date;
+  activeId: string | null;
+  nextId: string;
+}) {
+  const rows = PRAYER_ORDER.map((k) => {
+    const [h, m] = timings[k].split(":").map(Number);
+    const d = new Date(now);
+    d.setHours(h, m, 0, 0);
+    return {
+      id: k.toLowerCase(),
+      label: PRAYER_LABELS_ID[k],
+      arabic: PRAYER_ARABIC[k],
+      time: timings[k],
+      date: d,
+    };
+  });
+
   return (
     <div style={{
       background: "#fff", border: "0.5px solid #E8E3D6", borderRadius: 18,
       overflow: "hidden",
       boxShadow: "0 1px 0 rgba(43,32,15,.05), 0 8px 24px -10px rgba(43,32,15,.14)",
     }}>
-      {PRAYERS.map((p, i) => {
+      {rows.map((p, i) => {
         const isActive = p.id === activeId;
         const isNext = !activeId && p.id === nextId;
-        const isPassed = !activeId && nextIdx > i;
+        const isPassed = p.date < now && !isActive;
 
         return (
           <div
@@ -201,7 +395,7 @@ function PrayerList({ activeId, nextId }: { activeId: string | null; nextId: str
             style={{
               display: "flex", alignItems: "center", gap: 12,
               padding: "14px 18px",
-              borderBottom: i < PRAYERS.length - 1 ? "0.5px solid #E8E3D6" : "none",
+              borderBottom: i < rows.length - 1 ? "0.5px solid #E8E3D6" : "none",
               background: isActive ? "#2C4A3E" : isNext ? "#D8E2DA" : "transparent",
             }}
           >
@@ -255,7 +449,22 @@ function PrayerList({ activeId, nextId }: { activeId: string | null; nextId: str
   );
 }
 
-function QiblaCompass({ degrees }: { degrees: number }) {
+function QiblaCompass({
+  degrees, heading, needsPermission, onEnable, lat, lng,
+}: {
+  degrees: number;
+  heading: number | null;
+  needsPermission: boolean;
+  onEnable: () => void;
+  lat?: number; lng?: number;
+}) {
+  // Distance to Mecca (great-circle)
+  const distanceKm = lat != null && lng != null ? haversineKm(lat, lng, 21.4225, 39.8262) : null;
+
+  // Effective needle angle: live = qibla - heading (relative to where you face)
+  const needleAngle = heading != null ? degrees - heading : degrees;
+  const cardinalDir = degreesToCardinal(degrees);
+
   return (
     <div style={{
       background: "#fff", border: "0.5px solid #E8E3D6", borderRadius: 18,
@@ -269,33 +478,68 @@ function QiblaCompass({ degrees }: { degrees: number }) {
         Hadap ke Mekkah
       </div>
       <div style={{ fontSize: 12, color: "#6B6A63", marginTop: 2 }}>
-        Putar perangkat sampai jarum sejajar dengan ka&apos;bah.
+        {heading != null
+          ? "Putar perangkat sampai jarum lurus ke atas."
+          : "Putar perangkat sampai jarum sejajar dengan ka'bah."}
       </div>
 
       <div style={{
         position: "relative", width: "100%", aspectRatio: "1 / 1",
         marginTop: 18, display: "flex", alignItems: "center", justifyContent: "center",
       }}>
-        <CompassDial degrees={degrees} />
+        <CompassDial needleAngle={needleAngle} qiblaDegree={degrees} live={heading != null} />
       </div>
 
       <div style={{ marginTop: 10, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
         <div>
           <div className="mono" style={{ fontSize: 10.5, fontWeight: 500, letterSpacing: 1.2, textTransform: "uppercase", color: "#6B6A63" }}>Arah</div>
           <div className="serif" style={{ fontSize: 22, fontWeight: 600, color: "#2C4A3E", letterSpacing: -0.4, marginTop: 2 }}>
-            {degrees}° <span style={{ fontSize: 14, color: "#6B6A63", fontWeight: 500 }}>Barat-Laut</span>
+            {Math.round(degrees)}° <span style={{ fontSize: 14, color: "#6B6A63", fontWeight: 500 }}>{cardinalDir}</span>
           </div>
         </div>
         <div style={{ textAlign: "right" }}>
           <div className="mono" style={{ fontSize: 10.5, fontWeight: 500, letterSpacing: 1.2, textTransform: "uppercase", color: "#6B6A63" }}>Jarak</div>
-          <div className="mono" style={{ fontSize: 14, fontWeight: 600, color: "#1B1B19", marginTop: 2 }}>9,738 km</div>
+          <div className="mono" style={{ fontSize: 14, fontWeight: 600, color: "#1B1B19", marginTop: 2 }}>
+            {distanceKm != null ? `${distanceKm.toLocaleString("id-ID")} km` : "—"}
+          </div>
         </div>
       </div>
+
+      {needsPermission && (
+        <button
+          onClick={onEnable}
+          className="tap"
+          style={{
+            marginTop: 14, width: "100%", height: 44,
+            background: "#EFEBE2", border: "0.5px solid #D8D2C4",
+            borderRadius: 12, fontSize: 13, fontWeight: 600, color: "#3D3D3A",
+            cursor: "pointer",
+            display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M5 19l3-3M16 8l3-3" stroke="#3D3D3A" strokeWidth="1.6" strokeLinecap="round"/>
+            <circle cx="12" cy="12" r="4" stroke="#3D3D3A" strokeWidth="1.6"/>
+          </svg>
+          Aktifkan Kompas Live
+        </button>
+      )}
+
+      {heading != null && (
+        <div className="mono" style={{
+          marginTop: 10, fontSize: 10, color: "#9B998F", letterSpacing: 0.8,
+          textAlign: "center", textTransform: "uppercase",
+        }}>
+          ● LIVE COMPASS · ARAH ANDA: {Math.round(heading)}°
+        </div>
+      )}
     </div>
   );
 }
 
-function CompassDial({ degrees }: { degrees: number }) {
+function CompassDial({
+  needleAngle, qiblaDegree, live,
+}: { needleAngle: number; qiblaDegree: number; live: boolean }) {
   const ticks: React.ReactElement[] = [];
   for (let d = 0; d < 360; d += 15) {
     const major = d % 90 === 0;
@@ -356,7 +600,8 @@ function CompassDial({ degrees }: { degrees: number }) {
         );
       })}
 
-      <g transform={`rotate(${degrees} 50 50)`}>
+      {/* qibla marker on outer ring (rotates with live heading or fixed at qibla) */}
+      <g transform={`rotate(${needleAngle} 50 50)`}>
         <path d="M50 4 L52 8 L48 8 Z" fill="#2C4A3E" />
         <text x="50" y="13" textAnchor="middle"
               fontFamily="JetBrains Mono, monospace"
@@ -364,7 +609,11 @@ function CompassDial({ degrees }: { degrees: number }) {
               letterSpacing="0.3">QIBLAT</text>
       </g>
 
-      <g transform={`rotate(${degrees} 50 50)`}>
+      {/* needle (with smooth transition) */}
+      <g
+        transform={`rotate(${needleAngle} 50 50)`}
+        style={{ transition: live ? "transform 200ms ease-out" : "transform 600ms ease-out" }}
+      >
         <path d="M50 16 L46.5 50 L50 84 L53.5 50 Z" fill="rgba(27,27,25,0.10)" transform="translate(0.6 0.8)" />
         <path d="M50 16 L46.8 50 L50 50 Z" fill="url(#needle)" />
         <path d="M50 16 L53.2 50 L50 50 Z" fill="#3F6A58" />
@@ -375,6 +624,9 @@ function CompassDial({ degrees }: { degrees: number }) {
 
       <circle cx="50" cy="50" r="3.4" fill="#1B1B19" />
       <circle cx="50" cy="50" r="1.4" fill="#F7F5F0" />
+
+      {/* hidden value carrier so a11y tools can read the actual qibla degree */}
+      <title>Arah kiblat: {Math.round(qiblaDegree)} derajat dari Utara</title>
     </svg>
   );
 }
@@ -386,7 +638,7 @@ function FootnoteRow({ hisabLabel }: { hisabLabel: string }) {
         Metode hisab: <span style={{ color: "#1B1B19", fontWeight: 600 }}>{hisabLabel}</span>
       </div>
       <div className="mono" style={{ fontSize: 9.5, color: "#9B998F", letterSpacing: 1, textTransform: "uppercase" }}>
-        WIB+2 · JST
+        Aladhan API
       </div>
     </div>
   );
@@ -415,16 +667,13 @@ function LoadingCard() {
         Mencari arah…
       </div>
       <div style={{ fontSize: 13, color: "#6B6A63", marginTop: 6, lineHeight: 1.4, maxWidth: 280, margin: "6px auto 0" }}>
-        Mendeteksi GPS dan kompas perangkat. Mohon tunggu sebentar.
-      </div>
-      <div className="mono" style={{ marginTop: 16, display: "flex", justifyContent: "center", gap: 18, fontSize: 10.5, color: "#9B998F", letterSpacing: 0.6 }}>
-        <span>● GPS</span><span>● COMPASS</span><span>● HISAB</span>
+        Mendeteksi GPS, lalu mengambil waktu sholat & arah kiblat.
       </div>
     </div>
   );
 }
 
-function DeniedCard({ onRetry }: { onRetry: () => void }) {
+function DeniedCard({ onRetry, message }: { onRetry: () => void; message?: string }) {
   return (
     <div style={{
       background: "#fff", border: "0.5px solid #E8E3D6", borderRadius: 18,
@@ -442,10 +691,10 @@ function DeniedCard({ onRetry }: { onRetry: () => void }) {
         </svg>
       </div>
       <div className="serif" style={{ fontSize: 22, fontWeight: 500, color: "#1B1B19", letterSpacing: -0.4 }}>
-        Izin lokasi diperlukan
+        Tidak bisa mengakses lokasi
       </div>
       <div style={{ fontSize: 13, color: "#6B6A63", marginTop: 6, lineHeight: 1.45, maxWidth: 300, margin: "6px auto 0" }}>
-        Tanpa GPS, kami tidak dapat menghitung waktu sholat & arah kiblat yang akurat untuk lokasi kamu di Jepang.
+        {message ?? "Tanpa GPS, kami tidak dapat menghitung waktu sholat & arah kiblat yang akurat."}
       </div>
       <button
         onClick={onRetry}
@@ -463,13 +712,7 @@ function DeniedCard({ onRetry }: { onRetry: () => void }) {
           <circle cx="12" cy="12" r="3" stroke="#fff" strokeWidth="1.6"/>
           <path d="M12 2v3M12 19v3M2 12h3M19 12h3" stroke="#fff" strokeWidth="1.6" strokeLinecap="round"/>
         </svg>
-        Aktifkan Lokasi
-      </button>
-      <button className="tap" style={{
-        marginTop: 8, background: "transparent", border: "none",
-        color: "#6B6A63", fontSize: 12.5, padding: 8, cursor: "pointer",
-      }}>
-        Atau pilih lokasi manual
+        Coba Lagi
       </button>
     </div>
   );
@@ -556,40 +799,21 @@ function SettingsSheet({
   );
 }
 
-function StateSwitcher({ state, setState }: { state: State; setState: (s: State) => void }) {
-  const STATES: { id: State; label: string }[] = [
-    { id: "located", label: "Default" },
-    { id: "active-prayer", label: "Saat Maghrib" },
-    { id: "loading", label: "Loading" },
-    { id: "denied", label: "Izin ditolak" },
-  ];
-  return (
-    <div style={{
-      marginTop: 8, padding: "14px 14px 16px",
-      borderRadius: 14, background: "#EFEBE2",
-      border: "0.5px dashed #D8D2C4",
-    }}>
-      <div className="mono" style={{ fontSize: 9.5, fontWeight: 500, letterSpacing: 1.4, textTransform: "uppercase", color: "#9B998F", marginBottom: 8 }}>
-        Demo · Pratinjau Status
-      </div>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-        {STATES.map((s) => (
-          <button
-            key={s.id}
-            onClick={() => setState(s.id)}
-            className="tap"
-            style={{
-              background: state === s.id ? "#1B1B19" : "#fff",
-              color: state === s.id ? "#fff" : "#3D3D3A",
-              border: "0.5px solid #D8D2C4",
-              borderRadius: 999, padding: "6px 11px",
-              fontSize: 11.5, fontWeight: 500, cursor: "pointer",
-            }}
-          >
-            {s.label}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
+// ─────── pure utilities ───────
+
+function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371;
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  return Math.round(R * 2 * Math.asin(Math.sqrt(a)));
+}
+
+function degreesToCardinal(deg: number): string {
+  const dirs = ["Utara", "Timur-Laut", "Timur", "Tenggara", "Selatan", "Barat-Daya", "Barat", "Barat-Laut"];
+  const idx = Math.round(((deg % 360) + 360) % 360 / 45) % 8;
+  return dirs[idx];
 }
