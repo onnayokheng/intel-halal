@@ -1,36 +1,104 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Intel Halal
 
-## Getting Started
+Asisten pribadi Muslim Indonesia untuk perjalanan ke Jepang — scan produk halal, jadwal sholat, cari tempat, dan rencana perjalanan.
 
-First, run the development server:
+**Live:** https://intelhalal.vercel.app
+
+---
+
+## Fitur
+
+| Fitur | Deskripsi |
+|---|---|
+| **Cek Halal** | Scan label produk dengan AI (Gemini 2.5 Flash), verdict Halal / Syubhat / Haram |
+| **Jadwal Sholat** | Waktu sholat akurat berdasarkan GPS + kompas kiblat |
+| **Bea Impor** | Kalkulator bea cukai barang bawaan (rule-based, tanpa AI) |
+| **Trip Plan** | Rencana perjalanan AI dengan narasi rute |
+| **Find Place** | Cari restoran halal, masjid, toko via Google Maps |
+| **Kamus Kanji** | 18 kanji penting untuk baca label makanan Jepang |
+
+## Stack
+
+- **Framework**: Next.js 16 App Router + TypeScript
+- **Styling**: Tailwind v4, inline styles (earthy design system)
+- **AI**: Gemini 2.5 Flash (server-side proxy)
+- **Auth**: better-auth + Google OAuth
+- **DB**: Neon Postgres + Drizzle ORM
+- **Payment**: AmsholPay (QRIS)
+- **Deploy**: Vercel
+
+## Model Bisnis
+
+- **Trial**: 12 jam gratis setelah signup
+- **Premium 7 Hari**: Rp 15.000
+- **Premium 1 Bulan**: Rp 35.000
+
+## Setup Lokal
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
+cp .env.example .env.local  # isi env vars
+pnpm db:push                # sync schema ke Neon
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Environment Variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```env
+# AI
+GEMINI_API_KEY=
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Database
+DATABASE_URL=                   # Neon pooler URL
+DATABASE_URL_UNPOOLED=          # Neon non-pooler URL (untuk neon HTTP API)
 
-## Learn More
+# Auth
+BETTER_AUTH_SECRET=
+BETTER_AUTH_URL=http://localhost:3000
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
 
-To learn more about Next.js, take a look at the following resources:
+# Payment
+AMSHOLPAY_API_KEY=
+AMSHOLPAY_PRIVATE_KEY=
+AMSHOLPAY_MERCHANT_CODE=
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Dev only (jangan set di production)
+DEV_SKIP_AUTH=true
+NEXT_PUBLIC_DEV_SKIP_AUTH=true
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Struktur Penting
 
-## Deploy on Vercel
+```
+app/
+  api/
+    analyze/        — Cek Halal proxy + access gate
+    trip/           — Trip Plan proxy + access gate
+    auth/[...all]/  — better-auth handler
+    payment/        — create, callback, status, cancel
+    user/           — access info, payment history
+components/
+  brand-bar.tsx     — logo, trial pill, avatar, user popup
+  cek-halal.tsx     — scanner + history
+  trip-plan.tsx     — trip planner + history
+  paywall.tsx       — upgrade modal
+  payment-sheet.tsx — QR payment flow
+lib/
+  auth.ts           — better-auth config
+  access.ts         — checkAccess, getAccessInfo
+  amsholpay.ts      — payment gateway helper
+  history.ts        — localStorage scan + trip history
+db/
+  schema.ts         — product_cache, user, session, subscription, ...
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Webhook AmsholPay
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Callback URL production:
+```
+https://intelhalal.vercel.app/api/payment/callback/amsholpay
+```
+
+Testing sandbox: https://payment.amalsholeh.com/sandbox
