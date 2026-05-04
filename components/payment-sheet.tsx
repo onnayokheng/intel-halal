@@ -17,7 +17,7 @@ function formatRupiah(amount: number): string {
 }
 
 function QRCode({ data }: { data: string }) {
-  const url = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&qzone=2&data=${encodeURIComponent(data)}`;
+  const url = encodeURIComponent(data);
   return (
     <div style={{
       width: 220, height: 220, margin: "0 auto",
@@ -26,7 +26,7 @@ function QRCode({ data }: { data: string }) {
       boxShadow: "0 4px 16px -4px rgba(27,27,25,0.12)",
     }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={url} alt="QRIS" width={220} height={220} style={{ display: "block" }} />
+      <img src={url} alt="QRIS" width={220} style={{ display: "block" }} />
     </div>
   );
 }
