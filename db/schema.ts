@@ -67,7 +67,7 @@ export const verification = pgTable("verification", {
 // plan: '7day' = Rp 15.000 | '30day' = Rp 35.000
 // status: 'pending' → 'active' (setelah payment confirm) | 'expired' | 'cancelled'
 export const subscription = pgTable("subscription", {
-  id:         text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  id:         uuid("id").defaultRandom().primaryKey(),
   userId:     text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
   plan:       text("plan").notNull(),        // '7day' | '30day'
   amountIdr:  integer("amount_idr").notNull(), // 15000 | 35000
@@ -78,6 +78,6 @@ export const subscription = pgTable("subscription", {
   createdAt:  timestamp("created_at").defaultNow().notNull(),
 });
 
-export type User         = typeof user.$inferSelect;
-export type Subscription = typeof subscription.$inferSelect;
+export type User            = typeof user.$inferSelect;
+export type Subscription    = typeof subscription.$inferSelect;
 export type NewSubscription = typeof subscription.$inferInsert;
