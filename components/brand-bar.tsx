@@ -31,15 +31,19 @@ function formatTrialRemaining(ms: number): string {
   return `<1m ${t("trial.remaining")}`;
 }
 
-/** Eight-point star with halal checkmark — the Intel Halal brand mark */
+/** "ih" rounded square — the Intel Halal brand mark */
 export function BrandMark({ size = 28, color = "#2C4A3E" }: { size?: number; color?: string }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 40 40" style={{ flexShrink: 0 }}>
-      <path d="M20 2 L24.5 14 L37 18 L24.5 22 L20 36 L15.5 22 L3 18 L15.5 14 Z"
-        fill={color} stroke={color} strokeWidth="1.2" strokeLinejoin="round"/>
-      <path d="M14.5 19.5 L18.5 23 L25.5 15.5"
-        fill="none" stroke="#F7F5F0" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
+    <div style={{
+      width: size, height: size, borderRadius: Math.round(size * 0.28),
+      background: color, flexShrink: 0,
+      display: "flex", alignItems: "center", justifyContent: "center",
+      color: "#fff", fontFamily: "var(--font-fraunces)",
+      fontSize: Math.round(size * 0.52), fontWeight: 500, fontStyle: "italic",
+      lineHeight: 1, letterSpacing: -0.5,
+    }}>
+      ih
+    </div>
   );
 }
 
