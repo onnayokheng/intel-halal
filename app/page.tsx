@@ -20,7 +20,7 @@ const TITLES: Record<Tab, string> = {
 };
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<Tab>("sholat");
+  const [activeTab, setActiveTab] = useState<Tab>("cek-halal");
 
   useEffect(() => {
     document.title = TITLES[activeTab];
