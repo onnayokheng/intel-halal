@@ -127,26 +127,30 @@ export async function POST(req: NextRequest) {
 
     // ── Step 2: cek cache ──
     if (lookupKey && process.env.DATABASE_URL) {
-      const cached = await db
-        .select()
-        .from(productCache)
-        .where(and(
-          eq(productCache.lookupKey, lookupKey),
-          gt(productCache.expiresAt, new Date())
-        ))
-        .limit(1);
+      try {
+        const cached = await db
+          .select()
+          .from(productCache)
+          .where(and(
+            eq(productCache.lookupKey, lookupKey),
+            gt(productCache.expiresAt, new Date())
+          ))
+          .limit(1);
 
-      if (cached.length > 0) {
-        // update hit count
-        await db
-          .update(productCache)
-          .set({ hitCount: cached[0].hitCount + 1 })
-          .where(eq(productCache.id, cached[0].id));
+        if (cached.length > 0) {
+          // update hit count (best-effort, bukan blocker)
+          db.update(productCache)
+            .set({ hitCount: cached[0].hitCount + 1 })
+            .where(eq(productCache.id, cached[0].id))
+            .catch(() => null);
 
-        return NextResponse.json({
-          result: cached[0].resultHtml,
-          fromCache: true,
-        });
+          return NextResponse.json({
+            result: cached[0].resultHtml,
+            fromCache: true,
+          });
+        }
+      } catch {
+        // cache lookup gagal → lanjut ke AI analysis
       }
     }
 
