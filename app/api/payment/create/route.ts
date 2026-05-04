@@ -4,7 +4,7 @@ import { db } from "@/db";
 import { subscription } from "@/db/schema";
 import { PLANS, type Plan } from "@/lib/access";
 import { createQrisPayment } from "@/lib/amsholpay";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 export async function POST(req: NextRequest) {
   const session = await auth.api.getSession({ headers: req.headers });
@@ -18,6 +18,14 @@ export async function POST(req: NextRequest) {
   }
 
   const planInfo = PLANS[plan];
+
+  // Idempotency: cegah double-submission (race condition)
+  const [existing] = await db.select().from(subscription)
+    .where(and(eq(subscription.userId, session.user.id), eq(subscription.status, "pending")))
+    .limit(1);
+  if (existing) {
+    return NextResponse.json({ error: "Ada transaksi pending, selesaikan dulu." }, { status: 409 });
+  }
 
   // Simpan subscription pending dulu
   const [sub] = await db.insert(subscription).values({

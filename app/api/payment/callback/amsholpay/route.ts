@@ -28,6 +28,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Subscription not found" }, { status: 404 });
   }
 
+  // Validasi amount — cegah aktivasi dengan nominal yang salah
+  if (sub.amountIdr !== Number(body.amount)) {
+    return NextResponse.json({ error: "Amount mismatch" }, { status: 400 });
+  }
+
   const planInfo = PLANS[sub.plan as Plan];
   const startsAt = paid_at ? new Date(paid_at) : new Date();
   const expiresAt = new Date(startsAt);

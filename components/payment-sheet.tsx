@@ -131,7 +131,7 @@ export default function PaymentSheet({ plan, onClose, onSuccess }: {
               <div className="mono" style={{ fontSize: 18, fontWeight: 700, color: "#1B1B19", marginTop: 6, letterSpacing: -0.3 }}>{formatRupiah(payment.amount)}</div>
             </div>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16 }}>
-              <QRCode data={payment.qrString} />
+              <QRCode data={/^(data:image\/|https?:\/\/)/.test(payment.qrString) ? payment.qrString : ""} />
               <div style={{ padding: "10px 16px", background: "#DFE8DA", borderRadius: 10, fontFamily: "var(--font-jakarta)", fontSize: 12.5, color: "#2C4A3E", textAlign: "center", lineHeight: 1.5 }}>
                 Buka aplikasi GoPay, OVO, Dana, atau bank kamu → scan QRIS ini
               </div>

@@ -20,8 +20,10 @@ export function verifyCallbackSignature(body: {
   const merchantCode = process.env.AMSHOLPAY_MERCHANT_CODE!;
   const privateKey  = process.env.AMSHOLPAY_PRIVATE_KEY!;
   const raw = merchantCode + body.payment_method + body.merchant_ref + body.amount;
-  const expected = crypto.createHmac("sha256", privateKey).update(raw).digest("hex");
-  return expected === body.signature;
+  const expected = crypto.createHmac("sha256", privateKey).update(raw).digest();
+  const actual   = Buffer.from(body.signature ?? "", "hex");
+  if (actual.length !== expected.length) return false;
+  return crypto.timingSafeEqual(expected, actual);
 }
 
 export async function createQrisPayment(params: {

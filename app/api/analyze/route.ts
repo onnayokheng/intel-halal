@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
   }
 
   // ── Access check (skip in local dev) ──
-  if (process.env.DEV_SKIP_AUTH !== "true") {
+  if (process.env.DEV_SKIP_AUTH !== "true" || process.env.NODE_ENV === "production") {
     const session = await auth.api.getSession({ headers: req.headers });
     if (!session?.user) {
       return NextResponse.json({ error: "Unauthorized", code: "NO_SESSION" }, { status: 401 });
