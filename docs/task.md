@@ -68,6 +68,27 @@
 
 ---
 
+## Fitur Tambahan (v2)
+
+### Jadwal Sholat & Arah Kiblat
+- [x] Komponen `prayer.tsx` — location strip, next prayer hero, prayer list, qibla compass, settings sheet
+- [x] States: loading / denied / located / active-prayer
+- [x] Set sebagai default tab (home)
+- [ ] Integrasi API real (aladhan.com untuk waktu sholat akurat berdasar GPS)
+
+### Kamus Kanji Halal
+- [x] Komponen `kanji.tsx` sebagai modal overlay (bukan tab)
+- [x] 8 kategori, 18 entri kanji dengan verdict
+- [x] Search + filter chips
+- [x] Detail view dengan related kanji navigation
+- [x] Akses dari Cek Halal screen
+
+### Bottom Nav v2
+- [x] 5 tab dengan center FAB (Cek Halal jadi terracotta button menonjol)
+- [x] Default tab: Sholat
+
+---
+
 ## Fase 3 — Auth & Membership (plan)
 
 - [ ] Install better-auth
