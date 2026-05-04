@@ -1,10 +1,26 @@
 "use client";
 
+import { useState } from "react";
 import { t, tObj } from "@/lib/i18n";
+import PaymentSheet from "@/components/payment-sheet";
 
-const PLANS = ["7day", "30day"] as const;
+type Plan = "7day" | "30day";
+const PLANS: Plan[] = ["7day", "30day"];
 
 export default function Paywall({ onClose }: { onClose: () => void }) {
+  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
+  const devSkip = process.env.NEXT_PUBLIC_DEV_SKIP_AUTH === "true";
+
+  if (selectedPlan) {
+    return (
+      <PaymentSheet
+        plan={selectedPlan}
+        onClose={() => setSelectedPlan(null)}
+        onSuccess={onClose}
+      />
+    );
+  }
+
   return (
     <div
       className="animate-fade-in"
@@ -24,7 +40,6 @@ export default function Paywall({ onClose }: { onClose: () => void }) {
         padding: "28px 22px 52px",
         boxShadow: "0 -8px 40px rgba(27,27,25,0.18)",
       }}>
-        {/* Pull handle */}
         <div style={{ width: 36, height: 4, borderRadius: 99, background: "#D8D2C4", margin: "0 auto 24px" }} />
 
         {/* Header */}
@@ -44,10 +59,7 @@ export default function Paywall({ onClose }: { onClose: () => void }) {
               {t("paywall.title").split(" ").at(-1)}
             </em>
           </h2>
-          <p style={{
-            fontFamily: "var(--font-jakarta)", fontSize: 14,
-            color: "#6B6A63", margin: 0, lineHeight: 1.5,
-          }}>
+          <p style={{ fontFamily: "var(--font-jakarta)", fontSize: 14, color: "#6B6A63", margin: 0, lineHeight: 1.5 }}>
             {t("paywall.subtitle")}
           </p>
         </div>
@@ -58,18 +70,20 @@ export default function Paywall({ onClose }: { onClose: () => void }) {
             const info = tObj(`paywall.plans.${plan}`) as { label: string; price: string; originalPrice: string; desc: string };
             const is30 = plan === "30day";
             return (
-              <div
+              <button
                 key={plan}
+                onClick={() => !devSkip && setSelectedPlan(plan)}
+                className="tap"
                 style={{
                   background: is30 ? "#2C4A3E" : "#fff",
                   border: `0.5px solid ${is30 ? "transparent" : "#E8E3D6"}`,
-                  borderRadius: 18,
-                  padding: "16px 18px",
+                  borderRadius: 18, padding: "16px 18px", cursor: devSkip ? "default" : "pointer",
                   display: "flex", alignItems: "center", justifyContent: "space-between",
                   boxShadow: is30
                     ? "0 8px 24px -8px rgba(44,74,62,0.45)"
                     : "0 1px 0 rgba(43,32,15,.04), 0 6px 18px -8px rgba(43,32,15,.12)",
-                  position: "relative", overflow: "hidden",
+                  position: "relative", overflow: "hidden", textAlign: "left",
+                  opacity: devSkip ? 0.7 : 1,
                 }}
               >
                 {is30 && (
@@ -84,64 +98,47 @@ export default function Paywall({ onClose }: { onClose: () => void }) {
                   </div>
                 )}
                 <div>
-                  <div style={{
-                    fontFamily: "var(--font-jakarta)", fontSize: 15,
-                    fontWeight: 700, color: is30 ? "#fff" : "#1B1B19",
-                    marginBottom: 3,
-                  }}>
+                  <div style={{ fontFamily: "var(--font-jakarta)", fontSize: 15, fontWeight: 700, color: is30 ? "#fff" : "#1B1B19", marginBottom: 3 }}>
                     {info.label}
                   </div>
-                  <div style={{
-                    fontFamily: "var(--font-jakarta)", fontSize: 12.5,
-                    color: is30 ? "rgba(255,255,255,0.7)" : "#6B6A63",
-                  }}>
+                  <div style={{ fontFamily: "var(--font-jakarta)", fontSize: 12.5, color: is30 ? "rgba(255,255,255,0.7)" : "#6B6A63" }}>
                     {info.desc}
                   </div>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                   <div style={{ textAlign: "right" }}>
-                    <div className="mono" style={{
-                      fontSize: 11, fontWeight: 500,
-                      color: is30 ? "rgba(255,255,255,0.5)" : "#9B998F",
-                      textDecoration: "line-through", marginBottom: 2,
-                    }}>
+                    <div className="mono" style={{ fontSize: 11, fontWeight: 500, color: is30 ? "rgba(255,255,255,0.5)" : "#9B998F", textDecoration: "line-through", marginBottom: 2 }}>
                       {info.originalPrice}
                     </div>
-                    <div className="mono" style={{
-                      fontSize: 16, fontWeight: 700,
-                      color: is30 ? "#fff" : "#1B1B19", letterSpacing: -0.3,
-                    }}>
+                    <div className="mono" style={{ fontSize: 16, fontWeight: 700, color: is30 ? "#fff" : "#1B1B19", letterSpacing: -0.3 }}>
                       {info.price}
                     </div>
                   </div>
                   <div style={{
-                    background: is30 ? "rgba(255,255,255,0.15)" : "#EFEBE2",
-                    color: is30 ? "#fff" : "#6B6A63",
+                    background: is30 ? "rgba(255,255,255,0.2)" : "#2C4A3E",
+                    color: "#fff",
                     borderRadius: 8, padding: "6px 10px",
-                    fontFamily: "var(--font-jakarta)", fontSize: 11,
-                    fontWeight: 600,
+                    fontFamily: "var(--font-jakarta)", fontSize: 11, fontWeight: 600,
                   }}>
-                    {t("paywall.soon")}
+                    {devSkip ? t("paywall.soon") : t("paywall.choose")}
                   </div>
                 </div>
-              </div>
+              </button>
             );
           })}
         </div>
 
-        {/* Close */}
-        <button
-          onClick={onClose}
-          className="tap"
-          style={{
-            width: "100%", height: 48,
-            background: "transparent",
-            border: "0.5px solid #D8D2C4",
-            borderRadius: 14, cursor: "pointer",
-            fontFamily: "var(--font-jakarta)", fontSize: 14,
-            fontWeight: 600, color: "#6B6A63",
-          }}
-        >
+        {devSkip && (
+          <div style={{ padding: "8px 12px", background: "#EFEBE2", borderRadius: 10, marginBottom: 14, fontFamily: "var(--font-mono)", fontSize: 10, color: "#9B998F", textAlign: "center", letterSpacing: 0.4 }}>
+            [DEV] Login diperlukan untuk bayar
+          </div>
+        )}
+
+        <button onClick={onClose} className="tap" style={{
+          width: "100%", height: 48, background: "transparent",
+          border: "0.5px solid #D8D2C4", borderRadius: 14, cursor: "pointer",
+          fontFamily: "var(--font-jakarta)", fontSize: 14, fontWeight: 600, color: "#6B6A63",
+        }}>
           {t("paywall.later")}
         </button>
       </div>
