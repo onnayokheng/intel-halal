@@ -320,12 +320,210 @@
       "halal": "Halal",
       "syubhat": "Doubtful",
       "haram": "Haram"
+    },
+    "categoryDesc": {
+      "pork": "Pork and its derivatives — always haram",
+      "alcohol": "Sake, mirin, and fermented alcohol derivatives",
+      "additive": "Emulsifiers, shortening, flavoring — source unclear",
+      "meat": "Chicken, beef — check slaughter method",
+      "seafood": "Fish and shrimp — generally halal",
+      "plant": "Soy, wheat, and other plant-based ingredients",
+      "sweets": "Sugar, honey, and natural sweeteners",
+      "sauce": "Shoyu, miso, dashi — check for alcohol/fish content"
+    },
+    "entries": {
+      "buta": {
+        "arti": "Pork. Its meat is haram according to Islamic law.",
+        "tips": "If kanji 豚 appears in ingredients or product name — skip immediately. Includes derivatives: 豚脂, 豚由来, 豚ゼラチン.",
+        "foundIn": [
+          "豚カツ (tonkatsu)",
+          "豚骨ラーメン (tonkotsu ramen)",
+          "チャーシュー (chashu)",
+          "Ham & sausage"
+        ]
+      },
+      "lard": {
+        "arti": "Lard — rendered pork fat. Often used as cooking oil and shortening.",
+        "tips": "Different from 牛脂 (beef fat) and 植物油脂 (vegetable oil). If unsure between ラード and ショートニング, treat as doubtful.",
+        "foundIn": [
+          "Tonkotsu instant noodles",
+          "Cheap bread & pastry",
+          "Crackers & fried snacks",
+          "Non-halal margarine"
+        ]
+      },
+      "sake": {
+        "arti": "Sake — alcoholic beverage from fermented rice. Also appears as a cooking ingredient (料理酒).",
+        "tips": "Includes variants 清酒, 日本酒, 料理酒. If listed in food ingredients, consider haram even after cooking.",
+        "foundIn": [
+          "料理酒 (cooking sake)",
+          "Teriyaki sauce",
+          "Fish marinade",
+          "Some miso & shoyu"
+        ]
+      },
+      "mirin": {
+        "arti": "Mirin — sweet condiment with 8–14% alcohol content. 本みりん (hon mirin) has the highest alcohol.",
+        "tips": "みりん風調味料 (mirin-fū) is mirin-flavored with no alcohol — still check the label. 本みりん = definitely alcoholic.",
+        "foundIn": [
+          "Teriyaki & yakitori sauce",
+          "Tsuyu (soba broth)",
+          "Nikujaga & Japanese stew",
+          "Sushi rice (sometimes)"
+        ]
+      },
+      "nyukazai": {
+        "arti": "Emulsifier — binds oil and water. Can come from soy (halal) or animal fat (haram/doubtful).",
+        "tips": "Look for source info: 乳化剤(大豆由来) means soy-derived → halal. No source listed = doubtful.",
+        "foundIn": [
+          "Chocolate & wafers",
+          "Ice cream & milk",
+          "Bread & cakes",
+          "Margarine"
+        ]
+      },
+      "shortening": {
+        "arti": "Shortening — solid fat for pastry. Can be vegetable-based (palm/soy) or animal-based (lard).",
+        "tips": "No 'vegetable' / 植物性 label → doubtful. If it says 植物油脂100%, usually safe.",
+        "foundIn": [
+          "Biscuits & cookies",
+          "Pie crust & croissant",
+          "Japanese dry cakes",
+          "Donuts"
+        ]
+      },
+      "kouryou": {
+        "arti": "Flavoring/fragrance. Can be plant-based, synthetic, or from animal extracts. Source is rarely disclosed.",
+        "tips": "If only written as \"香料\" without further info, treat as doubtful. Contact manufacturer if consumed regularly.",
+        "foundIn": [
+          "Candy & chocolate",
+          "Soft drinks",
+          "Savory snacks",
+          "Flavored yogurt"
+        ]
+      },
+      "tori": {
+        "arti": "Chicken. Status depends on slaughter method — must be dzabihah (Islamic) to be halal.",
+        "tips": "Look for 'Halal Chicken' label or buy from Muslim stores. Japanese restaurants generally don't guarantee halal slaughter.",
+        "foundIn": [
+          "唐揚げ (karaage)",
+          "Chicken nuggets",
+          "焼き鳥 (yakitori)",
+          "Meatballs & sausages"
+        ]
+      },
+      "gyuu": {
+        "arti": "Beef. Same as chicken — depends on slaughter method. Regular supermarket beef in Japan is not halal.",
+        "tips": "Look for halal certification (印) or Australian/Brazilian halal supplier. Local Wagyu is generally non-halal.",
+        "foundIn": [
+          "牛丼 (gyūdon)",
+          "Steak",
+          "Hamburger patty",
+          "Curry (カレー)"
+        ]
+      },
+      "sakana": {
+        "arti": "Fish. Most Islamic schools of thought consider all fish halal without requiring slaughter.",
+        "tips": "Beware of accompanying sauces — often contain mirin or sake. Raw sashimi is safe, but the sauces need checking.",
+        "foundIn": [
+          "Sushi & sashimi",
+          "Grilled fish",
+          "ちくわ & かまぼこ",
+          "魚醤 (fish sauce)"
+        ]
+      },
+      "ebi": {
+        "arti": "Shrimp. Halal according to the majority of schools (Shafi'i, Maliki, Hanbali). Hanafi has a different view.",
+        "tips": "Tempura batter sometimes uses egg & dashi — still check ingredients. Dipping sauces usually contain mirin.",
+        "foundIn": [
+          "天ぷら (tempura)",
+          "Ebi furai (fried shrimp)",
+          "えびせんべい",
+          "Sushi topping"
+        ]
+      },
+      "daizu": {
+        "arti": "Soybean. Base ingredient for tofu, miso, shoyu, natto, and many vegetable emulsifiers.",
+        "tips": "\"大豆由来\" on emulsifier label = green signal. Plain tofu & soymilk are almost always safe.",
+        "foundIn": [
+          "豆腐 (tofu)",
+          "納豆 (natto)",
+          "Shoyu & miso",
+          "Edamame & soy milk"
+        ]
+      },
+      "komugi": {
+        "arti": "Wheat. Base for noodles, bread, tempura flour, and most Japanese pastries.",
+        "tips": "Flour itself is halal, but processed products are often mixed with dashi/fat. Check dry noodle & commercial bread ingredients.",
+        "foundIn": [
+          "Udon & ramen",
+          "パン (bread)",
+          "Tempura flour",
+          "お好み焼き"
+        ]
+      },
+      "satou": {
+        "arti": "Sugar. White, brown (黒糖), or powdered — all halal as standalone ingredients.",
+        "tips": "Safe on its own, but sugar used in processed products doesn't guarantee the final product is halal.",
+        "foundIn": [
+          "Cakes & candy",
+          "Soft drinks",
+          "Teriyaki sauce",
+          "Bread"
+        ]
+      },
+      "hachimitsu": {
+        "arti": "Honey. Halal and recommended in Islam.",
+        "tips": "Sometimes mixed with royal jelly or other extracts — check label if not 100% pure honey.",
+        "foundIn": [
+          "Honey toast",
+          "Honey yogurt",
+          "Honey lemon candy",
+          "Herbal drinks"
+        ]
+      },
+      "shouyu": {
+        "arti": "Shoyu/Japanese soy sauce. Fermentation produces alcohol — final content 1–3%.",
+        "tips": "Look for halal-certified shoyu (Kikkoman Halal, etc.) or labeled \"アルコール無添加\". Standard version = doubtful.",
+        "foundIn": [
+          "Almost all Japanese cooking",
+          "Sushi & sashimi",
+          "Noodles & tsuyu",
+          "Teriyaki sauce"
+        ]
+      },
+      "miso": {
+        "arti": "Fermented soybean paste. Similar to shoyu — fermentation produces a small amount of alcohol.",
+        "tips": "Look for halal-certified miso. Alcohol content is usually <1% but still doubtful without certification.",
+        "foundIn": [
+          "味噌汁 (miso soup)",
+          "Fish marinade",
+          "Miso ramen broth",
+          "Dipping sauce"
+        ]
+      },
+      "dashi": {
+        "arti": "Japanese broth from fish (かつお), seaweed (昆布), or sardine (煮干し). Sometimes mixed with sake/mirin.",
+        "tips": "Pure kombu dashi = halal. Commercial dashi often adds chicken/pork extract & mirin — check 原材料名.",
+        "foundIn": [
+          "Miso soup & udon",
+          "Onigiri filling",
+          "Tamagoyaki",
+          "Almost all Japanese broths"
+        ]
+      }
     }
   },
   "common": {
     "retry": "Try Again",
     "reset": "Start Over",
     "back": "Back",
-    "done": "Done"
+    "done": "Done",
+    "errorGeneral": "Something went wrong",
+    "errorNetwork": "Failed to load. Please check your internet connection.",
+    "errorRoute": "Failed to build route. Please check your connection.",
+    "errorLocation": "Failed to load location data.",
+    "locationFallback": "Location detected",
+    "checkLocationNow": "Check location now"
   }
 }

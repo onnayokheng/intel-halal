@@ -1,141 +1,76 @@
 "use client";
 
-import { t } from "@/lib/i18n";
+import { t, ta } from "@/lib/i18n";
 
 import { useState, useMemo } from "react";
 
 type Verdict = "halal" | "syubhat" | "haram";
 
-interface Category {
-  id: string;
-  name: string;
-  tone: Verdict;
-  sample: string[];
-  desc: string;
-}
+interface Category { id: string; name: string; tone: Verdict; sample: string[]; desc: string; }
+interface Entry { id: string; cat: string; kanji: string; kana: string; romaji: string; verdict: Verdict; arti: string; foundIn: string[]; tips: string; related: string[]; }
 
-interface Entry {
-  id: string;
-  cat: string;
-  kanji: string;
-  kana: string;
-  romaji: string;
-  verdict: Verdict;
-  arti: string;
-  foundIn: string[];
-  tips: string;
-  related: string[];
-}
-
-const KANJI_CATEGORIES: Category[] = [
-  { id: "pork",     name: "Babi & turunannya",       tone: "haram",   sample: ["豚", "ラード"], desc: "Babi dan turunan langsung — selalu haram" },
-  { id: "alcohol",  name: "Alkohol & fermentasi",    tone: "haram",   sample: ["酒", "みりん"], desc: "Sake, mirin, dan turunan fermentasi alkohol" },
-  { id: "additive", name: "Aditif syubhat",          tone: "syubhat", sample: ["乳化剤", "ショートニング"], desc: "Emulsifier, shortening, perisa — sumber tidak jelas" },
-  { id: "meat",     name: "Daging perlu cek",        tone: "syubhat", sample: ["鶏", "牛"], desc: "Ayam, sapi — perlu cek metode penyembelihan" },
-  { id: "seafood",  name: "Seafood halal",           tone: "halal",   sample: ["魚", "海老"], desc: "Ikan dan udang — umumnya halal" },
-  { id: "plant",    name: "Nabati aman",             tone: "halal",   sample: ["大豆", "小麦"], desc: "Kedelai, gandum, dan bahan nabati lain" },
-  { id: "sweets",   name: "Manis & dessert",         tone: "halal",   sample: ["砂糖", "ハチミツ"], desc: "Gula, madu, dan pemanis alami" },
-  { id: "sauce",    name: "Saus & bumbu",            tone: "syubhat", sample: ["醤油", "味噌"], desc: "Shoyu, miso, dashi — periksa kandungan alkohol/ikan" },
+// ── Static (language-independent) data ──
+const CAT_STATIC: { id: string; tone: Verdict; sample: string[] }[] = [
+  { id: "pork",     tone: "haram",   sample: ["豚", "ラード"] },
+  { id: "alcohol",  tone: "haram",   sample: ["酒", "みりん"] },
+  { id: "additive", tone: "syubhat", sample: ["乳化剤", "ショートニング"] },
+  { id: "meat",     tone: "syubhat", sample: ["鶏", "牛"] },
+  { id: "seafood",  tone: "halal",   sample: ["魚", "海老"] },
+  { id: "plant",    tone: "halal",   sample: ["大豆", "小麦"] },
+  { id: "sweets",   tone: "halal",   sample: ["砂糖", "ハチミツ"] },
+  { id: "sauce",    tone: "syubhat", sample: ["醤油", "味噌"] },
 ];
 
-const KANJI_ENTRIES: Entry[] = [
-  { id: "buta", cat: "pork", kanji: "豚", kana: "ぶた", romaji: "buta", verdict: "haram",
-    arti: "Babi. Dagingnya haram dikonsumsi sesuai syariat Islam.",
-    foundIn: ["豚カツ (tonkatsu)", "豚骨ラーメン (tonkotsu ramen)", "チャーシュー (chashu)", "ハム & ソーセージ"],
-    tips: "Jika kanji 豚 muncul di komposisi atau nama produk — langsung skip. Termasuk turunan: 豚脂, 豚由来, 豚ゼラチン.",
-    related: ["ラード", "豚脂", "豚ゼラチン", "ハム"] },
-  { id: "lard", cat: "pork", kanji: "ラード", kana: "らーど", romaji: "rādo", verdict: "haram",
-    arti: "Lard — lemak babi yang dilelehkan. Sering jadi minyak goreng dan shortening.",
-    foundIn: ["Mi instan kuah tonkotsu", "Roti & pastry murah", "Kerupuk & snack gorengan", "Margarin non-halal"],
-    tips: "Beda dengan 牛脂 (gyū-shi, lemak sapi) dan 植物油脂 (minyak nabati). Kalau ragu antara ラード dan ショートニング, anggap syubhat.",
-    related: ["豚", "ショートニング", "牛脂", "植物油脂"] },
-  { id: "sake", cat: "alcohol", kanji: "酒", kana: "さけ", romaji: "sake", verdict: "haram",
-    arti: "Sake — minuman beralkohol dari fermentasi beras. Juga muncul sebagai bumbu masak (料理酒).",
-    foundIn: ["料理酒 (cooking sake)", "Saus teriyaki", "Marinade ikan", "Beberapa miso & shoyu"],
-    tips: "Termasuk varian 清酒, 日本酒, 料理酒. Jika tertulis di komposisi makanan, pertimbangkan haram meski sudah dimasak.",
-    related: ["みりん", "料理酒", "清酒", "焼酎"] },
-  { id: "mirin", cat: "alcohol", kanji: "みりん", kana: "みりん", romaji: "mirin", verdict: "haram",
-    arti: "Mirin — bumbu manis dengan kandungan alkohol 8–14%. Versi 本みりん adalah yang paling tinggi alkoholnya.",
-    foundIn: ["Saus teriyaki & yakitori", "Tsuyu (kuah soba)", "Nikujaga & masakan stew Jepang", "Sushi rice (kadang)"],
-    tips: "みりん風調味料 (mirin-fū) hanya rasa mirin tanpa alkohol — tetap cek labelnya. 本みりん = pasti beralkohol.",
-    related: ["酒", "料理酒", "醤油", "だし"] },
-  { id: "nyukazai", cat: "additive", kanji: "乳化剤", kana: "にゅうかざい", romaji: "nyūkazai", verdict: "syubhat",
-    arti: "Emulsifier — pengikat minyak & air. Bisa berasal dari kedelai (halal) atau lemak hewan (haram/syubhat).",
-    foundIn: ["Cokelat & wafer", "Ice cream & susu", "Roti & kue", "Margarin"],
-    tips: "Cari keterangan sumber: 乳化剤(大豆由来) artinya dari kedelai → halal. Tanpa keterangan = syubhat.",
-    related: ["ショートニング", "香料", "大豆", "レシチン"] },
-  { id: "shortening", cat: "additive", kanji: "ショートニング", kana: "しょーとにんぐ", romaji: "shōtoningu", verdict: "syubhat",
-    arti: "Shortening — lemak padat untuk pastry. Bisa nabati (palem/kedelai) atau hewani (lard).",
-    foundIn: ["Biskuit & cookies", "Pie crust & croissant", "Kue kering Jepang", "Donat"],
-    tips: "Tanpa label \"vegetable\" / 植物性 → status syubhat. Kalau ada keterangan 植物油脂100% biasanya aman.",
-    related: ["ラード", "乳化剤", "植物油脂", "マーガリン"] },
-  { id: "kouryou", cat: "additive", kanji: "香料", kana: "こうりょう", romaji: "kōryō", verdict: "syubhat",
-    arti: "Perisa/flavoring. Bisa nabati, sintetis, atau dari ekstrak hewan. Sumber jarang disebutkan eksplisit.",
-    foundIn: ["Permen & coklat", "Minuman ringan", "Snack gurih", "Yogurt rasa"],
-    tips: "Kalau hanya tertulis \"香料\" tanpa keterangan, anggap syubhat. Kontak produsen jika produk sering dikonsumsi.",
-    related: ["乳化剤", "着色料", "酸味料", "甘味料"] },
-  { id: "tori", cat: "meat", kanji: "鶏", kana: "とり", romaji: "tori", verdict: "syubhat",
-    arti: "Ayam. Status tergantung metode penyembelihan — dzabihah (Islami) atau tidak.",
-    foundIn: ["唐揚げ (karaage)", "チキンナゲット", "焼き鳥 (yakitori)", "Bakso & sosis"],
-    tips: "Cari label \"Halal Chicken\" atau toko muslim. Rumah makan Jepang umumnya tidak menjamin penyembelihan halal.",
-    related: ["牛", "鶏肉", "ハラルチキン", "鶏ガラ"] },
-  { id: "gyuu", cat: "meat", kanji: "牛", kana: "うし", romaji: "gyū / ushi", verdict: "syubhat",
-    arti: "Sapi. Sama seperti ayam — tergantung metode penyembelihan. Daging biasa di supermarket Jepang tidak halal.",
-    foundIn: ["牛丼 (gyūdon)", "ステーキ", "ハンバーグ", "カレー (curry)"],
-    tips: "Cari sertifikasi halal (印) atau supplier Australia/Brazil halal. Wagyu lokal Jepang umumnya non-halal.",
-    related: ["鶏", "牛脂", "牛肉", "ハラル牛"] },
-  { id: "sakana", cat: "seafood", kanji: "魚", kana: "さかな", romaji: "sakana", verdict: "halal",
-    arti: "Ikan. Mayoritas mazhab menganggap semua ikan halal tanpa perlu disembelih.",
-    foundIn: ["寿司 & 刺身", "焼き魚", "ちくわ & かまぼこ", "魚醤 (fish sauce)"],
-    tips: "Hati-hati dengan saus pendamping — sering mengandung mirin atau sake. Sashimi mentah aman, sausnya yang perlu cek.",
-    related: ["海老", "魚醤", "かつお", "のり"] },
-  { id: "ebi", cat: "seafood", kanji: "海老", kana: "えび", romaji: "ebi", verdict: "halal",
-    arti: "Udang. Halal menurut mayoritas mazhab (Syafi'i, Maliki, Hanbali). Mazhab Hanafi memiliki pandangan berbeda.",
-    foundIn: ["天ぷら (tempura)", "海老フライ (ebi furai)", "えびせんべい", "寿司ネタ"],
-    tips: "Tepung tempura kadang pakai telur & dashi — tetap cek komposisi. Saus celupan biasanya mengandung mirin.",
-    related: ["魚", "カニ", "タコ", "イカ"] },
-  { id: "daizu", cat: "plant", kanji: "大豆", kana: "だいず", romaji: "daizu", verdict: "halal",
-    arti: "Kedelai. Bahan dasar tofu, miso, shoyu, natto, dan banyak emulsifier nabati.",
-    foundIn: ["豆腐 (tofu)", "納豆 (natto)", "醤油 & 味噌", "Edamame & soy milk"],
-    tips: "Keterangan \"大豆由来\" pada emulsifier = sinyal hijau. Tahu & soymilk plain hampir selalu aman.",
-    related: ["小麦", "豆腐", "レシチン", "味噌"] },
-  { id: "komugi", cat: "plant", kanji: "小麦", kana: "こむぎ", romaji: "komugi", verdict: "halal",
-    arti: "Gandum. Bahan dasar mi, roti, tepung tempura, dan kebanyakan kue Jepang.",
-    foundIn: ["うどん & ラーメン", "パン (roti)", "天ぷら粉", "お好み焼き"],
-    tips: "Tepung sendiri halal, tapi olahannya sering dicampur dashi/lemak. Cek komposisi mi kering & roti komersial.",
-    related: ["大豆", "米", "そば", "パン粉"] },
-  { id: "satou", cat: "sweets", kanji: "砂糖", kana: "さとう", romaji: "satō", verdict: "halal",
-    arti: "Gula. Putih, merah (黒糖), atau halus — semuanya halal sebagai bahan tunggal.",
-    foundIn: ["Kue & permen", "Minuman ringan", "Saus teriyaki", "Roti"],
-    tips: "Aman sendirian, tapi gula yang dipakai produk olahan tidak menjamin produk akhirnya halal.",
-    related: ["ハチミツ", "黒糖", "甘味料", "果糖"] },
-  { id: "hachimitsu", cat: "sweets", kanji: "ハチミツ", kana: "はちみつ", romaji: "hachimitsu", verdict: "halal",
-    arti: "Madu. Halal dan dianjurkan dalam Islam.",
-    foundIn: ["ハニートースト", "Yogurt madu", "Permen madu lemon", "Minuman herbal"],
-    tips: "Kadang dicampur royal jelly atau ekstrak lain — cek label kalau bukan madu murni 100%.",
-    related: ["砂糖", "メープルシロップ", "黒糖", "甘味料"] },
-  { id: "shouyu", cat: "sauce", kanji: "醤油", kana: "しょうゆ", romaji: "shōyu", verdict: "syubhat",
-    arti: "Shoyu/kecap asin Jepang. Proses fermentasinya menghasilkan alkohol — kandungan akhir 1–3%.",
-    foundIn: ["Hampir semua masakan Jepang", "Sushi & sashimi", "Mi & tsuyu", "Saus teriyaki"],
-    tips: "Cari shoyu sertifikasi halal (Kikkoman Halal, dll) atau yang berlabel \"アルコール無添加\". Versi standar = syubhat.",
-    related: ["味噌", "みりん", "だし", "酒"] },
-  { id: "miso", cat: "sauce", kanji: "味噌", kana: "みそ", romaji: "miso", verdict: "syubhat",
-    arti: "Pasta kedelai fermentasi. Mirip shoyu — fermentasi menghasilkan sedikit alkohol.",
-    foundIn: ["味噌汁 (sup miso)", "Marinade ikan", "Ramen kuah miso", "Saus dengkulan"],
-    tips: "Cari miso halal-certified. Kandungan alkohol biasanya <1% tapi tetap syubhat tanpa sertifikasi.",
-    related: ["醤油", "だし", "大豆", "麹"] },
-  { id: "dashi", cat: "sauce", kanji: "だし", kana: "だし", romaji: "dashi", verdict: "syubhat",
-    arti: "Kaldu Jepang dari ikan (かつお), rumput laut (昆布), atau sardin (煮干し). Kadang dicampur sake/mirin.",
-    foundIn: ["Sup miso & udon", "Onigiri filling", "Tamagoyaki", "Hampir semua kuah Jepang"],
-    tips: "Dashi kombu murni = halal. Dashi pabrikan sering tambah ekstrak ayam/babi & mirin — cek 原材料名.",
-    related: ["醤油", "味噌", "かつお", "昆布"] },
+const ENTRY_STATIC: { id: string; cat: string; kanji: string; kana: string; romaji: string; verdict: Verdict; related: string[] }[] = [
+  { id: "buta",       cat: "pork",     kanji: "豚",           kana: "ぶた",         romaji: "buta",       verdict: "haram",   related: ["ラード", "豚脂", "豚ゼラチン", "ハム"] },
+  { id: "lard",       cat: "pork",     kanji: "ラード",        kana: "らーど",       romaji: "rādo",       verdict: "haram",   related: ["豚", "ショートニング", "牛脂", "植物油脂"] },
+  { id: "sake",       cat: "alcohol",  kanji: "酒",           kana: "さけ",         romaji: "sake",       verdict: "haram",   related: ["みりん", "料理酒", "清酒", "焼酎"] },
+  { id: "mirin",      cat: "alcohol",  kanji: "みりん",        kana: "みりん",       romaji: "mirin",      verdict: "haram",   related: ["酒", "料理酒", "醤油", "だし"] },
+  { id: "nyukazai",   cat: "additive", kanji: "乳化剤",        kana: "にゅうかざい", romaji: "nyūkazai",   verdict: "syubhat", related: ["ショートニング", "香料", "大豆", "レシチン"] },
+  { id: "shortening", cat: "additive", kanji: "ショートニング", kana: "しょーとにんぐ", romaji: "shōtoningu", verdict: "syubhat", related: ["ラード", "乳化剤", "植物油脂", "マーガリン"] },
+  { id: "kouryou",    cat: "additive", kanji: "香料",          kana: "こうりょう",   romaji: "kōryō",      verdict: "syubhat", related: ["乳化剤", "着色料", "酸味料", "甘味料"] },
+  { id: "tori",       cat: "meat",     kanji: "鶏",           kana: "とり",         romaji: "tori",       verdict: "syubhat", related: ["牛", "鶏肉", "ハラルチキン", "鶏ガラ"] },
+  { id: "gyuu",       cat: "meat",     kanji: "牛",           kana: "うし",         romaji: "gyū / ushi", verdict: "syubhat", related: ["鶏", "牛脂", "牛肉", "ハラル牛"] },
+  { id: "sakana",     cat: "seafood",  kanji: "魚",           kana: "さかな",       romaji: "sakana",     verdict: "halal",   related: ["海老", "魚醤", "かつお", "のり"] },
+  { id: "ebi",        cat: "seafood",  kanji: "海老",          kana: "えび",         romaji: "ebi",        verdict: "halal",   related: ["魚", "カニ", "タコ", "イカ"] },
+  { id: "daizu",      cat: "plant",    kanji: "大豆",          kana: "だいず",       romaji: "daizu",      verdict: "halal",   related: ["小麦", "豆腐", "レシチン", "味噌"] },
+  { id: "komugi",     cat: "plant",    kanji: "小麦",          kana: "こむぎ",       romaji: "komugi",     verdict: "halal",   related: ["大豆", "米", "そば", "パン粉"] },
+  { id: "satou",      cat: "sweets",   kanji: "砂糖",          kana: "さとう",       romaji: "satō",       verdict: "halal",   related: ["ハチミツ", "黒糖", "甘味料", "果糖"] },
+  { id: "hachimitsu", cat: "sweets",   kanji: "ハチミツ",      kana: "はちみつ",     romaji: "hachimitsu", verdict: "halal",   related: ["砂糖", "メープルシロップ", "黒糖", "甘味料"] },
+  { id: "shouyu",     cat: "sauce",    kanji: "醤油",          kana: "しょうゆ",     romaji: "shōyu",      verdict: "syubhat", related: ["味噌", "みりん", "だし", "酒"] },
+  { id: "miso",       cat: "sauce",    kanji: "味噌",          kana: "みそ",         romaji: "miso",       verdict: "syubhat", related: ["醤油", "だし", "大豆", "麹"] },
+  { id: "dashi",      cat: "sauce",    kanji: "だし",          kana: "だし",         romaji: "dashi",      verdict: "syubhat", related: ["醤油", "味噌", "かつお", "昆布"] },
 ];
 
-const VERDICT_META = {
-  halal:   { label: t("cekHalal.verdict.halal"),   bg: "#DFE8DA", fg: "#2C4A3E", strong: "#1F362D", dot: "#2C4A3E" },
-  syubhat: { label: t("cekHalal.verdict.syubhat"), bg: "#F4E4BF", fg: "#7A5A1F", strong: "#5A4116", dot: "#C8923A" },
-  haram:   { label: t("cekHalal.verdict.haram"),   bg: "#F1D5C7", fg: "#93462C", strong: "#6B2F1D", dot: "#B85C3C" },
+// ── Translated getters (called at render time so locale is always current) ──
+const getCategories = (): Category[] =>
+  CAT_STATIC.map((c) => ({
+    ...c,
+    name: t(`kanji.categories.${c.id}`),
+    desc: t(`kanji.categoryDesc.${c.id}`),
+  }));
+
+const getEntries = (): Entry[] =>
+  ENTRY_STATIC.map((e) => ({
+    ...e,
+    arti:    t(`kanji.entries.${e.id}.arti`),
+    tips:    t(`kanji.entries.${e.id}.tips`),
+    foundIn: ta(`kanji.entries.${e.id}.foundIn`),
+  }));
+
+// Kept for backwards compat (length display) — computed once OK since count never changes
+const KANJI_ENTRIES_COUNT = ENTRY_STATIC.length;
+
+const VERDICT_STATIC = {
+  halal:   { bg: "#DFE8DA", fg: "#2C4A3E", strong: "#1F362D", dot: "#2C4A3E" },
+  syubhat: { bg: "#F4E4BF", fg: "#7A5A1F", strong: "#5A4116", dot: "#C8923A" },
+  haram:   { bg: "#F1D5C7", fg: "#93462C", strong: "#6B2F1D", dot: "#B85C3C" },
 } as const;
+
+const getVerdictMeta = (verdict: Verdict) => ({
+  ...VERDICT_STATIC[verdict],
+  label: t(`kanji.verdicts.${verdict}`),
+});
 
 type View = "browse" | "list" | "detail";
 
@@ -165,6 +100,9 @@ export default function KamusKanji({ onClose }: { onClose: () => void }) {
   const openEntry = (id: string) => { setActiveEntry(id); setView("detail"); };
   const backToBrowse = () => { setView("browse"); setActiveCat(null); setQuery(""); setFilter("all"); };
   const backToList = () => setView(activeCat || query || filter !== "all" ? "list" : "browse");
+
+  const KANJI_ENTRIES = getEntries();
+  const KANJI_CATEGORIES = getCategories();
 
   const filteredEntries = useMemo(() => {
     let out = KANJI_ENTRIES;
@@ -226,7 +164,7 @@ export default function KamusKanji({ onClose }: { onClose: () => void }) {
           </div>
         </div>
         <div className="mono" style={{ fontSize: 10, fontWeight: 500, color: "#6B6A63", letterSpacing: 0.4, flexShrink: 0 }}>
-          {KANJI_ENTRIES.length} {t("kanji.wordCount")}
+          {KANJI_ENTRIES_COUNT} {t("kanji.wordCount")}
         </div>
       </div>
 
@@ -238,7 +176,7 @@ export default function KamusKanji({ onClose }: { onClose: () => void }) {
             isFav={!!favorites[detailEntry.id]}
             onFav={() => toggleFav(detailEntry.id)}
             onOpenRelated={(rkanji) => {
-              const target = KANJI_ENTRIES.find((e) => e.kanji === rkanji);
+              const target = getEntries().find((e) => e.kanji === rkanji);
               if (target) openEntry(target.id);
             }}
           />
@@ -282,7 +220,7 @@ function KanjiBrowseList({
     { id: "syubhat", label: t("kanji.filters.syubhat"), tone: "syubhat" },
     { id: "halal", label: t("kanji.filters.halal"), tone: "halal" },
   ];
-  const activeCategoryObj = KANJI_CATEGORIES.find((c) => c.id === activeCat);
+  const activeCategoryObj = getCategories().find((c) => c.id === activeCat);
 
   return (
     <div className="animate-fade-in" style={{ padding: "14px 18px 96px", display: "flex", flexDirection: "column", gap: 14 }}>
@@ -326,7 +264,7 @@ function KanjiBrowseList({
       <div style={{ display: "flex", gap: 6, overflowX: "auto", margin: "0 -18px", padding: "0 18px", scrollbarWidth: "none" }}>
         {FILTERS.map((f) => {
           const active = filter === f.id;
-          const meta = f.tone ? VERDICT_META[f.tone] : null;
+          const meta = f.tone ? f.tone ? getVerdictMeta(f.tone) : null : null;
           return (
             <button
               key={f.id}
@@ -364,9 +302,9 @@ function KanjiBrowseList({
             {t("kanji.browseLabel")}
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-            {KANJI_CATEGORIES.map((cat) => {
-              const count = KANJI_ENTRIES.filter((e) => e.cat === cat.id).length;
-              const meta = VERDICT_META[cat.tone];
+            {getCategories().map((cat) => {
+              const count = ENTRY_STATIC.filter((e) => e.cat === cat.id).length;
+              const meta = getVerdictMeta(cat.tone);
               return (
                 <button
                   key={cat.id}
@@ -437,7 +375,7 @@ function KanjiBrowseList({
 }
 
 function KanjiListRow({ entry, onClick }: { entry: Entry; onClick: () => void }) {
-  const meta = VERDICT_META[entry.verdict];
+  const meta = getVerdictMeta(entry.verdict);
   return (
     <button
       onClick={onClick}
@@ -529,7 +467,7 @@ function KanjiDetail({
   onFav: () => void;
   onOpenRelated: (k: string) => void;
 }) {
-  const meta = VERDICT_META[entry.verdict];
+  const meta = getVerdictMeta(entry.verdict);
 
   return (
     <div className="animate-fade-in" style={{ padding: "14px 18px 96px", display: "flex", flexDirection: "column", gap: 14 }}>
@@ -630,7 +568,7 @@ function KanjiDetail({
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
             {entry.related.map((r, i) => {
-              const target = KANJI_ENTRIES.find((e) => e.kanji === r);
+              const target = getEntries().find((e) => e.kanji === r);
               const clickable = !!target;
               return (
                 <button

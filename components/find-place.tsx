@@ -36,7 +36,7 @@ export default function FindPlace() {
       const res2  = await fetch("https://freeipapi.com/api/json");
       const data2 = await res2.json();
       if (data2?.cityName) { setLocationName(`${data2.cityName}, ${data2.regionName}`); setLocState("located"); return; }
-      throw new Error("Gagal");
+      throw new Error(t("common.errorGeneral"));
     } catch {
       setLocError(t("findPlace.location.errorGps"));
       setLocState("no-location");

@@ -320,12 +320,210 @@
       "halal": "Halal",
       "syubhat": "Syubhat",
       "haram": "Haram"
+    },
+    "categoryDesc": {
+      "pork": "Babi dan turunan langsung — selalu haram",
+      "alcohol": "Sake, mirin, dan turunan fermentasi alkohol",
+      "additive": "Emulsifier, shortening, perisa — sumber tidak jelas",
+      "meat": "Ayam, sapi — perlu cek metode penyembelihan",
+      "seafood": "Ikan dan udang — umumnya halal",
+      "plant": "Kedelai, gandum, dan bahan nabati lain",
+      "sweets": "Gula, madu, dan pemanis alami",
+      "sauce": "Shoyu, miso, dashi — periksa kandungan alkohol/ikan"
+    },
+    "entries": {
+      "buta": {
+        "arti": "Babi. Dagingnya haram dikonsumsi sesuai syariat Islam.",
+        "tips": "Jika kanji 豚 muncul di komposisi atau nama produk — langsung skip. Termasuk turunan: 豚脂, 豚由来, 豚ゼラチン.",
+        "foundIn": [
+          "豚カツ (tonkatsu)",
+          "豚骨ラーメン (tonkotsu ramen)",
+          "チャーシュー (chashu)",
+          "ハム & ソーセージ"
+        ]
+      },
+      "lard": {
+        "arti": "Lard — lemak babi yang dilelehkan. Sering jadi minyak goreng dan shortening.",
+        "tips": "Beda dengan 牛脂 (gyū-shi, lemak sapi) dan 植物油脂 (minyak nabati). Kalau ragu antara ラード dan ショートニング, anggap syubhat.",
+        "foundIn": [
+          "Mi instan kuah tonkotsu",
+          "Roti & pastry murah",
+          "Kerupuk & snack gorengan",
+          "Margarin non-halal"
+        ]
+      },
+      "sake": {
+        "arti": "Sake — minuman beralkohol dari fermentasi beras. Juga muncul sebagai bumbu masak (料理酒).",
+        "tips": "Termasuk varian 清酒, 日本酒, 料理酒. Jika tertulis di komposisi makanan, pertimbangkan haram meski sudah dimasak.",
+        "foundIn": [
+          "料理酒 (cooking sake)",
+          "Saus teriyaki",
+          "Marinade ikan",
+          "Beberapa miso & shoyu"
+        ]
+      },
+      "mirin": {
+        "arti": "Mirin — bumbu manis dengan kandungan alkohol 8–14%. Versi 本みりん adalah yang paling tinggi alkoholnya.",
+        "tips": "みりん風調味料 (mirin-fū) hanya rasa mirin tanpa alkohol — tetap cek labelnya. 本みりん = pasti beralkohol.",
+        "foundIn": [
+          "Saus teriyaki & yakitori",
+          "Tsuyu (kuah soba)",
+          "Nikujaga & masakan stew Jepang",
+          "Sushi rice (kadang)"
+        ]
+      },
+      "nyukazai": {
+        "arti": "Emulsifier — pengikat minyak & air. Bisa berasal dari kedelai (halal) atau lemak hewan (haram/syubhat).",
+        "tips": "Cari keterangan sumber: 乳化剤(大豆由来) artinya dari kedelai → halal. Tanpa keterangan = syubhat.",
+        "foundIn": [
+          "Cokelat & wafer",
+          "Ice cream & susu",
+          "Roti & kue",
+          "Margarin"
+        ]
+      },
+      "shortening": {
+        "arti": "Shortening — lemak padat untuk pastry. Bisa nabati (palem/kedelai) atau hewani (lard).",
+        "tips": "Tanpa label \"vegetable\" / 植物性 → status syubhat. Kalau ada keterangan 植物油脂100% biasanya aman.",
+        "foundIn": [
+          "Biskuit & cookies",
+          "Pie crust & croissant",
+          "Kue kering Jepang",
+          "Donat"
+        ]
+      },
+      "kouryou": {
+        "arti": "Perisa/flavoring. Bisa nabati, sintetis, atau dari ekstrak hewan. Sumber jarang disebutkan eksplisit.",
+        "tips": "Kalau hanya tertulis \"香料\" tanpa keterangan, anggap syubhat. Kontak produsen jika produk sering dikonsumsi.",
+        "foundIn": [
+          "Permen & coklat",
+          "Minuman ringan",
+          "Snack gurih",
+          "Yogurt rasa"
+        ]
+      },
+      "tori": {
+        "arti": "Ayam. Status tergantung metode penyembelihan — dzabihah (Islami) atau tidak.",
+        "tips": "Cari label \"Halal Chicken\" atau toko muslim. Rumah makan Jepang umumnya tidak menjamin penyembelihan halal.",
+        "foundIn": [
+          "唐揚げ (karaage)",
+          "チキンナゲット",
+          "焼き鳥 (yakitori)",
+          "Bakso & sosis"
+        ]
+      },
+      "gyuu": {
+        "arti": "Sapi. Sama seperti ayam — tergantung metode penyembelihan. Daging biasa di supermarket Jepang tidak halal.",
+        "tips": "Cari sertifikasi halal (印) atau supplier Australia/Brazil halal. Wagyu lokal Jepang umumnya non-halal.",
+        "foundIn": [
+          "牛丼 (gyūdon)",
+          "ステーキ",
+          "ハンバーグ",
+          "カレー (curry)"
+        ]
+      },
+      "sakana": {
+        "arti": "Ikan. Mayoritas mazhab menganggap semua ikan halal tanpa perlu disembelih.",
+        "tips": "Hati-hati dengan saus pendamping — sering mengandung mirin atau sake. Sashimi mentah aman, sausnya yang perlu cek.",
+        "foundIn": [
+          "寿司 & 刺身",
+          "焼き魚",
+          "ちくわ & かまぼこ",
+          "魚醤 (fish sauce)"
+        ]
+      },
+      "ebi": {
+        "arti": "Udang. Halal menurut mayoritas mazhab (Syafi'i, Maliki, Hanbali). Mazhab Hanafi memiliki pandangan berbeda.",
+        "tips": "Tepung tempura kadang pakai telur & dashi — tetap cek komposisi. Saus celupan biasanya mengandung mirin.",
+        "foundIn": [
+          "天ぷら (tempura)",
+          "海老フライ (ebi furai)",
+          "えびせんべい",
+          "寿司ネタ"
+        ]
+      },
+      "daizu": {
+        "arti": "Kedelai. Bahan dasar tofu, miso, shoyu, natto, dan banyak emulsifier nabati.",
+        "tips": "Keterangan \"大豆由来\" pada emulsifier = sinyal hijau. Tahu & soymilk plain hampir selalu aman.",
+        "foundIn": [
+          "豆腐 (tofu)",
+          "納豆 (natto)",
+          "醤油 & 味噌",
+          "Edamame & soy milk"
+        ]
+      },
+      "komugi": {
+        "arti": "Gandum. Bahan dasar mi, roti, tepung tempura, dan kebanyakan kue Jepang.",
+        "tips": "Tepung sendiri halal, tapi olahannya sering dicampur dashi/lemak. Cek komposisi mi kering & roti komersial.",
+        "foundIn": [
+          "うどん & ラーメン",
+          "パン (roti)",
+          "天ぷら粉",
+          "お好み焼き"
+        ]
+      },
+      "satou": {
+        "arti": "Gula. Putih, merah (黒糖), atau halus — semuanya halal sebagai bahan tunggal.",
+        "tips": "Aman sendirian, tapi gula yang dipakai produk olahan tidak menjamin produk akhirnya halal.",
+        "foundIn": [
+          "Kue & permen",
+          "Minuman ringan",
+          "Saus teriyaki",
+          "Roti"
+        ]
+      },
+      "hachimitsu": {
+        "arti": "Madu. Halal dan dianjurkan dalam Islam.",
+        "tips": "Kadang dicampur royal jelly atau ekstrak lain — cek label kalau bukan madu murni 100%.",
+        "foundIn": [
+          "ハニートースト",
+          "Yogurt madu",
+          "Permen madu lemon",
+          "Minuman herbal"
+        ]
+      },
+      "shouyu": {
+        "arti": "Shoyu/kecap asin Jepang. Proses fermentasinya menghasilkan alkohol — kandungan akhir 1–3%.",
+        "tips": "Cari shoyu sertifikasi halal (Kikkoman Halal, dll) atau yang berlabel \"アルコール無添加\". Versi standar = syubhat.",
+        "foundIn": [
+          "Hampir semua masakan Jepang",
+          "Sushi & sashimi",
+          "Mi & tsuyu",
+          "Saus teriyaki"
+        ]
+      },
+      "miso": {
+        "arti": "Pasta kedelai fermentasi. Mirip shoyu — fermentasi menghasilkan sedikit alkohol.",
+        "tips": "Cari miso halal-certified. Kandungan alkohol biasanya <1% tapi tetap syubhat tanpa sertifikasi.",
+        "foundIn": [
+          "味噌汁 (sup miso)",
+          "Marinade ikan",
+          "Ramen kuah miso",
+          "Saus dengkulan"
+        ]
+      },
+      "dashi": {
+        "arti": "Kaldu Jepang dari ikan (かつお), rumput laut (昆布), atau sardin (煮干し). Kadang dicampur sake/mirin.",
+        "tips": "Dashi kombu murni = halal. Dashi pabrikan sering tambah ekstrak ayam/babi & mirin — cek 原材料名.",
+        "foundIn": [
+          "Sup miso & udon",
+          "Onigiri filling",
+          "Tamagoyaki",
+          "Hampir semua kuah Jepang"
+        ]
+      }
     }
   },
   "common": {
     "retry": "Coba Lagi",
     "reset": "Mulai Baru",
     "back": "Kembali",
-    "done": "Selesai"
+    "done": "Selesai",
+    "errorGeneral": "Terjadi kesalahan",
+    "errorNetwork": "Gagal memuat. Pastikan koneksi internet stabil.",
+    "errorRoute": "Gagal menyusun rute. Pastikan koneksi stabil.",
+    "errorLocation": "Gagal memuat data lokasi.",
+    "locationFallback": "Lokasi terdeteksi",
+    "checkLocationNow": "Cek lokasi sekarang"
   }
 }

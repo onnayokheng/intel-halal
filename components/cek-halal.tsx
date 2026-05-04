@@ -268,7 +268,7 @@ export default function CekHalal({ isActive }: { isActive: boolean }) {
         body: JSON.stringify({ images: images.map(({ base64Data, mimeType }) => ({ base64Data, mimeType })), locale: getLocale() }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Terjadi kesalahan");
+      if (!res.ok) throw new Error(t("common.errorGeneral"));
       const { status: parsed, cleaned } = parseStatus(data.result);
       setStatus(parsed);
       setResultHtml(DOMPurify.sanitize(cleaned));

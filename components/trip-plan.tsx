@@ -23,12 +23,12 @@ export default function TripPlan() {
         body: JSON.stringify({ origin, destination, locale: getLocale() }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Terjadi kesalahan");
+      if (!res.ok) throw new Error(t("common.errorGeneral"));
       setResultHtml(DOMPurify.sanitize(data.result, {
         ADD_ATTR: ["target", "rel"],
       }));
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Gagal menyusun rute. Pastikan koneksi stabil.");
+      setError(err instanceof Error ? err.message : t("common.errorRoute"));
     } finally {
       setIsLoading(false);
     }

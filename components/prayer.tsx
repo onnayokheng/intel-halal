@@ -77,7 +77,7 @@ export default function PrayerSchedule() {
       const entry: CacheEntry = { prayerData: data, locationName: name, lat, lng };
       try { localStorage.setItem(key, JSON.stringify(entry)); } catch { /* quota */ }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Gagal memuat data");
+      setError(err instanceof Error ? err.message : t("common.errorLocation"));
     }
   }, []);
 
@@ -91,7 +91,7 @@ export default function PrayerSchedule() {
       setCoords(c);
       await loadData(c.lat, c.lng, hisab, force);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Lokasi tidak terdeteksi";
+      const msg = err instanceof Error ? err.message : t("common.errorLocation");
       setError(msg);
     } finally {
       setIsLoading(false);
@@ -235,7 +235,7 @@ function LocationStrip({
       </div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontSize: 13, fontWeight: 600, color: "#1B1B19", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-          {location || "Lokasi terdeteksi"}
+          {location || t("common.locationFallback")}
         </div>
         <div className="mono" style={{ fontSize: 10, color: "#6B6A63", letterSpacing: 0.4, marginTop: 2 }}>
           {gregorianDate} · {hijriDay} {HIJRI_MONTHS_ID[hijriMonth] || ""} {hijriYear}
@@ -245,7 +245,7 @@ function LocationStrip({
         onClick={onRefresh}
         disabled={isRefreshing}
         className="tap"
-        aria-label="Cek lokasi sekarang"
+        aria-label={t("common.checkLocationNow")}
         style={{
           background: isRefreshing ? "#EFEBE2" : "#fff",
           border: "0.5px solid #D8D2C4",
