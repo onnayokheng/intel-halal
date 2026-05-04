@@ -1,5 +1,7 @@
 "use client";
 
+import { t } from "@/lib/i18n";
+
 import { useState, useRef, useEffect } from "react";
 import DOMPurify from "dompurify";
 import { compressImage, parseStatus } from "@/lib/utils";
@@ -98,11 +100,11 @@ function IngredientRow({ jp, en, tone }: { jp: string; en: string; tone: "halal"
 
 function VerdictCard({ verdict, resultHtml, onReset }: { verdict: Status; resultHtml: string; onReset: () => void }) {
   const cfg = {
-    halal:   { bg: "#DFE8DA", fg: "#2C4A3E",  strong: "#1F362D", label: "HALAL",    sub: "Aman dikonsumsi",
+    halal:   { bg: "#DFE8DA", fg: "#2C4A3E",  strong: "#1F362D", label: "HALAL",    sub: t("cekHalal.verdict.halalSub"),
       icon: <svg width="34" height="34" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/></svg> },
-    syubhat: { bg: "#F4E4BF", fg: "#7A5A1F",  strong: "#5A4116", label: "SYUBHAT",  sub: "Status meragukan — periksa lebih lanjut",
+    syubhat: { bg: "#F4E4BF", fg: "#7A5A1F",  strong: "#5A4116", label: "SYUBHAT",  sub: t("cekHalal.verdict.syubhatSub"),
       icon: <svg width="34" height="34" viewBox="0 0 24 24" fill="none"><path d="M12 4v9" stroke="#fff" strokeWidth="2.6" strokeLinecap="round"/><circle cx="12" cy="18" r="1.5" fill="#fff"/></svg> },
-    haram:   { bg: "#F1D5C7", fg: "#93462C",  strong: "#6B2F1D", label: "HARAM",    sub: "Mengandung bahan tidak halal",
+    haram:   { bg: "#F1D5C7", fg: "#93462C",  strong: "#6B2F1D", label: "HARAM",    sub: t("cekHalal.verdict.haramSub"),
       icon: <svg width="34" height="34" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M6 18L18 6" stroke="#fff" strokeWidth="2.8" strokeLinecap="round"/></svg> },
     idle:    { bg: "#EFEBE2", fg: "#6B6A63",  strong: "#3D3D3A", label: "",         sub: "", icon: null },
   }[verdict];
@@ -361,9 +363,9 @@ export default function CekHalal({ isActive }: { isActive: boolean }) {
         <h1 className="serif" style={{
           fontSize: 30, fontWeight: 500, letterSpacing: -0.6,
           margin: "0 0 8px", color: "#1B1B19", lineHeight: 1.05,
-        }}>Cek Halal</h1>
+        }}>{t("cekHalal.title")}</h1>
         <p style={{ margin: 0, color: "#6B6A63", fontSize: 13.5, lineHeight: 1.45 }}>
-          Foto kemasan produk Jepang. AI baca komposisi dan beri verdict halal, syubhat, atau haram.
+          {t("cekHalal.subtitle")}
         </p>
       </div>
 
@@ -372,9 +374,9 @@ export default function CekHalal({ isActive }: { isActive: boolean }) {
         {/* Scan sources */}
         <input ref={galleryInputRef} type="file" accept="image/*" multiple style={{ display: "none" }} onChange={handleFileSelect} />
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
-          <ScanSource label="Kamera" sub="ambil foto" icon={<IconCamera />} onClick={() => startCamera("general")} active={activeSource === "camera"} />
-          <ScanSource label="Barcode" sub="JAN code" icon={<IconBarcode />} onClick={() => startCamera("barcode")} active={activeSource === "barcode"} />
-          <ScanSource label="Galeri" sub="dari foto" icon={<IconGallery />} onClick={() => galleryInputRef.current?.click()} active={activeSource === "gallery"} />
+          <ScanSource label={t("cekHalal.scan.camera")} sub={t("cekHalal.scan.cameraHint")} icon={<IconCamera />} onClick={() => startCamera("general")} active={activeSource === "camera"} />
+          <ScanSource label={t("cekHalal.scan.barcode")} sub={t("cekHalal.scan.barcodeHint")} icon={<IconBarcode />} onClick={() => startCamera("barcode")} active={activeSource === "barcode"} />
+          <ScanSource label={t("cekHalal.scan.gallery")} sub={t("cekHalal.scan.galleryHint")} icon={<IconGallery />} onClick={() => galleryInputRef.current?.click()} active={activeSource === "gallery"} />
         </div>
 
         {/* Onboarding */}
@@ -389,9 +391,9 @@ export default function CekHalal({ isActive }: { isActive: boolean }) {
             </div>
             <ol style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 12 }}>
               {[
-                ["Pilih sumber", "Kamera, barcode, atau foto dari galeri."],
-                ["Foto label", "Pastikan komposisi/原材料名 terlihat jelas."],
-                ["Analisa AI", "Sistem cek bahan terhadap database halal."],
+                [t("cekHalal.onboarding.step1Title"), t("cekHalal.onboarding.step1Desc")],
+                [t("cekHalal.onboarding.step2Title"), t("cekHalal.onboarding.step2Desc")],
+                [t("cekHalal.onboarding.step3Title"), t("cekHalal.onboarding.step3Desc")],
               ].map(([t, d], i) => (
                 <li key={i} style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
                   <div className="mono" style={{
@@ -439,7 +441,7 @@ export default function CekHalal({ isActive }: { isActive: boolean }) {
                 <span className="serif" style={{ fontSize: 22, fontWeight: 600, color: "#2C4A3E", lineHeight: 1 }}>豚</span>
               </div>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontSize: 13.5, fontWeight: 600, color: "#1F362D" }}>Lihat Kamus Kanji Halal</div>
+                <div style={{ fontSize: 13.5, fontWeight: 600, color: "#1F362D" }}>{t("cekHalal.onboarding.kamusTitle")}</div>
                 <div style={{ fontSize: 11.5, color: "#6B6A63", marginTop: 1, lineHeight: 1.4 }}>
                   Pelajari kanji bahan umum tanpa harus scan dulu
                 </div>
@@ -463,7 +465,7 @@ export default function CekHalal({ isActive }: { isActive: boolean }) {
               boxShadow: "var(--shadow-card)",
             }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
-                <div style={{ fontSize: 13, fontWeight: 600 }}>Gambar siap dianalisa</div>
+                <div style={{ fontSize: 13, fontWeight: 600 }}>{t("cekHalal.preview.readyLabel")}</div>
                 <span className="mono" style={{ fontSize: 11, color: "#6B6A63" }}>{images.length} foto</span>
               </div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
@@ -531,11 +533,11 @@ export default function CekHalal({ isActive }: { isActive: boolean }) {
               </div>
             </div>
             <div style={{ textAlign: "center" }}>
-              <div className="serif" style={{ fontSize: 20, fontWeight: 500, letterSpacing: -0.3 }}>Sedang menganalisa…</div>
-              <div style={{ fontSize: 12.5, color: "#6B6A63", marginTop: 4 }}>Membaca komposisi, mencocokkan database halal.</div>
+              <div className="serif" style={{ fontSize: 20, fontWeight: 500, letterSpacing: -0.3 }}>{t("cekHalal.analyzing.title")}</div>
+              <div style={{ fontSize: 12.5, color: "#6B6A63", marginTop: 4 }}>{t("cekHalal.analyzing.subtitle")}</div>
             </div>
             <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 8 }}>
-              {["Mengekstrak teks dari gambar", "Mengidentifikasi bahan", "Memeriksa status halal"].map((s, i) => (
+              {[t("cekHalal.analyzing.step1"), t("cekHalal.analyzing.step2"), t("cekHalal.analyzing.step3")].map((s, i) => (
                 <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 12.5, color: "#6B6A63" }}>
                   <div style={{
                     width: 14, height: 14, borderRadius: "50%",

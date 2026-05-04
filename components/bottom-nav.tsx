@@ -1,5 +1,7 @@
 "use client";
 
+import { t } from "@/lib/i18n";
+
 export type Tab = "sholat" | "bea-impor" | "cek-halal" | "trip-plan" | "find-place";
 
 interface NavItem {
@@ -12,7 +14,7 @@ interface NavItem {
 const TABS: NavItem[] = [
   {
     id: "sholat",
-    label: "Sholat",
+    label: t("nav.sholat"),
     icon: (a) => (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
         <path d="M17.5 14.5A7 7 0 119.5 6.5a5.6 5.6 0 008 8z"
@@ -24,7 +26,7 @@ const TABS: NavItem[] = [
   },
   {
     id: "bea-impor",
-    label: "Bea Impor",
+    label: t("nav.beaImpor"),
     icon: (a) => (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
         <rect x="3" y="5" width="18" height="14" rx="2" stroke={a ? "#fff" : "currentColor"} strokeWidth="1.6"/>
@@ -36,7 +38,7 @@ const TABS: NavItem[] = [
   },
   {
     id: "cek-halal",
-    label: "Cek Halal",
+    label: t("nav.cekHalal"),
     center: true,
     icon: () => (
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
@@ -48,7 +50,7 @@ const TABS: NavItem[] = [
   },
   {
     id: "trip-plan",
-    label: "Trip Plan",
+    label: t("nav.tripPlan"),
     icon: (a) => (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
         <path d="M5 4h11a3 3 0 010 6H8a3 3 0 000 6h11"
@@ -60,7 +62,7 @@ const TABS: NavItem[] = [
   },
   {
     id: "find-place",
-    label: "Find Place",
+    label: t("nav.findPlace"),
     icon: (a) => (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
         <path d="M12 22s7-6.5 7-12a7 7 0 10-14 0c0 5.5 7 12 7 12z"

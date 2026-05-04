@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import BottomNav, { type Tab } from "@/components/bottom-nav";
 import BrandBar from "@/components/brand-bar";
+import { t } from "@/lib/i18n";
 
 const PrayerSchedule = dynamic(() => import("@/components/prayer"),     { ssr: false });
 const CekHalal       = dynamic(() => import("@/components/cek-halal"),  { ssr: false });
@@ -12,11 +13,11 @@ const TripPlan       = dynamic(() => import("@/components/trip-plan"),  { ssr: f
 const FindPlace      = dynamic(() => import("@/components/find-place"), { ssr: false });
 
 const TITLES: Record<Tab, string> = {
-  "sholat":     "Sholat — Jadwal & Kiblat",
-  "bea-impor":  "Bea Impor — Kalkulator IMEI",
-  "cek-halal":  "Intel Halal — AI Scanner",
-  "trip-plan":  "Trip Plan — Rute Jepang",
-  "find-place": "Find Place — Direktori Jepang",
+  "sholat":     `${t("nav.sholat")} — ${t("sholat.title")}`,
+  "bea-impor":  `${t("nav.beaImpor")} — ${t("beaImpor.title")}`,
+  "cek-halal":  `${t("brand.name")} — AI Scanner`,
+  "trip-plan":  `${t("nav.tripPlan")} — ${t("tripPlan.title")}`,
+  "find-place": `${t("nav.findPlace")} — ${t("findPlace.title")}`,
 };
 
 export default function Home() {

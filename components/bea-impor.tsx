@@ -1,5 +1,7 @@
 "use client";
 
+import { t } from "@/lib/i18n";
+
 import { useState, useEffect } from "react";
 
 type Currency = "JPY" | "USD" | "SGD" | "MYR";
@@ -96,11 +98,9 @@ export default function BeaImpor() {
     <div style={{ minHeight: "100dvh", paddingBottom: 96, overflowY: "auto" }}>
       {/* Header */}
       <div style={{ padding: "72px 22px 18px" }}>
-        <h1 className="serif" style={{ fontSize: 30, fontWeight: 500, letterSpacing: -0.6, margin: "0 0 8px", lineHeight: 1.05 }}>
-          Bea Impor
-        </h1>
+        <h1 className="serif" style={{ fontSize: 30, fontWeight: 500, letterSpacing: -0.6, margin: "0 0 8px", lineHeight: 1.05 }}>{t("beaImpor.title")}</h1>
         <p style={{ margin: 0, color: "#6B6A63", fontSize: 13.5, lineHeight: 1.45 }}>
-          Hitung pajak IMEI HP yang dibeli di Jepang sebelum sampai bea cukai Indonesia.
+          {t("beaImpor.subtitle")}
         </p>
       </div>
 
@@ -113,7 +113,7 @@ export default function BeaImpor() {
               Detail pembelian
             </div>
 
-            <FieldRow label="Mata uang">
+            <FieldRow label={t("beaImpor.form.currencyLabel")}>
               <div style={{ display: "flex", background: "#EFEBE2", borderRadius: 12, padding: 4, gap: 2 }}>
                 {CURRENCIES.map((c) => (
                   <button key={c} onClick={() => setCurrency(c)} className="tap" style={{
@@ -130,7 +130,7 @@ export default function BeaImpor() {
               </div>
             </FieldRow>
 
-            <FieldRow label="Harga HP">
+            <FieldRow label={t("beaImpor.form.priceLabel")}>
               <div style={{
                 position: "relative", background: "#EFEBE2", borderRadius: 12,
                 padding: "14px 14px", display: "flex", alignItems: "baseline", gap: 8,
@@ -153,8 +153,8 @@ export default function BeaImpor() {
             </FieldRow>
 
             <FieldRow
-              label="Punya NPWP?"
-              hint={hasNpwp ? "Tarif PPh 22 lebih rendah (10%)" : "Tarif PPh 22 lebih tinggi (20%)"}
+              label={t("beaImpor.form.npwpLabel")}
+              hint={hasNpwp ? t("beaImpor.form.npwpHintYes") : t("beaImpor.form.npwpHintNo")}
             >
               <Toggle on={hasNpwp} onChange={setHasNpwp} />
             </FieldRow>
@@ -175,7 +175,7 @@ export default function BeaImpor() {
                 opacity: !rates ? 0.6 : 1,
               }}
             >
-              {!rates ? "Memuat kurs…" : "Hitung Bea Impor"}
+              {!rates ? t("beaImpor.form.loadingKurs") : t("beaImpor.form.calculateBtn")}
               {rates && <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}
             </button>
           </div>
@@ -189,8 +189,8 @@ export default function BeaImpor() {
               <path d="M21 12a9 9 0 00-9-9" fill="none" stroke="#2C4A3E" strokeWidth="2.4" strokeLinecap="round"/>
             </svg>
             <div>
-              <div style={{ fontWeight: 600, fontSize: 14 }}>Menghitung pajak…</div>
-              <div style={{ fontSize: 12, color: "#6B6A63", marginTop: 2 }}>Cek kurs realtime + tarif bea cukai.</div>
+              <div style={{ fontWeight: 600, fontSize: 14 }}>{t("beaImpor.loading")}</div>
+              <div style={{ fontSize: 12, color: "#6B6A63", marginTop: 2 }}>{t("beaImpor.loadingNote")}</div>
             </div>
           </div>
         )}
@@ -212,11 +212,11 @@ export default function BeaImpor() {
                 fontSize: 36, fontWeight: 600, letterSpacing: -0.8,
                 color: "#1F362D", lineHeight: 1,
               }}>
-                {result.totalTax === 0 ? "Bebas Pajak" : formatRp(result.totalTax)}
+                {result.totalTax === 0 ? t("beaImpor.result.bebasPajak") : formatRp(result.totalTax)}
               </div>
               <div style={{ fontSize: 13, marginTop: 8, color: "#2C4A3E" }}>
                 {result.totalTax === 0
-                  ? "Harga di bawah limit $500 — aman!"
+                  ? t("beaImpor.result.bebasPajakNote")
                   : `Kena pajak dari selisih $${result.taxableUsd.toFixed(2)}`}
               </div>
             </div>
@@ -229,7 +229,7 @@ export default function BeaImpor() {
               <div className="serif" style={{ fontSize: 28, fontWeight: 600, letterSpacing: -0.5, color: "#1B1B19" }}>
                 {formatRp(result.priceIdr + result.totalTax + 25000)}
               </div>
-              <div style={{ fontSize: 11, color: "#9B998F", marginTop: 4 }}>*Termasuk harga HP, pajak & biaya bank (Rp 25.000)</div>
+              <div style={{ fontSize: 11, color: "#9B998F", marginTop: 4 }}>{t("beaImpor.result.modalNote")}</div>
             </div>
 
             {/* Kurs */}
@@ -253,8 +253,8 @@ export default function BeaImpor() {
                 Rincian Perhitungan
               </div>
               {[
-                { label: "Nilai Barang (USD)", value: `$${result.priceUsd.toFixed(2)}`, mono: true },
-                { label: "Pembebasan Bea", value: "-$500.00", mono: true, green: true },
+                { label: t("beaImpor.result.nilaiBarang"), value: `$${result.priceUsd.toFixed(2)}`, mono: true },
+                { label: t("beaImpor.result.pembebasanBea"), value: "-$500.00", mono: true, green: true },
               ].map(({ label, value, mono, green }) => (
                 <div key={label} style={{ display: "flex", justifyContent: "space-between", fontSize: 13, marginBottom: 8 }}>
                   <span style={{ color: "#6B6A63" }}>{label}</span>
@@ -267,9 +267,9 @@ export default function BeaImpor() {
               </div>
               <div style={{ background: "#EFEBE2", borderRadius: 12, padding: "12px 14px", marginTop: 12, display: "flex", flexDirection: "column", gap: 8 }}>
                 {[
-                  ["1. Bea Masuk (10%)", formatRp(result.bm)],
-                  ["2. PPN (11%)", formatRp(result.ppn)],
-                  [`3. PPh (${hasNpwp ? "10%" : "20%"})`, formatRp(result.pph)],
+                  [t("beaImpor.result.beaMasuk"), formatRp(result.bm)],
+                  [t("beaImpor.result.ppn"), formatRp(result.ppn)],
+                  [`${t("beaImpor.result.ppn").replace("2. PPN", "3. PPh")} (${hasNpwp ? "10%" : "20%"})`, formatRp(result.pph)],
                 ].map(([l, v]) => (
                   <div key={l} style={{ display: "flex", justifyContent: "space-between", fontSize: 13 }}>
                     <span style={{ color: "#6B6A63" }}>{l}</span>

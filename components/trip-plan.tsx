@@ -1,5 +1,7 @@
 "use client";
 
+import { t } from "@/lib/i18n";
+
 import { useState } from "react";
 import DOMPurify from "dompurify";
 
@@ -44,11 +46,9 @@ export default function TripPlan() {
     <div style={{ minHeight: "100dvh", paddingBottom: 96, overflowY: "auto" }}>
       {/* Header */}
       <div style={{ padding: "72px 22px 18px" }}>
-        <h1 className="serif" style={{ fontSize: 30, fontWeight: 500, letterSpacing: -0.6, margin: "0 0 8px", lineHeight: 1.05 }}>
-          Trip Plan
-        </h1>
+        <h1 className="serif" style={{ fontSize: 30, fontWeight: 500, letterSpacing: -0.6, margin: "0 0 8px", lineHeight: 1.05 }}>{t("tripPlan.title")}</h1>
         <p style={{ margin: 0, color: "#6B6A63", fontSize: 13.5, lineHeight: 1.45 }}>
-          AI bikin panduan rute kereta atau bus Jepang gaya cerita — biar gak bingung di Shinkansen.
+          {t("tripPlan.subtitle")}
         </p>
       </div>
 
@@ -78,12 +78,12 @@ export default function TripPlan() {
                   <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#2C4A3E" }} />
                 </div>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 0.8, color: "#9B998F", textTransform: "uppercase", marginBottom: 2 }}>Dari</div>
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 0.8, color: "#9B998F", textTransform: "uppercase", marginBottom: 2 }}>{t("tripPlan.form.fromLabel")}</div>
                   <div style={{ background: "#EFEBE2", borderRadius: 10 }}>
                     <input
                       value={origin}
                       onChange={(e) => setOrigin(e.target.value)}
-                      placeholder="Shinjuku Station"
+                      placeholder={t("tripPlan.form.fromPlaceholder")}
                       style={inputStyle}
                     />
                   </div>
@@ -104,13 +104,13 @@ export default function TripPlan() {
                   </svg>
                 </div>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 0.8, color: "#9B998F", textTransform: "uppercase", marginBottom: 2 }}>Ke</div>
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 0.8, color: "#9B998F", textTransform: "uppercase", marginBottom: 2 }}>{t("tripPlan.form.toLabel")}</div>
                   <div style={{ background: "#EFEBE2", borderRadius: 10 }}>
                     <input
                       value={destination}
                       onChange={(e) => setDestination(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && go()}
-                      placeholder="Tokyo Tower"
+                      placeholder={t("tripPlan.form.toPlaceholder")}
                       style={inputStyle}
                     />
                   </div>
@@ -151,8 +151,8 @@ export default function TripPlan() {
               <circle cx="12" cy="12" r="9" fill="none" stroke="#2C4A3E" strokeOpacity="0.18" strokeWidth="2.4"/>
               <path d="M21 12a9 9 0 00-9-9" fill="none" stroke="#2C4A3E" strokeWidth="2.4" strokeLinecap="round"/>
             </svg>
-            <div style={{ fontWeight: 600, fontSize: 14 }}>Menganalisis stasiun & jalur…</div>
-            <div style={{ fontSize: 12, color: "#6B6A63", marginTop: 4 }}>Mencari kombinasi kereta dan bus terbaik.</div>
+            <div style={{ fontWeight: 600, fontSize: 14 }}>{t("tripPlan.loading")}</div>
+            <div style={{ fontSize: 12, color: "#6B6A63", marginTop: 4 }}>{t("tripPlan.loadingNote")}</div>
           </div>
         )}
 

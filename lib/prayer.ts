@@ -1,24 +1,16 @@
 /* Aladhan API + prayer time utilities */
 
+import { ta, tObj } from "@/lib/i18n";
+
 export const HISAB_METHOD_ID: Record<string, number> = {
   kemenag: 20,   // Indonesian Ministry of Religious Affairs
   mwl: 3,        // Muslim World League
   egyptian: 5,   // Egyptian General Authority
 };
 
-export const HIJRI_MONTHS_ID = [
-  "", "Muharram", "Safar", "Rabiul Awal", "Rabiul Akhir",
-  "Jumadil Awal", "Jumadil Akhir", "Rajab", "Sya'ban",
-  "Ramadhan", "Syawal", "Dzulqa'dah", "Dzulhijjah",
-];
-
-export const PRAYER_LABELS_ID: Record<string, string> = {
-  Fajr: "Subuh", Dhuhr: "Dzuhur", Asr: "Ashar", Maghrib: "Maghrib", Isha: "Isya",
-};
-
-export const PRAYER_ARABIC: Record<string, string> = {
-  Fajr: "الفجر", Dhuhr: "الظهر", Asr: "العصر", Maghrib: "المغرب", Isha: "العشاء",
-};
+export const HIJRI_MONTHS_ID = ta("sholat.hijriMonths");
+export const PRAYER_LABELS_ID = tObj("sholat.prayers");
+export const PRAYER_ARABIC    = tObj("sholat.arabic");
 
 export const PRAYER_ORDER = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"] as const;
 export type PrayerKey = typeof PRAYER_ORDER[number];

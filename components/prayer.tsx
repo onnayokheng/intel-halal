@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { t, ta } from "@/lib/i18n";
 import {
   HIJRI_MONTHS_ID, PRAYER_LABELS_ID, PRAYER_ARABIC, PRAYER_ORDER,
   type PrayerKey, type PrayerData, type PrayerComputed,
@@ -9,9 +10,9 @@ import {
 } from "@/lib/prayer";
 
 const HISAB_METHODS = [
-  { id: "kemenag",  label: "Kemenag RI",          meta: "Subuh 20° · Isya 18°" },
-  { id: "mwl",      label: "Muslim World League", meta: "Subuh 18° · Isya 17°" },
-  { id: "egyptian", label: "Egyptian Authority",  meta: "Subuh 19.5° · Isya 17.5°" },
+  { id: "kemenag",  label: t("sholat.hisabSettings.methods.kemenag"),  meta: t("sholat.hisabSettings.meta.kemenag") },
+  { id: "mwl",      label: t("sholat.hisabSettings.methods.mwl"),      meta: t("sholat.hisabSettings.meta.mwl") },
+  { id: "egyptian", label: t("sholat.hisabSettings.methods.egyptian"), meta: t("sholat.hisabSettings.meta.egyptian") },
 ];
 
 interface CacheEntry {
@@ -107,8 +108,8 @@ export default function PrayerSchedule() {
 
   // Tick countdown every second
   useEffect(() => {
-    const t = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(t);
+    const tick = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(tick);
   }, []);
 
   // ─── Derived state ───
@@ -125,10 +126,10 @@ export default function PrayerSchedule() {
       <div style={{ padding: "72px 22px 18px", display: "flex", alignItems: "flex-start", gap: 12 }}>
         <div style={{ flex: 1 }}>
           <h1 className="serif" style={{ fontSize: 30, fontWeight: 500, letterSpacing: -0.6, margin: "0 0 8px", lineHeight: 1.05 }}>
-            Jadwal Sholat
+            {t("sholat.title")}
           </h1>
           <p style={{ margin: 0, color: "#6B6A63", fontSize: 13.5, lineHeight: 1.45 }}>
-            Waktu sholat berdasarkan lokasi kamu saat ini.
+            {t("sholat.subtitle")}
           </p>
         </div>
         <button
@@ -140,7 +141,7 @@ export default function PrayerSchedule() {
             display: "flex", alignItems: "center", justifyContent: "center",
             color: "#3D3D3A", cursor: "pointer", flexShrink: 0,
           }}
-          aria-label="Pengaturan"
+          aria-label={t("sholat.settings")}
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
             <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.6"/>
@@ -273,7 +274,7 @@ function NextPrayerHero({ prayer, remainingMs }: { prayer: PrayerComputed; remai
       <div className="star-bg" style={{ position: "absolute", inset: 0, opacity: 0.55, pointerEvents: "none" }} />
       <div style={{ position: "relative", padding: "22px 22px 24px" }}>
         <div className="mono" style={{ fontSize: 10.5, fontWeight: 500, letterSpacing: 1.4, textTransform: "uppercase", color: "#6B6A63" }}>
-          Sholat Berikutnya
+          {t("sholat.nextPrayer")}
         </div>
         <div style={{ marginTop: 10, display: "flex", alignItems: "baseline", gap: 12 }}>
           <div className="serif" style={{ fontSize: 44, fontWeight: 500, letterSpacing: -1, lineHeight: 1, color: "#1B1B19" }}>
@@ -284,7 +285,7 @@ function NextPrayerHero({ prayer, remainingMs }: { prayer: PrayerComputed; remai
           </div>
         </div>
         <div className="serif" style={{ marginTop: 8, fontSize: 18, fontStyle: "italic", color: "#3D3D3A", fontWeight: 400, lineHeight: 1.3 }}>
-          Sebentar lagi {prayer.label.toLowerCase()}…
+          {t("sholat.soonCopy")} {prayer.label.toLowerCase()}…
         </div>
         <div style={{
           marginTop: 14, display: "inline-flex", alignItems: "center", gap: 8,
@@ -309,7 +310,7 @@ function ActivePrayerBanner({ prayer }: { prayer: PrayerComputed }) {
       <div className="star-bg" style={{ position: "absolute", inset: 0, opacity: 0.18, pointerEvents: "none", filter: "invert(1)" }} />
       <div style={{ position: "relative", padding: "22px" }}>
         <div className="mono" style={{ fontSize: 10.5, fontWeight: 500, letterSpacing: 1.4, textTransform: "uppercase", color: "rgba(255,255,255,0.65)" }}>
-          Saat Ini
+          {t("sholat.currentLabel")}
         </div>
         <div style={{ marginTop: 10, display: "flex", alignItems: "baseline", gap: 12 }}>
           <div className="serif" style={{ fontSize: 44, fontWeight: 500, letterSpacing: -1, lineHeight: 1, color: "#fff" }}>
@@ -320,7 +321,7 @@ function ActivePrayerBanner({ prayer }: { prayer: PrayerComputed }) {
           </div>
         </div>
         <div className="serif" style={{ marginTop: 8, fontSize: 18, fontStyle: "italic", color: "rgba(255,255,255,0.82)", fontWeight: 400, lineHeight: 1.3 }}>
-          Waktunya menunaikan {prayer.label.toLowerCase()}.
+          {t("sholat.activeCopy")} {prayer.label.toLowerCase()}.
         </div>
         <div style={{
           marginTop: 14, display: "inline-flex", alignItems: "center", gap: 8,
@@ -328,7 +329,7 @@ function ActivePrayerBanner({ prayer }: { prayer: PrayerComputed }) {
         }}>
           <span style={{ width: 6, height: 6, borderRadius: 99, background: "#fff" }} className="animate-pulse-ring" />
           <span className="mono" style={{ fontSize: 12, fontWeight: 600, color: "#fff", letterSpacing: 0.3 }}>
-            Sholat di awal waktu lebih utama
+            {t("sholat.activeNote")}
           </span>
         </div>
       </div>
@@ -413,7 +414,7 @@ function PrayerList({
                 color: isActive ? "#fff" : "#1F362D",
                 padding: "4px 10px", borderRadius: 999,
                 border: isActive ? "0.5px solid rgba(255,255,255,0.2)" : "0.5px solid rgba(44,74,62,0.18)",
-              }}>{isActive ? "Sekarang" : "Berikutnya"}</span>
+              }}>{isActive ? t("sholat.chipNow") : t("sholat.chipNext")}</span>
             )}
             <div className="mono" style={{
               fontSize: 16, fontWeight: 500,
@@ -432,10 +433,10 @@ function FootnoteRow({ hisabLabel }: { hisabLabel: string }) {
   return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "4px 4px 0", gap: 12 }}>
       <div style={{ fontSize: 11.5, color: "#6B6A63", lineHeight: 1.4 }}>
-        Metode hisab: <span style={{ color: "#1B1B19", fontWeight: 600 }}>{hisabLabel}</span>
+        {t("sholat.hisabMethod")}: <span style={{ color: "#1B1B19", fontWeight: 600 }}>{hisabLabel}</span>
       </div>
       <div className="mono" style={{ fontSize: 9.5, color: "#9B998F", letterSpacing: 1, textTransform: "uppercase" }}>
-        Aladhan API
+        {t("sholat.aladhanAttr")}
       </div>
     </div>
   );
@@ -461,10 +462,10 @@ function LoadingCard() {
         </div>
       </div>
       <div className="serif" style={{ fontSize: 22, fontWeight: 500, color: "#1B1B19", letterSpacing: -0.4 }}>
-        Mendeteksi lokasi…
+        {t("sholat.loading.title")}
       </div>
       <div style={{ fontSize: 13, color: "#6B6A63", marginTop: 6, lineHeight: 1.4, maxWidth: 280, margin: "6px auto 0" }}>
-        Mengambil GPS, lalu menghitung waktu sholat hari ini.
+        {t("sholat.loading.desc")}
       </div>
     </div>
   );
@@ -488,10 +489,10 @@ function DeniedCard({ onRetry, message }: { onRetry: () => void; message?: strin
         </svg>
       </div>
       <div className="serif" style={{ fontSize: 22, fontWeight: 500, color: "#1B1B19", letterSpacing: -0.4 }}>
-        Tidak bisa mengakses lokasi
+        {t("sholat.denied.title")}
       </div>
       <div style={{ fontSize: 13, color: "#6B6A63", marginTop: 6, lineHeight: 1.45, maxWidth: 300, margin: "6px auto 0" }}>
-        {message ?? "Tanpa GPS, kami tidak dapat menghitung waktu sholat yang akurat."}
+        {message ?? t("sholat.denied.desc")}
       </div>
       <button
         onClick={onRetry}
@@ -509,7 +510,7 @@ function DeniedCard({ onRetry, message }: { onRetry: () => void; message?: strin
           <circle cx="12" cy="12" r="3" stroke="#fff" strokeWidth="1.6"/>
           <path d="M12 2v3M12 19v3M2 12h3M19 12h3" stroke="#fff" strokeWidth="1.6" strokeLinecap="round"/>
         </svg>
-        Cek Lokasi Sekarang
+        {t("sholat.denied.retryBtn")}
       </button>
     </div>
   );
@@ -541,7 +542,7 @@ function SettingsSheet({
           Metode Hisab
         </div>
         <div style={{ fontSize: 12.5, color: "#6B6A63", marginTop: 4, lineHeight: 1.45 }}>
-          Pilih metode perhitungan waktu sholat. Default: Kemenag RI untuk warga Indonesia.
+          {t("sholat.hisabSettings.desc")}
         </div>
 
         <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 8 }}>

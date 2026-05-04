@@ -1,5 +1,7 @@
 "use client";
 
+import { t } from "@/lib/i18n";
+
 /** Eight-point star with halal checkmark — the Intel Halal brand mark */
 export function BrandMark({ size = 28, color = "#2C4A3E" }: { size?: number; color?: string }) {
   return (
@@ -32,7 +34,7 @@ export function BrandLogo({ height = 22 }: { height?: number }) {
           lineHeight: 1,
         }}
       >
-        Intel<span style={{ color: "#2C4A3E" }}>·</span>Halal
+        {t("brand.name").split("·")[0]}<span style={{ color: "#2C4A3E" }}>·</span>{t("brand.name").split("·")[1]}
       </span>
     </div>
   );
@@ -68,7 +70,7 @@ export default function BrandBar() {
           textTransform: "uppercase",
         }}
       >
-        JP · ID
+        {t("brand.locale")}
       </span>
     </div>
   );

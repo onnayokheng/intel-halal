@@ -1,23 +1,25 @@
 "use client";
 
+import { t } from "@/lib/i18n";
+
 import { useState } from "react";
 
 const CATEGORIES = [
-  { id: "akomodasi", label: "Akomodasi", icon: "🏨",
+  { id: "akomodasi", label: t("findPlace.categoryLabels.akomodasi"), icon: "🏨",
     subs: ["Hotel halal-friendly", "Capsule hotel", "Ryokan", "Apartment / Airbnb"] },
-  { id: "kuliner", label: "Kuliner & Makanan", icon: "🍱",
+  { id: "kuliner", label: t("findPlace.categoryLabels.kuliner"), icon: "🍱",
     subs: ["Restoran sertifikasi halal", "Muslim-friendly", "Seafood / vegetarian", "Halal ramen"] },
-  { id: "transport", label: "Transportasi", icon: "🚆",
+  { id: "transport", label: t("findPlace.categoryLabels.transport"), icon: "🚆",
     subs: ["Stasiun JR / Metro", "Halte bus", "Taksi / rental mobil", "Bandara"] },
-  { id: "belanja", label: "Belanja & Retail", icon: "🛒",
+  { id: "belanja", label: t("findPlace.categoryLabels.belanja"), icon: "🛒",
     subs: ["Toko bahan halal", "Supermarket umum", "Don Quijote", "Mall / Dept. store"] },
-  { id: "wisata", label: "Wisata & Atraksi", icon: "⛩️",
+  { id: "wisata", label: t("findPlace.categoryLabels.wisata"), icon: "⛩️",
     subs: ["Landmark & spot foto", "Taman & alam", "Museum", "Kuil / shrine"] },
-  { id: "lifestyle", label: "Relaksasi", icon: "🧖",
+  { id: "lifestyle", label: t("findPlace.categoryLabels.lifestyle"), icon: "🧖",
     subs: ["Onsen privat (kashikiri)", "Spa & pijat", "Cafe non-alcohol", "Taman kota"] },
-  { id: "layanan", label: "Layanan & Kesehatan", icon: "🏥",
+  { id: "layanan", label: t("findPlace.categoryLabels.layanan"), icon: "🏥",
     subs: ["Klinik / Rumah Sakit", "Apotek", "ATM internasional", "Money changer"] },
-  { id: "ibadah", label: "Tempat Ibadah", icon: "🕌",
+  { id: "ibadah", label: t("findPlace.categoryLabels.ibadah"), icon: "🕌",
     subs: ["Masjid", "Mushola publik", "Prayer room", "Tempat wudhu"] },
 ];
 
@@ -80,11 +82,9 @@ export default function FindPlace() {
     <div style={{ minHeight: "100dvh", paddingBottom: 96, overflowY: "auto" }}>
       {/* Header */}
       <div style={{ padding: "72px 22px 18px" }}>
-        <h1 className="serif" style={{ fontSize: 30, fontWeight: 500, letterSpacing: -0.6, margin: "0 0 8px", lineHeight: 1.05 }}>
-          Find Place
-        </h1>
+        <h1 className="serif" style={{ fontSize: 30, fontWeight: 500, letterSpacing: -0.6, margin: "0 0 8px", lineHeight: 1.05 }}>{t("findPlace.title")}</h1>
         <p style={{ margin: 0, color: "#6B6A63", fontSize: 13.5, lineHeight: 1.45 }}>
-          Temukan masjid, restoran halal, hotel, dan tempat penting di sekitarmu.
+          {t("findPlace.subtitle")}
         </p>
       </div>
 

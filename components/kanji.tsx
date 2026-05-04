@@ -1,5 +1,7 @@
 "use client";
 
+import { t } from "@/lib/i18n";
+
 import { useState, useMemo } from "react";
 
 type Verdict = "halal" | "syubhat" | "haram";
@@ -299,7 +301,7 @@ function KanjiBrowseList({
         <input
           value={query}
           onChange={(e) => onQueryChange(e.target.value)}
-          placeholder="Cari kanji, romaji, atau arti..."
+          placeholder={t("kanji.searchPlaceholder")}
           style={{
             flex: 1, height: "100%", border: "none", outline: "none",
             background: "transparent", marginLeft: 10,
@@ -414,7 +416,7 @@ function KanjiBrowseList({
         <>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 4 }}>
             <div className="mono" style={{ fontSize: 10.5, fontWeight: 500, letterSpacing: 1.4, textTransform: "uppercase", color: "#6B6A63" }}>
-              {activeCategoryObj ? activeCategoryObj.name : query ? `Hasil untuk "${query}"` : "Semua kosakata"}
+              {activeCategoryObj ? activeCategoryObj.name : query ? `Hasil untuk "${query}"` : t("kanji.allVocab")}
             </div>
             <div className="mono" style={{ fontSize: 11, color: "#6B6A63" }}>{filteredEntries.length}</div>
           </div>
@@ -677,7 +679,7 @@ function KanjiDetail({
           <path d="M12 21s-7-4.5-7-10.5A4.5 4.5 0 0112 6a4.5 4.5 0 017 4.5C19 16.5 12 21 12 21z"
                 stroke={isFav ? "#fff" : "#1B1B19"} strokeWidth="1.7" strokeLinejoin="round"/>
         </svg>
-        {isFav ? "Tersimpan di favorit" : "Tambah ke favorit"}
+        {isFav ? t("kanji.favAdded") : t("kanji.favAdd")}
       </button>
     </div>
   );

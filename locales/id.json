@@ -1,0 +1,247 @@
+{
+  "brand": {
+    "name": "Intel Halal",
+    "tagline": "Asisten Pribadi Muslim di Jepang",
+    "locale": "JP · ID"
+  },
+  "nav": {
+    "sholat": "Sholat",
+    "beaImpor": "Bea Impor",
+    "cekHalal": "Cek Halal",
+    "tripPlan": "Trip Plan",
+    "findPlace": "Find Place"
+  },
+  "cekHalal": {
+    "title": "Cek Halal",
+    "subtitle": "Foto kemasan produk Jepang. AI baca komposisi dan beri verdict halal, syubhat, atau haram.",
+    "scan": {
+      "sectionLabel": "Mulai Pindai",
+      "camera": "Kamera",
+      "cameraHint": "ambil foto",
+      "barcode": "Barcode",
+      "barcodeHint": "JAN code",
+      "gallery": "Galeri",
+      "galleryHint": "dari foto"
+    },
+    "onboarding": {
+      "howTo": "Cara pakai",
+      "step1Title": "Pilih sumber",
+      "step1Desc": "Kamera, barcode, atau foto dari galeri.",
+      "step2Title": "Foto label",
+      "step2Desc": "Pastikan komposisi/原材料名 terlihat jelas.",
+      "step3Title": "Analisa AI",
+      "step3Desc": "Sistem cek bahan terhadap database halal.",
+      "disclaimer": "AI bersifat indikatif. Untuk produk dengan label MUI/JAKIM, selalu utamakan sertifikasi resmi.",
+      "kamusTitle": "Lihat Kamus Kanji Halal",
+      "kamusDesc": "Pelajari kanji bahan umum tanpa harus scan dulu"
+    },
+    "preview": {
+      "readyLabel": "Gambar siap dianalisa",
+      "photoCount": "foto",
+      "analyzeBtn": "Analisa Komposisi",
+      "retakeBtn": "Foto ulang"
+    },
+    "analyzing": {
+      "title": "Sedang menganalisa…",
+      "subtitle": "Membaca komposisi, mencocokkan database halal.",
+      "step1": "Mengekstrak teks dari gambar",
+      "step2": "Mengidentifikasi bahan",
+      "step3": "Memeriksa status halal"
+    },
+    "verdict": {
+      "label": "VERDICT",
+      "halal": "HALAL",
+      "halalSub": "Aman dikonsumsi",
+      "syubhat": "SYUBHAT",
+      "syubhatSub": "Status meragukan — periksa lebih lanjut",
+      "haram": "HARAM",
+      "haramSub": "Mengandung bahan tidak halal",
+      "scanAgain": "Scan ulang",
+      "disclaimer": "AI Analysis · indikatif · bukan pengganti sertifikasi MUI / JAKIM"
+    }
+  },
+  "beaImpor": {
+    "title": "Bea Impor",
+    "subtitle": "Hitung pajak IMEI HP yang dibeli di Jepang sebelum sampai bea cukai Indonesia.",
+    "form": {
+      "sectionLabel": "Detail pembelian",
+      "currencyLabel": "Mata uang",
+      "priceLabel": "Harga HP",
+      "pricePlaceholder": "Contoh: 150000",
+      "npwpLabel": "Punya NPWP?",
+      "npwpHintYes": "Tarif PPh 22 lebih rendah (10%)",
+      "npwpHintNo": "Tarif PPh 22 lebih tinggi (20%)",
+      "calculateBtn": "Hitung Bea Impor",
+      "loadingKurs": "Memuat kurs…"
+    },
+    "result": {
+      "estimasiLabel": "ESTIMASI PAJAK",
+      "bebasPajak": "Bebas Pajak",
+      "bebasPajakNote": "Harga di bawah limit $500 — aman!",
+      "taxableNote": "Kena pajak dari selisih",
+      "modalLabel": "Total Modal Keseluruhan",
+      "modalNote": "*Termasuk harga HP, pajak & biaya bank (Rp 25.000)",
+      "kursLabel": "Kurs Referensi (Realtime)",
+      "rincianLabel": "Rincian Perhitungan",
+      "nilaiBarang": "Nilai Barang (USD)",
+      "pembebasanBea": "Pembebasan Bea",
+      "dasarPajak": "Dasar Pajak (NDPZ)",
+      "beaMasuk": "1. Bea Masuk (10%)",
+      "ppn": "2. PPN (11%)",
+      "nilaiImpor": "Nilai Impor (NDPZ + BM)",
+      "disclaimerText": "Estimasi menggunakan logika Kurs Kemenkeu. Lapor di",
+      "disclaimerBold": "Jalur Merah",
+      "disclaimerSuffix": "untuk mendapatkan batas bebas $500."
+    },
+    "loading": "Menghitung pajak…",
+    "loadingNote": "Cek kurs realtime + tarif bea cukai."
+  },
+  "tripPlan": {
+    "title": "Trip Plan",
+    "subtitle": "AI bikin panduan rute kereta atau bus Jepang gaya cerita — biar gak bingung di Shinkansen.",
+    "form": {
+      "sectionLabel": "Mau ke mana?",
+      "fromLabel": "Dari",
+      "fromPlaceholder": "Shinjuku Station",
+      "toLabel": "Ke",
+      "toPlaceholder": "Tokyo Tower",
+      "goBtn": "GO"
+    },
+    "loading": "Menganalisis stasiun & jalur…",
+    "loadingNote": "Mencari kombinasi kereta dan bus terbaik.",
+    "newPlanBtn": "Rencana baru",
+    "error": "Gagal menyusun rute. Pastikan koneksi stabil."
+  },
+  "findPlace": {
+    "title": "Find Place",
+    "subtitle": "Temukan masjid, restoran halal, hotel, dan tempat penting di sekitarmu.",
+    "location": {
+      "detected": "Lokasi Terdeteksi",
+      "detect": "Deteksi Sekarang",
+      "detecting": "Mendeteksi lokasi…",
+      "detectDesc": "Aplikasi akan mengambil data lokasi dari perangkat Anda.",
+      "update": "Perbarui",
+      "error": "Gagal mendapatkan lokasi. Coba matikan VPN."
+    },
+    "search": {
+      "categoryLabel": "Pilih Kategori",
+      "subCategoryLabel": "Pilih Spesifik Tempat",
+      "categoryPlaceholder": "— Silakan Pilih Kategori —",
+      "subCategoryPlaceholder": "— Pilih Detail Tempat —",
+      "searchBtn": "Cari di Google Maps",
+      "tip": "Saat tombol Cari ditekan, Google Maps akan mencarikan lokasi dalam radius ±3.2 km dari titik acuan Anda."
+    },
+    "categoryLabels": {
+      "akomodasi": "Akomodasi",
+      "kuliner": "Kuliner & Makanan",
+      "transport": "Transportasi",
+      "belanja": "Belanja & Retail",
+      "wisata": "Wisata & Atraksi",
+      "lifestyle": "Relaksasi",
+      "layanan": "Layanan & Kesehatan",
+      "ibadah": "Tempat Ibadah"
+    }
+  },
+  "sholat": {
+    "title": "Jadwal Sholat",
+    "subtitle": "Waktu sholat berdasarkan lokasi kamu saat ini.",
+    "settings": "Pengaturan",
+    "nextPrayer": "Sholat Berikutnya",
+    "soonCopy": "Sebentar lagi",
+    "lagi": "lagi",
+    "currentLabel": "Saat Ini",
+    "activeCopy": "Waktunya menunaikan",
+    "activeNote": "Sholat di awal waktu lebih utama",
+    "hisabMethod": "Metode hisab",
+    "aladhanAttr": "Aladhan API",
+    "chipNow": "Sekarang",
+    "chipNext": "Berikutnya",
+    "prayers": {
+      "Fajr": "Subuh",
+      "Dhuhr": "Dzuhur",
+      "Asr": "Ashar",
+      "Maghrib": "Maghrib",
+      "Isha": "Isya"
+    },
+    "arabic": {
+      "Fajr": "الفجر",
+      "Dhuhr": "الظهر",
+      "Asr": "العصر",
+      "Maghrib": "المغرب",
+      "Isha": "العشاء"
+    },
+    "hijriMonths": ["", "Muharram", "Safar", "Rabiul Awal", "Rabiul Akhir", "Jumadil Awal", "Jumadil Akhir", "Rajab", "Sya'ban", "Ramadhan", "Syawal", "Dzulqa'dah", "Dzulhijjah"],
+    "loading": {
+      "title": "Mendeteksi lokasi…",
+      "desc": "Mengambil GPS, lalu menghitung waktu sholat hari ini."
+    },
+    "denied": {
+      "title": "Tidak bisa mengakses lokasi",
+      "desc": "Tanpa GPS, kami tidak dapat menghitung waktu sholat yang akurat.",
+      "retryBtn": "Cek Lokasi Sekarang"
+    },
+    "hisabSettings": {
+      "label": "Pengaturan",
+      "title": "Metode Hisab",
+      "desc": "Pilih metode perhitungan waktu sholat. Default: Kemenag RI untuk warga Indonesia.",
+      "doneBtn": "Selesai",
+      "methods": {
+        "kemenag": "Kemenag RI",
+        "mwl": "Muslim World League",
+        "egyptian": "Egyptian Authority"
+      },
+      "meta": {
+        "kemenag": "Subuh 20° · Isya 18°",
+        "mwl": "Subuh 18° · Isya 17°",
+        "egyptian": "Subuh 19.5° · Isya 17.5°"
+      }
+    }
+  },
+  "kanji": {
+    "title": "Kamus Kanji Halal",
+    "ref": "Referensi",
+    "wordCount": "kata",
+    "searchPlaceholder": "Cari kanji, romaji, atau arti...",
+    "filters": {
+      "all": "Semua",
+      "haram": "Haram",
+      "syubhat": "Syubhat",
+      "halal": "Halal-aman"
+    },
+    "browseLabel": "Telusuri per kategori",
+    "vocabCount": "kosakata",
+    "allVocab": "Semua kosakata",
+    "meaning": "Arti",
+    "foundIn": "Sering ditemukan di",
+    "tips": "Tips",
+    "related": "Kanji terkait",
+    "favAdd": "Tambah ke favorit",
+    "favAdded": "Tersimpan di favorit",
+    "empty": {
+      "title": "Belum ada di kamus",
+      "desc": "Kosakata yang kamu cari belum ada. Coba scan langsung lewat Cek Halal — AI bisa baca kanji apa pun di kemasan.",
+      "scanBtn": "Coba scan lewat Cek Halal"
+    },
+    "categories": {
+      "pork": "Babi & turunannya",
+      "alcohol": "Alkohol & fermentasi",
+      "additive": "Aditif syubhat",
+      "meat": "Daging perlu cek",
+      "seafood": "Seafood halal",
+      "plant": "Nabati aman",
+      "sweets": "Manis & dessert",
+      "sauce": "Saus & bumbu"
+    },
+    "verdicts": {
+      "halal": "Halal",
+      "syubhat": "Syubhat",
+      "haram": "Haram"
+    }
+  },
+  "common": {
+    "retry": "Coba Lagi",
+    "reset": "Mulai Baru",
+    "back": "Kembali",
+    "done": "Selesai"
+  }
+}
