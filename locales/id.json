@@ -58,6 +58,14 @@
       "haramSub": "Mengandung bahan tidak halal",
       "scanAgain": "Scan ulang",
       "disclaimer": "AI Analysis · indikatif · bukan pengganti sertifikasi MUI / JAKIM"
+    },
+    "camera": {
+      "barcodeHint": "Arahkan ke barcode",
+      "generalHint": "Pas-kan label dalam bingkai",
+      "cancelBtn": "Batal",
+      "captureLabel": "Ambil foto",
+      "errorCamera": "Gagal mengakses kamera. Gunakan Galeri sebagai alternatif.",
+      "errorProcess": "Gagal memproses. Pastikan koneksi internet stabil."
     }
   },
   "beaImpor": {
@@ -91,7 +99,8 @@
       "nilaiImpor": "Nilai Impor (NDPZ + BM)",
       "disclaimerText": "Estimasi menggunakan logika Kurs Kemenkeu. Lapor di",
       "disclaimerBold": "Jalur Merah",
-      "disclaimerSuffix": "untuk mendapatkan batas bebas $500."
+      "disclaimerSuffix": "untuk mendapatkan batas bebas $500.",
+      "disclaimerFull": "Estimasi menggunakan logika Kurs Kemenkeu. Lapor di Jalur Merah untuk mendapatkan batas bebas $500."
     },
     "loading": "Menghitung pajak…",
     "loadingNote": "Cek kurs realtime + tarif bea cukai."
@@ -121,7 +130,10 @@
       "detecting": "Mendeteksi lokasi…",
       "detectDesc": "Aplikasi akan mengambil data lokasi dari perangkat Anda.",
       "update": "Perbarui",
-      "error": "Gagal mendapatkan lokasi. Coba matikan VPN."
+      "error": "Gagal mendapatkan lokasi. Coba matikan VPN.",
+      "detectingDesc": "Meminta izin GPS perangkat.",
+      "detectTitle": "Deteksi Lokasi Saya",
+      "errorGps": "Gagal mendapatkan lokasi. Coba matikan VPN."
     },
     "search": {
       "categoryLabel": "Pilih Kategori",
@@ -129,7 +141,8 @@
       "categoryPlaceholder": "— Silakan Pilih Kategori —",
       "subCategoryPlaceholder": "— Pilih Detail Tempat —",
       "searchBtn": "Cari di Google Maps",
-      "tip": "Saat tombol Cari ditekan, Google Maps akan mencarikan lokasi dalam radius ±3.2 km dari titik acuan Anda."
+      "tip": "Saat tombol Cari ditekan, Google Maps akan mencarikan lokasi dalam radius ±3.2 km dari titik acuan Anda.",
+      "categoryTitle": "Pilih Kategori"
     },
     "categoryLabels": {
       "akomodasi": "Akomodasi",
@@ -170,7 +183,21 @@
       "Maghrib": "المغرب",
       "Isha": "العشاء"
     },
-    "hijriMonths": ["", "Muharram", "Safar", "Rabiul Awal", "Rabiul Akhir", "Jumadil Awal", "Jumadil Akhir", "Rajab", "Sya'ban", "Ramadhan", "Syawal", "Dzulqa'dah", "Dzulhijjah"],
+    "hijriMonths": [
+      "",
+      "Muharram",
+      "Safar",
+      "Rabiul Awal",
+      "Rabiul Akhir",
+      "Jumadil Awal",
+      "Jumadil Akhir",
+      "Rajab",
+      "Sya'ban",
+      "Ramadhan",
+      "Syawal",
+      "Dzulqa'dah",
+      "Dzulhijjah"
+    ],
     "loading": {
       "title": "Mendeteksi lokasi…",
       "desc": "Mengambil GPS, lalu menghitung waktu sholat hari ini."

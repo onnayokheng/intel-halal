@@ -262,7 +262,7 @@ export default function BeaImpor() {
                 </div>
               ))}
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 14, fontWeight: 700, borderTop: "1px solid #E8E3D6", paddingTop: 10, marginTop: 6 }}>
-                <span>Dasar Pajak (NDPZ)</span>
+                <span>{t("beaImpor.result.dasarPajak")}</span>
                 <span className="mono" style={{ color: "#B85C3C" }}>{formatRp(result.ndpz)}</span>
               </div>
               <div style={{ background: "#EFEBE2", borderRadius: 12, padding: "12px 14px", marginTop: 12, display: "flex", flexDirection: "column", gap: 8 }}>
@@ -283,7 +283,7 @@ export default function BeaImpor() {
             <div style={{ background: "#F0E2C2", border: "0.5px solid rgba(200,146,58,0.25)", borderRadius: 14, padding: "12px 14px", display: "flex", gap: 10, alignItems: "flex-start" }}>
               <span style={{ fontSize: 14 }}>⚠</span>
               <p style={{ margin: 0, fontSize: 12, color: "#5A4116", lineHeight: 1.5 }}>
-                Estimasi menggunakan logika Kurs Kemenkeu. Lapor di <strong>Jalur Merah</strong> untuk mendapatkan batas bebas $500.
+                {t("beaImpor.result.disclaimerFull")}
               </p>
             </div>
           </div>

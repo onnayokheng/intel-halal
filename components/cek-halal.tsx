@@ -76,9 +76,9 @@ function ScanSource({
 
 function IngredientRow({ jp, en, tone }: { jp: string; en: string; tone: "halal" | "syubhat" | "haram" }) {
   const cfg = {
-    halal:   { dot: "#2C4A3E", bg: "transparent", label: "Halal",   lc: "#1F362D" },
-    syubhat: { dot: "#C8923A", bg: "#F4E4BF",     label: "Syubhat", lc: "#5A4116" },
-    haram:   { dot: "#B85C3C", bg: "#F1D5C7",     label: "Haram",   lc: "#6B2F1D" },
+    halal:   { dot: "#2C4A3E", bg: "transparent", label: t("kanji.verdicts.halal"),   lc: "#1F362D" },
+    syubhat: { dot: "#C8923A", bg: "#F4E4BF",     label: t("kanji.verdicts.syubhat"), lc: "#5A4116" },
+    haram:   { dot: "#B85C3C", bg: "#F1D5C7",     label: t("kanji.verdicts.haram"),   lc: "#6B2F1D" },
   }[tone];
   return (
     <div style={{
@@ -100,11 +100,11 @@ function IngredientRow({ jp, en, tone }: { jp: string; en: string; tone: "halal"
 
 function VerdictCard({ verdict, resultHtml, onReset }: { verdict: Status; resultHtml: string; onReset: () => void }) {
   const cfg = {
-    halal:   { bg: "#DFE8DA", fg: "#2C4A3E",  strong: "#1F362D", label: "HALAL",    sub: t("cekHalal.verdict.halalSub"),
+    halal:   { bg: "#DFE8DA", fg: "#2C4A3E",  strong: "#1F362D", label: t("cekHalal.verdict.halal"),    sub: t("cekHalal.verdict.halalSub"),
       icon: <svg width="34" height="34" viewBox="0 0 24 24" fill="none"><path d="M5 12.5l4.5 4.5L19 7" stroke="#fff" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round"/></svg> },
-    syubhat: { bg: "#F4E4BF", fg: "#7A5A1F",  strong: "#5A4116", label: "SYUBHAT",  sub: t("cekHalal.verdict.syubhatSub"),
+    syubhat: { bg: "#F4E4BF", fg: "#7A5A1F",  strong: "#5A4116", label: t("cekHalal.verdict.syubhat"),  sub: t("cekHalal.verdict.syubhatSub"),
       icon: <svg width="34" height="34" viewBox="0 0 24 24" fill="none"><path d="M12 4v9" stroke="#fff" strokeWidth="2.6" strokeLinecap="round"/><circle cx="12" cy="18" r="1.5" fill="#fff"/></svg> },
-    haram:   { bg: "#F1D5C7", fg: "#93462C",  strong: "#6B2F1D", label: "HARAM",    sub: t("cekHalal.verdict.haramSub"),
+    haram:   { bg: "#F1D5C7", fg: "#93462C",  strong: "#6B2F1D", label: t("cekHalal.verdict.haram"),    sub: t("cekHalal.verdict.haramSub"),
       icon: <svg width="34" height="34" viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M6 18L18 6" stroke="#fff" strokeWidth="2.8" strokeLinecap="round"/></svg> },
     idle:    { bg: "#EFEBE2", fg: "#6B6A63",  strong: "#3D3D3A", label: "",         sub: "", icon: null },
   }[verdict];
@@ -129,7 +129,7 @@ function VerdictCard({ verdict, resultHtml, onReset }: { verdict: Status; result
           }}>{cfg.icon}</div>
           <div style={{ flex: 1 }}>
             <div className="mono" style={{ fontSize: 11, fontWeight: 600, letterSpacing: 1.4, color: cfg.fg, opacity: 0.7, marginBottom: 4 }}>
-              VERDICT
+              {t("cekHalal.verdict.label")}
             </div>
             <div className="serif" style={{ fontSize: 32, fontWeight: 600, lineHeight: 1, color: cfg.strong, letterSpacing: -0.6 }}>
               {cfg.label}
@@ -209,7 +209,7 @@ export default function CekHalal({ isActive }: { isActive: boolean }) {
       streamRef.current = stream;
       setIsCameraOpen(true);
     } catch {
-      setError("Gagal mengakses kamera. Gunakan Galeri sebagai alternatif.");
+      setError(t("cekHalal.camera.errorCamera"));
     }
   };
 
@@ -273,7 +273,7 @@ export default function CekHalal({ isActive }: { isActive: boolean }) {
       setStatus(parsed);
       setResultHtml(DOMPurify.sanitize(cleaned));
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Gagal memproses. Pastikan koneksi internet stabil.");
+      setError(err instanceof Error ? err.message : t("cekHalal.camera.errorProcess"));
     } finally {
       setIsAnalyzing(false);
     }
@@ -322,7 +322,7 @@ export default function CekHalal({ isActive }: { isActive: boolean }) {
           color: "#fff", fontSize: 14, fontWeight: 500,
           textShadow: "0 1px 8px rgba(0,0,0,0.6)",
         }}>
-          {cameraMode === "barcode" ? "Arahkan ke barcode" : "Pas-kan label dalam bingkai"}
+          {cameraMode === "barcode" ? t("cekHalal.camera.barcodeHint") : t("cekHalal.camera.generalHint")}
         </div>
 
         <video ref={videoRef} autoPlay playsInline muted
@@ -339,13 +339,13 @@ export default function CekHalal({ isActive }: { isActive: boolean }) {
             border: "0.5px solid rgba(255,255,255,0.25)",
             padding: "10px 16px", borderRadius: 999, fontWeight: 600, fontSize: 13,
             cursor: "pointer",
-          }}>Batal</button>
+          }}>{t("cekHalal.camera.cancelBtn")}</button>
           <button onClick={capturePhoto} className="tap" style={{
             width: 70, height: 70, borderRadius: "50%",
             background: "#fff", border: "4px solid rgba(255,255,255,0.4)",
             boxShadow: "0 0 0 4px rgba(255,255,255,0.15)",
             padding: 0, cursor: "pointer",
-          }} aria-label="Ambil foto" />
+          }} aria-label={t("cekHalal.camera.captureLabel")} />
           <div style={{ width: 60 }} />
         </div>
         <canvas ref={canvasRef} style={{ display: "none" }} />
@@ -387,7 +387,7 @@ export default function CekHalal({ isActive }: { isActive: boolean }) {
             boxShadow: "var(--shadow-card)",
           }}>
             <div className="mono" style={{ fontSize: 10.5, fontWeight: 500, letterSpacing: 1.4, textTransform: "uppercase", color: "#6B6A63", marginBottom: 10 }}>
-              Cara pakai
+              {t("cekHalal.onboarding.howTo")}
             </div>
             <ol style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 12 }}>
               {[
@@ -466,7 +466,7 @@ export default function CekHalal({ isActive }: { isActive: boolean }) {
             }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
                 <div style={{ fontSize: 13, fontWeight: 600 }}>{t("cekHalal.preview.readyLabel")}</div>
-                <span className="mono" style={{ fontSize: 11, color: "#6B6A63" }}>{images.length} foto</span>
+                <span className="mono" style={{ fontSize: 11, color: "#6B6A63" }}>{images.length} {t("cekHalal.preview.photoCount")}</span>
               </div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 {images.map((img, idx) => (

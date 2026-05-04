@@ -58,6 +58,14 @@
       "haramSub": "Contains non-halal ingredients",
       "scanAgain": "Scan again",
       "disclaimer": "AI Analysis · indicative · not a substitute for MUI / JAKIM certification"
+    },
+    "camera": {
+      "barcodeHint": "Point at barcode",
+      "generalHint": "Align label within frame",
+      "cancelBtn": "Cancel",
+      "captureLabel": "Take photo",
+      "errorCamera": "Failed to access camera. Use Gallery instead.",
+      "errorProcess": "Failed to process. Please check your internet connection."
     }
   },
   "beaImpor": {
@@ -91,7 +99,8 @@
       "nilaiImpor": "Import Value (NDPZ + Duty)",
       "disclaimerText": "Estimate uses Ministry of Finance rate logic. Declare at",
       "disclaimerBold": "Red Lane",
-      "disclaimerSuffix": "to get the $500 free limit."
+      "disclaimerSuffix": "to get the $500 free limit.",
+      "disclaimerFull": "Estimate uses Ministry of Finance rate logic. Declare at Red Lane to get the $500 free limit."
     },
     "loading": "Calculating tax…",
     "loadingNote": "Checking realtime rates + customs tariffs."
@@ -121,7 +130,10 @@
       "detecting": "Detecting location…",
       "detectDesc": "The app will retrieve location data from your device.",
       "update": "Update",
-      "error": "Failed to get location. Try turning off VPN."
+      "error": "Failed to get location. Try turning off VPN.",
+      "detectingDesc": "Requesting GPS permission.",
+      "detectTitle": "Detect My Location",
+      "errorGps": "Failed to get location. Try turning off VPN."
     },
     "search": {
       "categoryLabel": "Select Category",
@@ -129,7 +141,8 @@
       "categoryPlaceholder": "— Please Select Category —",
       "subCategoryPlaceholder": "— Select Place Detail —",
       "searchBtn": "Search on Google Maps",
-      "tip": "When Search is tapped, Google Maps will find locations within a ±3.2 km radius from your reference point."
+      "tip": "When Search is tapped, Google Maps will find locations within a ±3.2 km radius from your reference point.",
+      "categoryTitle": "Select Category"
     },
     "categoryLabels": {
       "akomodasi": "Accommodation",
@@ -170,7 +183,21 @@
       "Maghrib": "المغرب",
       "Isha": "العشاء"
     },
-    "hijriMonths": ["", "Muharram", "Safar", "Rabi al-Awwal", "Rabi al-Thani", "Jumada al-Awwal", "Jumada al-Thani", "Rajab", "Sha'ban", "Ramadhan", "Shawwal", "Dhul Qa'dah", "Dhul Hijjah"],
+    "hijriMonths": [
+      "",
+      "Muharram",
+      "Safar",
+      "Rabi al-Awwal",
+      "Rabi al-Thani",
+      "Jumada al-Awwal",
+      "Jumada al-Thani",
+      "Rajab",
+      "Sha'ban",
+      "Ramadhan",
+      "Shawwal",
+      "Dhul Qa'dah",
+      "Dhul Hijjah"
+    ],
     "loading": {
       "title": "Detecting location…",
       "desc": "Getting GPS, then calculating today's prayer times."

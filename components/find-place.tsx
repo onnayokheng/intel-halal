@@ -42,7 +42,7 @@ export default function FindPlace() {
       if (data2?.cityName) { setLocationName(`${data2.cityName}, ${data2.regionName}`); setLocState("located"); return; }
       throw new Error("Gagal");
     } catch {
-      setLocError("Gagal mendapatkan lokasi. Coba matikan VPN.");
+      setLocError(t("findPlace.location.errorGps"));
       setLocState("no-location");
     }
   };
@@ -107,8 +107,8 @@ export default function FindPlace() {
                 </div>
               </div>
               <div>
-                <div style={{ fontWeight: 600, fontSize: 14 }}>Mendeteksi lokasi…</div>
-                <div style={{ fontSize: 12, color: "#6B6A63", marginTop: 2 }}>Meminta izin GPS perangkat.</div>
+                <div style={{ fontWeight: 600, fontSize: 14 }}>{t("findPlace.location.detecting")}</div>
+                <div style={{ fontSize: 12, color: "#6B6A63", marginTop: 2 }}>{t("findPlace.location.detectingDesc")}</div>
               </div>
             </div>
           ) : locState === "located" ? (
@@ -125,7 +125,7 @@ export default function FindPlace() {
                 </div>
                 <div style={{ flex: 1 }}>
                   <div className="mono" style={{ fontSize: 9.5, fontWeight: 600, letterSpacing: 1.2, color: "#2C4A3E", textTransform: "uppercase", marginBottom: 2 }}>
-                    Lokasi Terdeteksi
+                    {t("findPlace.location.detected")}
                   </div>
                   <div style={{ fontSize: 14, fontWeight: 600, color: "#1B1B19" }}>{locationName}</div>
                 </div>
@@ -133,7 +133,7 @@ export default function FindPlace() {
                   border: "none", background: "#EFEBE2", color: "#6B6A63",
                   borderRadius: 8, padding: "6px 10px", fontSize: 11, fontWeight: 600, cursor: "pointer",
                 }}>
-                  Perbarui
+                  {t("findPlace.location.update")}
                 </button>
               </div>
             </div>
@@ -150,8 +150,8 @@ export default function FindPlace() {
                   </svg>
                 </div>
                 <div>
-                  <div style={{ fontWeight: 600, fontSize: 14, color: "#1B1B19" }}>Deteksi Lokasi Saya</div>
-                  <div style={{ fontSize: 12, color: "#6B6A63", marginTop: 2 }}>Diperlukan untuk mencari tempat terdekat.</div>
+                  <div style={{ fontWeight: 600, fontSize: 14, color: "#1B1B19" }}>{t("findPlace.location.detectTitle")}</div>
+                  <div style={{ fontSize: 12, color: "#6B6A63", marginTop: 2 }}>{t("findPlace.location.detectDesc")}</div>
                 </div>
               </div>
               {locError && (
@@ -171,7 +171,7 @@ export default function FindPlace() {
                   <circle cx="12" cy="12" r="4" fill="#fff"/>
                   <path d="M12 2v3M12 19v3M2 12h3M19 12h3" stroke="#fff" strokeWidth="2" strokeLinecap="round"/>
                 </svg>
-                Deteksi Sekarang
+                {t("findPlace.location.detect")}
               </button>
             </div>
           )}
@@ -180,7 +180,7 @@ export default function FindPlace() {
         {/* Category grid — 2 columns */}
         <div>
           <div className="mono" style={{ fontSize: 10.5, fontWeight: 500, letterSpacing: 1.4, textTransform: "uppercase", color: "#6B6A63", marginBottom: 12 }}>
-            Pilih Kategori
+            {t("findPlace.search.categoryTitle")}
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
             {CATEGORIES.map((cat) => {
@@ -258,7 +258,7 @@ export default function FindPlace() {
               <path d="M12 22s7-6.5 7-12a7 7 0 10-14 0c0 5.5 7 12 7 12z" stroke="#fff" strokeWidth="1.8" strokeLinejoin="round"/>
               <circle cx="12" cy="10" r="2.5" stroke="#fff" strokeWidth="1.8"/>
             </svg>
-            Cari di Google Maps
+            {t("findPlace.search.searchBtn")}
           </button>
         )}
 
@@ -266,7 +266,7 @@ export default function FindPlace() {
         <div style={{ padding: "12px 14px", background: "#EFEBE2", borderRadius: 12, display: "flex", gap: 10, alignItems: "flex-start" }}>
           <span style={{ fontSize: 14 }}>💡</span>
           <p style={{ margin: 0, fontSize: 12, color: "#6B6A63", lineHeight: 1.5 }}>
-            Saat tombol <strong style={{ color: "#3D3D3A" }}>Cari</strong> ditekan, Google Maps akan mencarikan lokasi dalam <strong style={{ color: "#3D3D3A" }}>radius ±3.2 km</strong> dari titik acuan Anda.
+            {t("findPlace.search.tip")}
           </p>
         </div>
       </div>

@@ -132,9 +132,9 @@ const KANJI_ENTRIES: Entry[] = [
 ];
 
 const VERDICT_META = {
-  halal:   { label: "HALAL",   bg: "#DFE8DA", fg: "#2C4A3E", strong: "#1F362D", dot: "#2C4A3E" },
-  syubhat: { label: "SYUBHAT", bg: "#F4E4BF", fg: "#7A5A1F", strong: "#5A4116", dot: "#C8923A" },
-  haram:   { label: "HARAM",   bg: "#F1D5C7", fg: "#93462C", strong: "#6B2F1D", dot: "#B85C3C" },
+  halal:   { label: t("cekHalal.verdict.halal"),   bg: "#DFE8DA", fg: "#2C4A3E", strong: "#1F362D", dot: "#2C4A3E" },
+  syubhat: { label: t("cekHalal.verdict.syubhat"), bg: "#F4E4BF", fg: "#7A5A1F", strong: "#5A4116", dot: "#C8923A" },
+  haram:   { label: t("cekHalal.verdict.haram"),   bg: "#F1D5C7", fg: "#93462C", strong: "#6B2F1D", dot: "#B85C3C" },
 } as const;
 
 type View = "browse" | "list" | "detail";
@@ -277,10 +277,10 @@ function KanjiBrowseList({
   onScanInstead: () => void;
 }) {
   const FILTERS: { id: "all" | Verdict; label: string; tone?: Verdict }[] = [
-    { id: "all", label: "Semua" },
-    { id: "haram", label: "Haram", tone: "haram" },
-    { id: "syubhat", label: "Syubhat", tone: "syubhat" },
-    { id: "halal", label: "Halal-aman", tone: "halal" },
+    { id: "all", label: t("kanji.filters.all") },
+    { id: "haram", label: t("kanji.filters.haram"), tone: "haram" },
+    { id: "syubhat", label: t("kanji.filters.syubhat"), tone: "syubhat" },
+    { id: "halal", label: t("kanji.filters.halal"), tone: "halal" },
   ];
   const activeCategoryObj = KANJI_CATEGORIES.find((c) => c.id === activeCat);
 
@@ -498,7 +498,7 @@ function EmptyState({ onScan }: { onScan: () => void }) {
         Belum ada di kamus
       </div>
       <p style={{ margin: "6px auto 16px", fontSize: 13, color: "#6B6A63", lineHeight: 1.5, maxWidth: 280 }}>
-        Kosakata yang kamu cari belum ada. Coba scan langsung lewat <b>Cek Halal</b> — AI bisa baca kanji apa pun di kemasan.
+        {t("kanji.empty.desc")}
       </p>
       <button
         onClick={onScan}
