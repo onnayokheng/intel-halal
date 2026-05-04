@@ -375,13 +375,15 @@ export default function CekHalal({ isActive, onShowPaywall }: { isActive: boolea
 
       <div style={{ padding: "0 22px", display: "flex", flexDirection: "column", gap: 16 }}>
 
-        {/* Scan sources */}
+        {/* Scan sources — sembunyikan saat analisa berjalan atau hasil sudah muncul */}
         <input ref={galleryInputRef} type="file" accept="image/*" multiple style={{ display: "none" }} onChange={handleFileSelect} />
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
-          <ScanSource label={t("cekHalal.scan.camera")} sub={t("cekHalal.scan.cameraHint")} icon={<IconCamera />} onClick={() => startCamera("general")} active={activeSource === "camera"} />
-          <ScanSource label={t("cekHalal.scan.barcode")} sub={t("cekHalal.scan.barcodeHint")} icon={<IconBarcode />} onClick={() => startCamera("barcode")} active={activeSource === "barcode"} />
-          <ScanSource label={t("cekHalal.scan.gallery")} sub={t("cekHalal.scan.galleryHint")} icon={<IconGallery />} onClick={() => galleryInputRef.current?.click()} active={activeSource === "gallery"} />
-        </div>
+        {!isAnalyzing && !resultHtml && (
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
+            <ScanSource label={t("cekHalal.scan.camera")} sub={t("cekHalal.scan.cameraHint")} icon={<IconCamera />} onClick={() => startCamera("general")} active={activeSource === "camera"} />
+            <ScanSource label={t("cekHalal.scan.barcode")} sub={t("cekHalal.scan.barcodeHint")} icon={<IconBarcode />} onClick={() => startCamera("barcode")} active={activeSource === "barcode"} />
+            <ScanSource label={t("cekHalal.scan.gallery")} sub={t("cekHalal.scan.galleryHint")} icon={<IconGallery />} onClick={() => galleryInputRef.current?.click()} active={activeSource === "gallery"} />
+          </div>
+        )}
 
         {/* Onboarding */}
         {images.length === 0 && !resultHtml && !isAnalyzing && (
