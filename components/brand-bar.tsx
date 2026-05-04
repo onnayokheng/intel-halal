@@ -56,17 +56,20 @@ function formatRemaining(ms: number): string {
 function TrialPill({ onUpgrade }: { onUpgrade: () => void }) {
   const { data: session } = useSession();
   const [msLeft, setMsLeft] = useState<number | null>(null);
+  const devSkip = process.env.NEXT_PUBLIC_DEV_SKIP_AUTH === "true";
 
   useEffect(() => {
-    if (!session?.user) return;
-    const trialAt = (session.user as { trialExpiresAt?: string | Date }).trialExpiresAt;
+    // Dev mode: mock 2-hour trial countdown
+    const mockAt = devSkip ? new Date(Date.now() + 2 * 60 * 60 * 1000) : null;
+    const trialAt = mockAt
+      ?? (session?.user as { trialExpiresAt?: string | Date } | undefined)?.trialExpiresAt;
     if (!trialAt) return;
 
     const tick = () => setMsLeft(trialMsRemaining(trialAt));
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [session]);
+  }, [session, devSkip]);
 
   if (msLeft === null) return null;
 
@@ -106,7 +109,9 @@ export default function BrandBar({ onUpgrade }: { onUpgrade?: () => void }) {
   const { data: session } = useSession();
   const next: Locale = locale === "id" ? "en" : "id";
 
-  const hasUser = !!session?.user;
+  const devSkip = process.env.NEXT_PUBLIC_DEV_SKIP_AUTH === "true";
+  // In dev skip mode, treat as logged-in with 2h trial remaining
+  const hasUser = devSkip || !!session?.user;
 
   return (
     <div

@@ -558,6 +558,23 @@ export default function CekHalal({ isActive, onShowPaywall }: { isActive: boolea
           </div>
         )}
 
+        {/* Dev: test paywall gate */}
+        {process.env.NEXT_PUBLIC_DEV_SKIP_AUTH === "true" && onShowPaywall && (
+          <button
+            onClick={onShowPaywall}
+            className="tap"
+            style={{
+              width: "100%", padding: "10px 0",
+              background: "transparent", border: "1px dashed #D8D2C4",
+              borderRadius: 10, cursor: "pointer",
+              fontFamily: "var(--font-mono)", fontSize: 10,
+              color: "#9B998F", letterSpacing: 0.6,
+            }}
+          >
+            [DEV] Test Paywall →
+          </button>
+        )}
+
         {/* Error */}
         {error && (
           <div style={{
