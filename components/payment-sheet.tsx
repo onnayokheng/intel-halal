@@ -17,7 +17,7 @@ function formatRupiah(amount: number): string {
 }
 
 function QRCode({ data }: { data: string }) {
-  const url = encodeURIComponent(data);
+  const url = `${encodeURIComponent(data)}`;
   return (
     <div style={{
       width: 220, height: 220, margin: "0 auto",
