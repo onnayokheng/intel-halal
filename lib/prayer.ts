@@ -138,11 +138,14 @@ export const findCurrentPrayer = (
 };
 
 export const formatRemaining = (ms: number): string => {
-  if (ms < 0) return "0 menit";
-  const totalMin = Math.floor(ms / 60_000);
-  const hours = Math.floor(totalMin / 60);
-  const mins = totalMin % 60;
-  return hours > 0 ? `${hours} jam ${mins} menit` : `${mins} menit`;
+  if (ms < 0) return "0 detik";
+  const totalSec = Math.floor(ms / 1000);
+  const hours = Math.floor(totalSec / 3600);
+  const mins = Math.floor((totalSec % 3600) / 60);
+  const secs = totalSec % 60;
+  if (hours > 0) return `${hours} jam ${mins} menit ${secs} detik`;
+  if (mins > 0) return `${mins} menit ${secs} detik`;
+  return `${secs} detik`;
 };
 
 export const formatActiveRemaining = (
