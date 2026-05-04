@@ -81,8 +81,8 @@ function TrialPill({ onUpgrade }: { onUpgrade: () => void }) {
       className="tap"
       style={{
         display: "inline-flex", alignItems: "center", gap: 5,
-        background: expired ? "#B85C3C" : "#DFE8DA",
-        color: expired ? "#fff" : "#2C4A3E",
+        background: expired ? "#B85C3C" : "#FDE68A",
+        color: expired ? "#fff" : "#78350F",
         border: "none", borderRadius: 999,
         padding: "5px 10px 5px 8px",
         cursor: "pointer",
@@ -91,7 +91,7 @@ function TrialPill({ onUpgrade }: { onUpgrade: () => void }) {
     >
       <svg width="10" height="10" viewBox="0 0 24 24" fill="none">
         <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"
-          fill={expired ? "#fff" : "#2C4A3E"} />
+          fill={expired ? "#fff" : "#78350F"} />
       </svg>
       <span style={{
         fontFamily: "var(--font-mono)", fontSize: 9, fontWeight: 600,
