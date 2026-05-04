@@ -1,16 +1,24 @@
 "use client";
 
-export type Tab = "cek-halal" | "bea-impor" | "trip-plan" | "find-place";
+export type Tab = "sholat" | "bea-impor" | "cek-halal" | "trip-plan" | "find-place";
 
-const TABS: { id: Tab; label: string; icon: (active: boolean) => React.ReactNode }[] = [
+interface NavItem {
+  id: Tab;
+  label: string;
+  icon: (active: boolean) => React.ReactNode;
+  center?: boolean;
+}
+
+const TABS: NavItem[] = [
   {
-    id: "cek-halal",
-    label: "Cek Halal",
+    id: "sholat",
+    label: "Sholat",
     icon: (a) => (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-        <path d="M9 12l2 2 4-4" stroke={a ? "#fff" : "currentColor"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        <path d="M12 2.5l8 3.5v6c0 4.7-3.4 8.6-8 9.5-4.6-.9-8-4.8-8-9.5v-6l8-3.5z"
+        <path d="M17.5 14.5A7 7 0 119.5 6.5a5.6 5.6 0 008 8z"
               stroke={a ? "#fff" : "currentColor"} strokeWidth="1.6" strokeLinejoin="round"/>
+        <path d="M18 5.2l.7 1.6 1.6.3-1.2 1.1.3 1.6-1.4-.8-1.4.8.3-1.6L15.7 7.1l1.6-.3z"
+              stroke={a ? "#fff" : "currentColor"} strokeWidth="1.2" strokeLinejoin="round" fill="none"/>
       </svg>
     ),
   },
@@ -23,6 +31,18 @@ const TABS: { id: Tab; label: string; icon: (active: boolean) => React.ReactNode
         <path d="M3 10h18" stroke={a ? "#fff" : "currentColor"} strokeWidth="1.6"/>
         <circle cx="8" cy="14.5" r="1.2" fill={a ? "#fff" : "currentColor"}/>
         <path d="M12 14h5" stroke={a ? "#fff" : "currentColor"} strokeWidth="1.6" strokeLinecap="round"/>
+      </svg>
+    ),
+  },
+  {
+    id: "cek-halal",
+    label: "Cek Halal",
+    center: true,
+    icon: () => (
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+        <path d="M9 12l2 2 4-4" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M12 2.5l8 3.5v6c0 4.7-3.4 8.6-8 9.5-4.6-.9-8-4.8-8-9.5v-6l8-3.5z"
+              stroke="#fff" strokeWidth="1.7" strokeLinejoin="round"/>
       </svg>
     ),
   },
@@ -62,44 +82,75 @@ export default function BottomNav({ active, onChange }: { active: Tab; onChange:
           background: "rgba(247,245,240,0.88)",
           backdropFilter: "blur(20px) saturate(180%)",
           WebkitBackdropFilter: "blur(20px) saturate(180%)",
-          borderRadius: 22,
+          borderRadius: 24,
           padding: 6,
           display: "flex",
-          gap: 4,
+          gap: 2,
+          alignItems: "center",
+          position: "relative",
+          overflow: "visible",
           boxShadow: "0 1px 0 rgba(255,255,255,0.6) inset, 0 12px 30px -12px rgba(35,25,5,0.22), 0 0 0 0.5px rgba(43,32,15,0.10)",
         }}>
-          {TABS.map(({ id, label, icon }) => {
-            const isActive = id === active;
+          {TABS.map((item) => {
+            const isActive = item.id === active;
+
+            // Center FAB — Cek Halal
+            if (item.center) {
+              return (
+                <div key={item.id} style={{ flex: 1, display: "flex", justifyContent: "center", position: "relative" }}>
+                  <button
+                    onClick={() => onChange(item.id)}
+                    className="tap"
+                    aria-label={item.label}
+                    aria-current={isActive ? "page" : undefined}
+                    style={{
+                      border: "none",
+                      width: 64, height: 64,
+                      marginTop: -22,
+                      background: isActive ? "#93462C" : "#B85C3C",
+                      color: "#fff",
+                      borderRadius: 22,
+                      display: "flex", flexDirection: "column",
+                      alignItems: "center", justifyContent: "center", gap: 2,
+                      fontFamily: "var(--font-jakarta)",
+                      fontSize: 9.5, fontWeight: 700, letterSpacing: 0.3,
+                      cursor: "pointer",
+                      boxShadow: "0 14px 28px -10px rgba(184,92,60,0.65), 0 0 0 4px #F7F5F0, 0 0 0 4.5px rgba(184,92,60,0.20)",
+                    }}
+                  >
+                    {item.icon(isActive)}
+                    <span style={{ marginTop: 1 }}>{item.label}</span>
+                  </button>
+                </div>
+              );
+            }
+
             return (
               <button
-                key={id}
-                onClick={() => onChange(id)}
+                key={item.id}
+                onClick={() => onChange(item.id)}
                 className="tap"
-                aria-label={label}
+                aria-label={item.label}
                 aria-current={isActive ? "page" : undefined}
                 style={{
                   flex: 1,
                   border: "none",
                   background: isActive ? "#2C4A3E" : "transparent",
                   color: isActive ? "#fff" : "#3D3D3A",
-                  borderRadius: 17,
-                  padding: "9px 4px 8px",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: 3,
+                  borderRadius: 18,
+                  padding: "9px 2px 8px",
+                  display: "flex", flexDirection: "column",
+                  alignItems: "center", gap: 3,
                   fontFamily: "var(--font-jakarta)",
-                  fontSize: 10.5,
-                  fontWeight: 600,
-                  letterSpacing: 0.1,
+                  fontSize: 10, fontWeight: 600, letterSpacing: 0.1,
                   cursor: "pointer",
                   boxShadow: isActive ? "0 6px 14px -6px rgba(44,74,62,0.55)" : "none",
                   transition: "background 200ms ease, color 200ms ease",
                   minHeight: 44,
                 }}
               >
-                {icon(isActive)}
-                <span>{label}</span>
+                {item.icon(isActive)}
+                <span>{item.label}</span>
               </button>
             );
           })}

@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import DOMPurify from "dompurify";
 import { compressImage, parseStatus } from "@/lib/utils";
+import KamusKanji from "@/components/kanji";
 
 type Status = "idle" | "halal" | "syubhat" | "haram";
 
@@ -180,6 +181,7 @@ export default function CekHalal({ isActive }: { isActive: boolean }) {
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [cameraMode, setCameraMode]     = useState<"general" | "barcode">("general");
   const [activeSource, setActiveSource] = useState<"camera" | "barcode" | "gallery" | null>(null);
+  const [kamusOpen, setKamusOpen]       = useState(false);
 
   const streamRef       = useRef<MediaStream | null>(null);
   const videoRef        = useRef<HTMLVideoElement>(null);
@@ -415,8 +417,42 @@ export default function CekHalal({ isActive }: { isActive: boolean }) {
                 AI bersifat <i>indikatif</i>. Untuk produk dengan label MUI/JAKIM, selalu utamakan sertifikasi resmi.
               </p>
             </div>
+
+            {/* Kamus Kanji entry point */}
+            <button
+              onClick={() => setKamusOpen(true)}
+              className="tap"
+              style={{
+                marginTop: 14, width: "100%",
+                background: "#D8E2DA",
+                border: "0.5px solid rgba(44,74,62,0.18)",
+                borderRadius: 14, padding: "14px 14px",
+                display: "flex", alignItems: "center", gap: 12,
+                textAlign: "left", cursor: "pointer",
+              }}
+            >
+              <div style={{
+                width: 42, height: 42, borderRadius: 12,
+                background: "#fff", display: "flex", alignItems: "center", justifyContent: "center",
+                flexShrink: 0,
+              }}>
+                <span className="serif" style={{ fontSize: 22, fontWeight: 600, color: "#2C4A3E", lineHeight: 1 }}>豚</span>
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 13.5, fontWeight: 600, color: "#1F362D" }}>Lihat Kamus Kanji Halal</div>
+                <div style={{ fontSize: 11.5, color: "#6B6A63", marginTop: 1, lineHeight: 1.4 }}>
+                  Pelajari kanji bahan umum tanpa harus scan dulu
+                </div>
+              </div>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M9 6l6 6-6 6" stroke="#1F362D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
           </div>
         )}
+
+        {/* Kamus overlay */}
+        {kamusOpen && <KamusKanji onClose={() => setKamusOpen(false)} />}
 
         {/* Image previews */}
         {images.length > 0 && !isAnalyzing && !resultHtml && (
