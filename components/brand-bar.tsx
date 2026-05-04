@@ -3,6 +3,7 @@
 import { t, useLocale, type Locale } from "@/lib/i18n";
 import { useSession, signOut } from "@/lib/auth-client";
 import { useEffect, useState } from "react";
+import PaymentHistory from "@/components/payment-history";
 
 type AccessInfo =
   | { type: "trial";   expiresAt: string }
@@ -130,9 +131,9 @@ function AccessPill({ accessInfo, onUpgrade }: { accessInfo: AccessInfo; onUpgra
   );
 }
 
-function UserSheet({ name, email, image, accessInfo, onClose }: {
+function UserSheet({ name, email, image, accessInfo, onClose, onShowPayments }: {
   name: string; email: string; image?: string | null;
-  accessInfo: AccessInfo; onClose: () => void;
+  accessInfo: AccessInfo; onClose: () => void; onShowPayments: () => void;
 }) {
   const initials = name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 
@@ -184,7 +185,22 @@ function UserSheet({ name, email, image, accessInfo, onClose }: {
           </div>
         )}
 
-        <div style={{ height: "0.5px", background: "#E8E3D6", marginBottom: 16 }} />
+        <div style={{ height: "0.5px", background: "#E8E3D6", marginBottom: 12 }} />
+
+        {/* Riwayat Pembayaran */}
+        <button onClick={onShowPayments} className="tap" style={{
+          background: "none", border: "none", width: "100%", textAlign: "left",
+          padding: "10px 0", cursor: "pointer",
+          fontFamily: "var(--font-jakarta)", fontSize: 14, fontWeight: 600,
+          color: "#1B1B19", display: "flex", alignItems: "center", justifyContent: "space-between",
+        }}>
+          Riwayat Pembayaran
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+            <path d="M9 6l6 6-6 6" stroke="#6B6A63" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+
+        <div style={{ height: "0.5px", background: "#E8E3D6", margin: "4px 0 12px" }} />
 
         {/* Logout */}
         <button onClick={handleLogout} className="tap" style={{
@@ -220,6 +236,7 @@ export default function BrandBar({ onUpgrade }: { onUpgrade?: () => void }) {
   const [locale, setLocale] = useLocale();
   const { data: session } = useSession();
   const [showUserSheet, setShowUserSheet] = useState(false);
+  const [showPayments, setShowPayments]   = useState(false);
   const [accessInfo, setAccessInfo] = useState<AccessInfo>(null);
   const next: Locale = locale === "id" ? "en" : "id";
 
@@ -294,7 +311,12 @@ export default function BrandBar({ onUpgrade }: { onUpgrade?: () => void }) {
           image={user.image}
           accessInfo={accessInfo}
           onClose={() => setShowUserSheet(false)}
+          onShowPayments={() => { setShowUserSheet(false); setShowPayments(true); }}
         />
+      )}
+
+      {showPayments && (
+        <PaymentHistory onClose={() => setShowPayments(false)} />
       )}
     </>
   );
