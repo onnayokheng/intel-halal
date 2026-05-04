@@ -1,15 +1,13 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { Pool, neonConfig } from "@neondatabase/serverless";
-import { drizzle } from "drizzle-orm/neon-serverless";
-import ws from "ws";
+import { neon } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-http";
 import * as schema from "@/db/schema";
 
-// WebSocket required for Pool (transaction support) in Node.js runtime
-neonConfig.webSocketConstructor = ws;
-
-const pool = new Pool({ connectionString: process.env.DATABASE_URL! });
-const authDb = drizzle({ client: pool, schema });
+// Strip channel_binding — parameter TCP-only, tidak dikenal HTTP endpoint Neon
+const dbUrl = (process.env.DATABASE_URL ?? "").replace(/[&?]channel_binding=[^&]*/g, "");
+const sql = neon(dbUrl);
+const authDb = drizzle(sql, { schema });
 
 const TRIAL_HOURS = 12;
 
@@ -52,6 +50,12 @@ export const auth = betterAuth({
           return { data: { ...userData, trialExpiresAt } };
         },
       },
+    },
+  },
+
+  onAPIError: {
+    onError: (error) => {
+      console.error("[Better Auth] real cause:", (error as Error & { cause?: unknown })?.cause);
     },
   },
 });
