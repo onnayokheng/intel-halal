@@ -143,7 +143,7 @@ export const formatRemaining = (ms: number): string => {
   const hours = Math.floor(totalSec / 3600);
   const mins = Math.floor((totalSec % 3600) / 60);
   const secs = totalSec % 60;
-  if (hours > 0) return `${hours} jam ${mins} menit ${secs} detik`;
+  if (hours > 0) return `${hours} jam ${mins} menit`;
   if (mins > 0) return `${mins} menit ${secs} detik`;
   return `${secs} detik`;
 };
