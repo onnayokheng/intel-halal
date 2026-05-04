@@ -100,7 +100,8 @@
       "disclaimerText": "Estimasi menggunakan logika Kurs Kemenkeu. Lapor di",
       "disclaimerBold": "Jalur Merah",
       "disclaimerSuffix": "untuk mendapatkan batas bebas $500.",
-      "disclaimerFull": "Estimasi menggunakan logika Kurs Kemenkeu. Lapor di Jalur Merah untuk mendapatkan batas bebas $500."
+      "disclaimerFull": "Estimasi menggunakan logika Kurs Kemenkeu. Lapor di Jalur Merah untuk mendapatkan batas bebas $500.",
+      "pph": "3. PPh"
     },
     "loading": "Menghitung pajak…",
     "loadingNote": "Cek kurs realtime + tarif bea cukai."
@@ -153,6 +154,56 @@
       "lifestyle": "Relaksasi",
       "layanan": "Layanan & Kesehatan",
       "ibadah": "Tempat Ibadah"
+    },
+    "subs": {
+      "akomodasi": [
+        "Hotel halal-friendly",
+        "Capsule hotel",
+        "Ryokan",
+        "Apartment / Airbnb"
+      ],
+      "kuliner": [
+        "Restoran sertifikasi halal",
+        "Muslim-friendly",
+        "Seafood / vegetarian",
+        "Halal ramen"
+      ],
+      "transport": [
+        "Stasiun JR / Metro",
+        "Halte bus",
+        "Taksi / rental mobil",
+        "Bandara"
+      ],
+      "belanja": [
+        "Toko bahan halal",
+        "Supermarket umum",
+        "Don Quijote",
+        "Mall / Dept. store"
+      ],
+      "wisata": [
+        "Landmark & spot foto",
+        "Taman & alam",
+        "Museum",
+        "Kuil / shrine"
+      ],
+      "lifestyle": [
+        "Onsen privat (kashikiri)",
+        "Spa & pijat",
+        "Cafe non-alcohol",
+        "Taman kota"
+      ],
+      "layanan": [
+        "Klinik / Rumah Sakit",
+        "Apotek",
+        "ATM internasional",
+        "Money changer"
+      ],
+      "ibadah": [
+        "Masjid",
+        "Mushola publik",
+        "Prayer room",
+        "Tempat wudhu"
+      ]
     }
   },
   "sholat": {
@@ -222,6 +273,12 @@
         "mwl": "Subuh 18° · Isya 17°",
         "egyptian": "Subuh 19.5° · Isya 17.5°"
       }
+    },
+    "timeUnits": {
+      "hours": "jam",
+      "minutes": "menit",
+      "seconds": "detik",
+      "zero": "0 detik"
     }
   },
   "kanji": {

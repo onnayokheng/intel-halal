@@ -10,9 +10,10 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { origin, destination } = await req.json() as {
+    const { origin, destination, locale = "id" } = await req.json() as {
       origin: string;
       destination: string;
+      locale?: string;
     };
 
     if (!origin?.trim() || !destination?.trim()) {
@@ -21,9 +22,14 @@ export async function POST(req: NextRequest) {
 
     const mapsBase = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&travelmode=transit`;
 
+    const langInstruction = locale === "en"
+      ? "IMPORTANT: Write your entire response in English. Use English for all route names, directions, tips, and button labels."
+      : "PENTING: Tulis seluruh jawaban dalam Bahasa Indonesia.";
+
     const prompt = `
-Kamu adalah "Pemandu Perjalanan Jepang" yang ramah dan komunikatif.
-Pengguna ingin melakukan perjalanan dari "${origin}" ke "${destination}".
+${locale === "en" ? "You are a friendly and communicative Japan Travel Guide." : "Kamu adalah \"Pemandu Perjalanan Jepang\" yang ramah dan komunikatif."}
+${langInstruction}
+${locale === "en" ? `The user wants to travel from "${origin}" to "${destination}".` : `Pengguna ingin melakukan perjalanan dari "${origin}" ke "${destination}".`}
 
 TUGAS:
 Berikan MAKSIMAL 3 alternatif rute menggunakan transportasi umum Jepang (Kereta, Subway, Bus, Jalan Kaki).

@@ -1,27 +1,15 @@
 "use client";
 
-import { t } from "@/lib/i18n";
+import { t, ta } from "@/lib/i18n";
 
 import { useState } from "react";
 
-const CATEGORIES = [
-  { id: "akomodasi", label: t("findPlace.categoryLabels.akomodasi"), icon: "🏨",
-    subs: ["Hotel halal-friendly", "Capsule hotel", "Ryokan", "Apartment / Airbnb"] },
-  { id: "kuliner", label: t("findPlace.categoryLabels.kuliner"), icon: "🍱",
-    subs: ["Restoran sertifikasi halal", "Muslim-friendly", "Seafood / vegetarian", "Halal ramen"] },
-  { id: "transport", label: t("findPlace.categoryLabels.transport"), icon: "🚆",
-    subs: ["Stasiun JR / Metro", "Halte bus", "Taksi / rental mobil", "Bandara"] },
-  { id: "belanja", label: t("findPlace.categoryLabels.belanja"), icon: "🛒",
-    subs: ["Toko bahan halal", "Supermarket umum", "Don Quijote", "Mall / Dept. store"] },
-  { id: "wisata", label: t("findPlace.categoryLabels.wisata"), icon: "⛩️",
-    subs: ["Landmark & spot foto", "Taman & alam", "Museum", "Kuil / shrine"] },
-  { id: "lifestyle", label: t("findPlace.categoryLabels.lifestyle"), icon: "🧖",
-    subs: ["Onsen privat (kashikiri)", "Spa & pijat", "Cafe non-alcohol", "Taman kota"] },
-  { id: "layanan", label: t("findPlace.categoryLabels.layanan"), icon: "🏥",
-    subs: ["Klinik / Rumah Sakit", "Apotek", "ATM internasional", "Money changer"] },
-  { id: "ibadah", label: t("findPlace.categoryLabels.ibadah"), icon: "🕌",
-    subs: ["Masjid", "Mushola publik", "Prayer room", "Tempat wudhu"] },
-];
+const CAT_ICONS: Record<string, string> = {
+  akomodasi: "🏨", kuliner: "🍱", transport: "🚆", belanja: "🛒",
+  wisata: "⛩️",  lifestyle: "🧖", layanan: "🏥",  ibadah: "🕌",
+};
+
+const CAT_ORDER = ["akomodasi","kuliner","transport","belanja","wisata","lifestyle","layanan","ibadah"];
 
 type LocationState = "no-location" | "locating" | "located";
 
@@ -31,6 +19,14 @@ export default function FindPlace() {
   const [locError, setLocError]         = useState("");
   const [categoryId, setCategoryId]     = useState<string | null>(null);
   const [subCategory, setSubCategory]   = useState<string | null>(null);
+
+  // Build category list per render so labels re-translate on locale switch
+  const CATEGORIES = CAT_ORDER.map((id) => ({
+    id,
+    icon: CAT_ICONS[id],
+    label: t(`findPlace.categoryLabels.${id}`),
+    subs:  ta(`findPlace.subs.${id}`),
+  }));
 
   const fetchFromIP = async () => {
     try {

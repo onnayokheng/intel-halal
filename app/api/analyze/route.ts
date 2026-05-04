@@ -52,13 +52,18 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { images } = await req.json() as {
+    const { images, locale = "id" } = await req.json() as {
       images: { mimeType: string; base64Data: string }[];
+      locale?: string;
     };
 
     if (!images?.length) {
       return NextResponse.json({ error: "No images provided" }, { status: 400 });
     }
+
+    const langInstruction = locale === "en"
+      ? "IMPORTANT: Write your entire response in English."
+      : "PENTING: Tulis seluruh jawaban dalam Bahasa Indonesia.";
 
     const imageParts = images.map((img) => ({
       inlineData: { mimeType: img.mimeType, data: img.base64Data },
@@ -109,8 +114,9 @@ export async function POST(req: NextRequest) {
     }
 
     // ── Step 3: full AI analysis ──
+    const prompt = `${SYSTEM_PROMPT}\n\n${langInstruction}`;
     const payload = {
-      contents: [{ parts: [{ text: SYSTEM_PROMPT }, ...imageParts] }],
+      contents: [{ parts: [{ text: prompt }, ...imageParts] }],
       generationConfig: { temperature: 0.3, maxOutputTokens: 4096 },
     };
 

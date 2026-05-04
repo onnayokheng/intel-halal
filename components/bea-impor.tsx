@@ -206,7 +206,7 @@ export default function BeaImpor() {
               boxShadow: "var(--shadow-card)",
             }}>
               <div className="mono" style={{ fontSize: 10.5, fontWeight: 600, letterSpacing: 1.4, color: "#2C4A3E", opacity: 0.7, marginBottom: 8 }}>
-                ESTIMASI PAJAK
+                {t("beaImpor.result.estimasiLabel")}
               </div>
               <div className="serif" style={{
                 fontSize: 36, fontWeight: 600, letterSpacing: -0.8,
@@ -224,7 +224,7 @@ export default function BeaImpor() {
             {/* Total modal */}
             <div style={{ background: "#fff", border: "0.5px solid #E8E3D6", borderRadius: 18, padding: 18, boxShadow: "var(--shadow-card)" }}>
               <div className="mono" style={{ fontSize: 10.5, fontWeight: 500, letterSpacing: 1.4, textTransform: "uppercase", color: "#6B6A63", marginBottom: 12 }}>
-                Total Modal Keseluruhan
+                {t("beaImpor.result.modalLabel")}
               </div>
               <div className="serif" style={{ fontSize: 28, fontWeight: 600, letterSpacing: -0.5, color: "#1B1B19" }}>
                 {formatRp(result.priceIdr + result.totalTax + 25000)}
@@ -235,7 +235,7 @@ export default function BeaImpor() {
             {/* Kurs */}
             <div style={{ background: "#EFEBE2", borderRadius: 14, padding: "14px 16px" }}>
               <div className="mono" style={{ fontSize: 10, fontWeight: 600, letterSpacing: 1.2, textTransform: "uppercase", color: "#9B998F", marginBottom: 8 }}>
-                Kurs Referensi (Realtime)
+                {t("beaImpor.result.kursLabel")}
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13 }}>
                 <span className="mono" style={{ color: "#6B6A63" }}>1 USD</span>
@@ -250,7 +250,7 @@ export default function BeaImpor() {
             {/* Breakdown */}
             <div style={{ background: "#fff", border: "0.5px solid #E8E3D6", borderRadius: 18, padding: 18, boxShadow: "var(--shadow-card)" }}>
               <div className="mono" style={{ fontSize: 10.5, fontWeight: 500, letterSpacing: 1.4, textTransform: "uppercase", color: "#6B6A63", marginBottom: 14 }}>
-                Rincian Perhitungan
+                {t("beaImpor.result.rincianLabel")}
               </div>
               {[
                 { label: t("beaImpor.result.nilaiBarang"), value: `$${result.priceUsd.toFixed(2)}`, mono: true },
@@ -269,7 +269,7 @@ export default function BeaImpor() {
                 {[
                   [t("beaImpor.result.beaMasuk"), formatRp(result.bm)],
                   [t("beaImpor.result.ppn"), formatRp(result.ppn)],
-                  [`${t("beaImpor.result.ppn").replace("2. PPN", "3. PPh")} (${hasNpwp ? "10%" : "20%"})`, formatRp(result.pph)],
+                  [`${t("beaImpor.result.pph")} (${hasNpwp ? "10%" : "20%"})`, formatRp(result.pph)],
                 ].map(([l, v]) => (
                   <div key={l} style={{ display: "flex", justifyContent: "space-between", fontSize: 13 }}>
                     <span style={{ color: "#6B6A63" }}>{l}</span>

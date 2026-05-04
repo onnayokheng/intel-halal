@@ -100,7 +100,8 @@
       "disclaimerText": "Estimate uses Ministry of Finance rate logic. Declare at",
       "disclaimerBold": "Red Lane",
       "disclaimerSuffix": "to get the $500 free limit.",
-      "disclaimerFull": "Estimate uses Ministry of Finance rate logic. Declare at Red Lane to get the $500 free limit."
+      "disclaimerFull": "Estimate uses Ministry of Finance rate logic. Declare at Red Lane to get the $500 free limit.",
+      "pph": "3. Income Tax"
     },
     "loading": "Calculating tax…",
     "loadingNote": "Checking realtime rates + customs tariffs."
@@ -153,6 +154,56 @@
       "lifestyle": "Relaxation",
       "layanan": "Services & Health",
       "ibadah": "Places of Worship"
+    },
+    "subs": {
+      "akomodasi": [
+        "Halal-friendly hotel",
+        "Capsule hotel",
+        "Ryokan",
+        "Apartment / Airbnb"
+      ],
+      "kuliner": [
+        "Halal-certified restaurant",
+        "Muslim-friendly",
+        "Seafood / vegetarian",
+        "Halal ramen"
+      ],
+      "transport": [
+        "JR / Metro station",
+        "Bus stop",
+        "Taxi / car rental",
+        "Airport"
+      ],
+      "belanja": [
+        "Halal grocery store",
+        "Supermarket",
+        "Don Quijote",
+        "Mall / Department store"
+      ],
+      "wisata": [
+        "Landmark & photo spot",
+        "Park & nature",
+        "Museum",
+        "Temple / shrine"
+      ],
+      "lifestyle": [
+        "Private onsen (kashikiri)",
+        "Spa & massage",
+        "Non-alcohol cafe",
+        "City park"
+      ],
+      "layanan": [
+        "Clinic / Hospital",
+        "Pharmacy",
+        "International ATM",
+        "Money changer"
+      ],
+      "ibadah": [
+        "Mosque",
+        "Public mushola",
+        "Prayer room",
+        "Wudu facility"
+      ]
     }
   },
   "sholat": {
@@ -222,6 +273,12 @@
         "mwl": "Fajr 18° · Isha 17°",
         "egyptian": "Fajr 19.5° · Isha 17.5°"
       }
+    },
+    "timeUnits": {
+      "hours": "h",
+      "minutes": "min",
+      "seconds": "sec",
+      "zero": "0 sec"
     }
   },
   "kanji": {

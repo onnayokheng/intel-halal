@@ -216,17 +216,17 @@ export default function KamusKanji({ onClose }: { onClose: () => void }) {
         </button>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div className="mono" style={{ fontSize: 9.5, fontWeight: 500, letterSpacing: 1.2, color: "#9B998F", textTransform: "uppercase" }}>
-            Referensi
+            {t("kanji.ref")}
           </div>
           <div className="serif" style={{
             fontSize: 17, fontWeight: 600, letterSpacing: -0.2, color: "#1B1B19", lineHeight: 1.1, marginTop: 1,
             whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
           }}>
-            Kamus Kanji Halal
+            {t("kanji.title")}
           </div>
         </div>
         <div className="mono" style={{ fontSize: 10, fontWeight: 500, color: "#6B6A63", letterSpacing: 0.4, flexShrink: 0 }}>
-          {KANJI_ENTRIES.length} kata
+          {KANJI_ENTRIES.length} {t("kanji.wordCount")}
         </div>
       </div>
 
@@ -361,7 +361,7 @@ function KanjiBrowseList({
       {view === "browse" && (
         <>
           <div className="mono" style={{ fontSize: 10.5, fontWeight: 500, letterSpacing: 1.4, textTransform: "uppercase", color: "#6B6A63", marginTop: 4 }}>
-            Telusuri per kategori
+            {t("kanji.browseLabel")}
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
             {KANJI_CATEGORIES.map((cat) => {
@@ -399,7 +399,7 @@ function KanjiBrowseList({
                       fontSize: 10.5, fontWeight: 600,
                       background: meta.bg, color: meta.strong,
                       padding: "3px 8px", borderRadius: 999, letterSpacing: 0.4,
-                    }}>{count} kosakata</span>
+                    }}>{count} {t("kanji.vocabCount")}</span>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                       <path d="M9 6l6 6-6 6" stroke="#6B6A63" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
@@ -495,7 +495,7 @@ function EmptyState({ onScan }: { onScan: () => void }) {
         </svg>
       </div>
       <div className="serif" style={{ fontSize: 19, fontWeight: 500, letterSpacing: -0.3, color: "#1B1B19" }}>
-        Belum ada di kamus
+        {t("kanji.empty.title")}
       </div>
       <p style={{ margin: "6px auto 16px", fontSize: 13, color: "#6B6A63", lineHeight: 1.5, maxWidth: 280 }}>
         {t("kanji.empty.desc")}
@@ -515,7 +515,7 @@ function EmptyState({ onScan }: { onScan: () => void }) {
           <path d="M3 8a2 2 0 012-2h2l1.5-2h7L17 6h2a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V8z" stroke="#fff" strokeWidth="1.6" strokeLinejoin="round"/>
           <circle cx="12" cy="13" r="4" stroke="#fff" strokeWidth="1.6"/>
         </svg>
-        Coba scan lewat Cek Halal
+        {t("kanji.empty.scanBtn")}
       </button>
     </div>
   );
@@ -575,7 +575,7 @@ function KanjiDetail({
         padding: 18, boxShadow: "0 1px 0 rgba(43,32,15,.05), 0 8px 24px -10px rgba(43,32,15,.14)",
       }}>
         <div className="mono" style={{ fontSize: 10.5, fontWeight: 500, letterSpacing: 1.4, textTransform: "uppercase", color: "#6B6A63", marginBottom: 8 }}>
-          Arti
+          {t("kanji.meaning")}
         </div>
         <p style={{ margin: 0, fontSize: 14.5, color: "#3D3D3A", lineHeight: 1.55 }}>{entry.arti}</p>
       </div>
@@ -586,7 +586,7 @@ function KanjiDetail({
         padding: 18, boxShadow: "0 1px 0 rgba(43,32,15,.05), 0 8px 24px -10px rgba(43,32,15,.14)",
       }}>
         <div className="mono" style={{ fontSize: 10.5, fontWeight: 500, letterSpacing: 1.4, textTransform: "uppercase", color: "#6B6A63", marginBottom: 12 }}>
-          Sering ditemukan di
+          {t("kanji.foundIn")}
         </div>
         <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 8 }}>
           {entry.foundIn.map((item, i) => (
@@ -614,7 +614,7 @@ function KanjiDetail({
             background: meta.strong, color: "#fff",
             fontSize: 10, fontWeight: 700,
           }}>i</span>
-          Tips
+          {t("kanji.tips")}
         </div>
         <p style={{ margin: 0, fontSize: 13.5, color: meta.strong, lineHeight: 1.55 }}>{entry.tips}</p>
       </div>
@@ -626,7 +626,7 @@ function KanjiDetail({
           boxShadow: "0 1px 0 rgba(43,32,15,.05), 0 8px 24px -10px rgba(43,32,15,.14)",
         }}>
           <div className="mono" style={{ fontSize: 10.5, fontWeight: 500, letterSpacing: 1.4, textTransform: "uppercase", color: "#6B6A63", marginBottom: 12 }}>
-            Kanji terkait
+            {t("kanji.related")}
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
             {entry.related.map((r, i) => {

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import BottomNav, { type Tab } from "@/components/bottom-nav";
 import BrandBar from "@/components/brand-bar";
-import { t, useLocale, initLocale } from "@/lib/i18n";
+import { t, useLocale } from "@/lib/i18n";
 
 const PrayerSchedule = dynamic(() => import("@/components/prayer"),     { ssr: false });
 const CekHalal       = dynamic(() => import("@/components/cek-halal"),  { ssr: false });
@@ -14,10 +14,7 @@ const FindPlace      = dynamic(() => import("@/components/find-place"), { ssr: f
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<Tab>("cek-halal");
-  const [locale]   = useLocale();   // re-renders when language switches
-
-  // Init locale from localStorage on first mount
-  useEffect(() => { initLocale(); }, []);
+  const [locale] = useLocale();   // re-renders when language switches
 
   const TAB_NAV_KEY: Record<Tab, string> = {
     "sholat":     "nav.sholat",

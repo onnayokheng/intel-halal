@@ -1,6 +1,6 @@
 "use client";
 
-import { t } from "@/lib/i18n";
+import { t, getLocale } from "@/lib/i18n";
 
 import { useState, useRef, useEffect } from "react";
 import DOMPurify from "dompurify";
@@ -163,12 +163,12 @@ function VerdictCard({ verdict, resultHtml, onReset }: { verdict: Status; result
             boxShadow: "var(--shadow-soft)",
           }}
         >
-          Scan ulang
+          {t("cekHalal.verdict.scanAgain")}
         </button>
       </div>
 
       <div className="mono" style={{ fontSize: 11, color: "#9B998F", textAlign: "center", lineHeight: 1.5 }}>
-        AI Analysis · indikatif · bukan pengganti sertifikasi MUI / JAKIM
+        {t("cekHalal.verdict.disclaimer")}
       </div>
     </div>
   );
@@ -265,7 +265,7 @@ export default function CekHalal({ isActive }: { isActive: boolean }) {
       const res = await fetch("/api/analyze", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ images: images.map(({ base64Data, mimeType }) => ({ base64Data, mimeType })) }),
+        body: JSON.stringify({ images: images.map(({ base64Data, mimeType }) => ({ base64Data, mimeType })), locale: getLocale() }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Terjadi kesalahan");
@@ -416,7 +416,7 @@ export default function CekHalal({ isActive }: { isActive: boolean }) {
             }}>
               <span style={{ fontSize: 16, lineHeight: 1 }}>⚠</span>
               <p style={{ margin: 0, fontSize: 11.5, color: "#6B6A63", lineHeight: 1.5 }}>
-                AI bersifat <i>indikatif</i>. Untuk produk dengan label MUI/JAKIM, selalu utamakan sertifikasi resmi.
+                {t("cekHalal.onboarding.disclaimer")}
               </p>
             </div>
 
@@ -443,7 +443,7 @@ export default function CekHalal({ isActive }: { isActive: boolean }) {
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontSize: 13.5, fontWeight: 600, color: "#1F362D" }}>{t("cekHalal.onboarding.kamusTitle")}</div>
                 <div style={{ fontSize: 11.5, color: "#6B6A63", marginTop: 1, lineHeight: 1.4 }}>
-                  Pelajari kanji bahan umum tanpa harus scan dulu
+                  {t("cekHalal.onboarding.kamusDesc")}
                 </div>
               </div>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none">

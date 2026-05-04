@@ -1,6 +1,6 @@
 "use client";
 
-import { t } from "@/lib/i18n";
+import { t, getLocale } from "@/lib/i18n";
 
 import { useState } from "react";
 import DOMPurify from "dompurify";
@@ -20,7 +20,7 @@ export default function TripPlan() {
       const res = await fetch("/api/trip", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ origin, destination }),
+        body: JSON.stringify({ origin, destination, locale: getLocale() }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Terjadi kesalahan");
@@ -58,7 +58,7 @@ export default function TripPlan() {
         <div style={{ background: "#fff", border: "0.5px solid #E8E3D6", borderRadius: 18, overflow: "hidden", boxShadow: "var(--shadow-card)" }}>
           <div style={{ padding: "18px 18px 6px" }}>
             <div className="mono" style={{ fontSize: 10.5, fontWeight: 500, letterSpacing: 1.4, textTransform: "uppercase", color: "#6B6A63", marginBottom: 14 }}>
-              Mau ke mana?
+              {t("tripPlan.form.sectionLabel")}
             </div>
 
             <div style={{ position: "relative", display: "flex", flexDirection: "column", gap: 0 }}>

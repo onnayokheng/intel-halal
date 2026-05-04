@@ -1,6 +1,6 @@
 /* Aladhan API + prayer time utilities */
 
-import { ta, tObj } from "@/lib/i18n";
+import { t, ta, tObj } from "@/lib/i18n";
 
 export const HISAB_METHOD_ID: Record<string, number> = {
   kemenag: 20,   // Indonesian Ministry of Religious Affairs
@@ -130,13 +130,16 @@ export const findCurrentPrayer = (
 };
 
 export const formatRemaining = (ms: number): string => {
-  if (ms < 0) return "0 detik";
+  if (ms < 0) return t("sholat.timeUnits.zero");
   const totalSec = Math.floor(ms / 1000);
   const hours = Math.floor(totalSec / 3600);
   const mins = Math.floor((totalSec % 3600) / 60);
   const secs = totalSec % 60;
-  if (hours > 0) return `${hours} jam ${mins} menit`;
-  if (mins > 0) return `${mins} menit ${secs} detik`;
-  return `${secs} detik`;
+  const h = t("sholat.timeUnits.hours");
+  const m = t("sholat.timeUnits.minutes");
+  const s = t("sholat.timeUnits.seconds");
+  if (hours > 0) return `${hours} ${h} ${mins} ${m}`;
+  if (mins > 0) return `${mins} ${m} ${secs} ${s}`;
+  return `${secs} ${s}`;
 };
 

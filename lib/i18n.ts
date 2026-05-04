@@ -10,13 +10,6 @@ const LOCALE_EVENT = "intel-halal-locale-change";
 
 let currentLocale: Locale = "id";
 
-/** Initialise locale from localStorage (call once on app mount) */
-export const initLocale = () => {
-  if (typeof window === "undefined") return;
-  const saved = localStorage.getItem(STORAGE_KEY) as Locale | null;
-  if (saved && saved in locales) currentLocale = saved;
-};
-
 /** Change locale, persist to localStorage, emit event for React re-render */
 export const setLocale = (locale: Locale) => {
   currentLocale = locale;
@@ -72,16 +65,33 @@ export function tObj(key: string): Record<string, string> {
   return {};
 }
 
-/** React hook — triggers re-render when locale changes */
+/**
+ * React hook — reads locale from localStorage on mount and keeps all
+ * useLocale() instances in sync via a custom DOM event.
+ *
+ * Root cause of the bug: the lazy useState initializer only runs during
+ * React's server-side render pass (where localStorage is undefined), so the
+ * client hydrates with "id" even when localStorage has "en". The fix is to
+ * read localStorage inside useEffect (client-only) and immediately update
+ * both the module variable and the React state.
+ */
 export function useLocale(): [Locale, (l: Locale) => void] {
   const { useState, useEffect } = require("react") as typeof import("react");
-  const [locale, setLocaleState] = useState<Locale>(() => {
-    initLocale();
-    return currentLocale;
-  });
+
+  // Start with server-safe default; useEffect will correct it on the client.
+  const [locale, setLocaleState] = useState<Locale>("id");
 
   useEffect(() => {
-    const handler = (e: Event) => setLocaleState((e as CustomEvent<Locale>).detail);
+    // 1. Read saved locale from localStorage and sync both module var + state.
+    const saved = localStorage.getItem(STORAGE_KEY) as Locale | null;
+    if (saved && saved in locales) {
+      currentLocale = saved as Locale;
+      setLocaleState(saved as Locale);
+    }
+
+    // 2. Listen for future changes triggered by setLocale().
+    const handler = (e: Event) =>
+      setLocaleState((e as CustomEvent<Locale>).detail);
     window.addEventListener(LOCALE_EVENT, handler);
     return () => window.removeEventListener(LOCALE_EVENT, handler);
   }, []);
