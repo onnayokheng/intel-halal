@@ -217,7 +217,7 @@ export default function BeaImpor() {
               <div style={{ fontSize: 13, marginTop: 8, color: "#2C4A3E" }}>
                 {result.totalTax === 0
                   ? t("beaImpor.result.bebasPajakNote")
-                  : `Kena pajak dari selisih $${result.taxableUsd.toFixed(2)}`}
+                  : `${t("beaImpor.result.taxableNote")} $${result.taxableUsd.toFixed(2)}`}
               </div>
             </div>
 
