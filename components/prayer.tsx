@@ -293,7 +293,7 @@ function NextPrayerHero({ prayer, remainingMs }: { prayer: PrayerComputed; remai
         }}>
           <span style={{ width: 6, height: 6, borderRadius: 99, background: "#2C4A3E" }} className="animate-pulse-ring" />
           <span className="mono" style={{ fontSize: 12, fontWeight: 600, color: "#1F362D", letterSpacing: 0.3 }}>
-            {formatRemaining(remainingMs)} lagi
+            {formatRemaining(remainingMs)}
           </span>
         </div>
       </div>

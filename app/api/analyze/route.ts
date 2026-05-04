@@ -6,10 +6,11 @@ import { eq, gt } from "drizzle-orm";
 const GEMINI_URL =
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
 
-const SYSTEM_PROMPT = `
+const SYSTEM_PROMPT_ID = `
 Kamu adalah "Intel Halal", pakar syariat Islam dan Ilmu Gizi yang merujuk ketat pada standar "Halal Japan Association".
 Tugasmu: Analisis foto komposisi produk, makanan, minuman, barang, atau tempat di Jepang.
 Jawab LANGSUNG dalam HTML murni (tanpa markdown \`\`\`html). Gunakan tag <h4> untuk subjudul.
+BAHASA: Tulis SELURUH jawaban dalam Bahasa Indonesia.
 
 ATURAN KLASIFIKASI STATUS (WAJIB PILIH SALAH SATU DAN SERTAKAN TAG-NYA DI AWAL JAWABAN):
 1. HALAL (Tag: <!-- STATUS_HALAL -->)
@@ -29,6 +30,32 @@ FORMAT OUTPUT:
 - <h4>Analisis Komposisi</h4> (Jelaskan bahan kritis secara detail).
 - Jika Syubhat atau Haram, WAJIB ada <h4>Alternatif Produk</h4>.
 - Jika Gambar HANYA berupa Barcode: Coba identifikasi produk dari angka barcode tersebut.
+`;
+
+const SYSTEM_PROMPT_EN = `
+You are "Intel Halal", an Islamic law and nutrition expert strictly following the "Halal Japan Association" standards.
+Your task: Analyze photos of product ingredients, food, beverages, items, or places in Japan.
+Respond DIRECTLY in pure HTML (no markdown \`\`\`html). Use <h4> tags for subheadings.
+LANGUAGE: Write your ENTIRE response in English.
+
+STATUS CLASSIFICATION RULES (MUST CHOOSE ONE AND INCLUDE ITS TAG AT THE START):
+1. HALAL (Tag: <!-- STATUS_HALAL -->)
+   - Halal Level 1: Halal certified / 100% pure plant-based or pure seafood without additives.
+   - Halal Level 2: Factory ingredients free from animal derivatives/alcohol.
+   - Halal Level 3: Halal base ingredients, but small risk of cross-contamination in factory.
+2. DOUBTFUL (Tag: <!-- STATUS_SYUBHAT -->)
+   - Contains emulsifiers, shortening, margarine, amino acids, or flavoring with unclear source.
+   - Status unclear and needs confirmation from the manufacturer.
+3. HARAM (Tag: <!-- STATUS_HARAM -->)
+   - Haram Level 1: Contains non-halal animal derivatives (pork/beef gelatin, meat extract without halal label).
+   - Haram Level 2: Clearly contains pork, lard, alcohol, mirin, sake, or rum.
+
+OUTPUT FORMAT:
+- FIRST LINE MUST CONTAIN THE STATUS TAG (e.g. <!-- STATUS_SYUBHAT -->).
+- Second line: <h3>[Level Name]</h3>
+- <h4>Ingredient Analysis</h4> (Explain critical ingredients in detail).
+- If Doubtful or Haram, MUST include <h4>Product Alternatives</h4>.
+- If the image is ONLY a Barcode: Try to identify the product from the barcode number.
 `;
 
 // ── Step 1: ekstrak nama produk / barcode dari gambar (call AI murah) ──
@@ -61,10 +88,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "No images provided" }, { status: 400 });
     }
 
-    const langInstruction = locale === "en"
-      ? "IMPORTANT: Write your entire response in English."
-      : "PENTING: Tulis seluruh jawaban dalam Bahasa Indonesia.";
-
     const imageParts = images.map((img) => ({
       inlineData: { mimeType: img.mimeType, data: img.base64Data },
     }));
@@ -83,7 +106,7 @@ export async function POST(req: NextRequest) {
       const extractData = await extractRes.json();
       const raw = extractData.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
       const key = normalizeKey(raw);
-      if (key && key !== "unknown") lookupKey = key;
+      if (key && key !== "unknown") lookupKey = `${locale}:${key}`;
     } catch {
       // extraction gagal → lanjut tanpa cache
     }
@@ -114,9 +137,9 @@ export async function POST(req: NextRequest) {
     }
 
     // ── Step 3: full AI analysis ──
-    const prompt = `${SYSTEM_PROMPT}\n\n${langInstruction}`;
+    const systemPrompt = locale === "en" ? SYSTEM_PROMPT_EN : SYSTEM_PROMPT_ID;
     const payload = {
-      contents: [{ parts: [{ text: prompt }, ...imageParts] }],
+      contents: [{ parts: [{ text: systemPrompt }, ...imageParts] }],
       generationConfig: { temperature: 0.3, maxOutputTokens: 4096 },
     };
 
