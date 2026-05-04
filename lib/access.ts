@@ -13,6 +13,12 @@ export type AccessStatus =
   | { ok: true;  reason: "trial" | "subscription" }
   | { ok: false; reason: "no-session" | "trial-expired" | "no-subscription" };
 
+export type AccessInfo =
+  | { type: "trial";      expiresAt: Date }
+  | { type: "premium";    expiresAt: Date; plan: Plan }
+  | { type: "expired" }
+  | { type: "no-session" };
+
 export async function checkAccess(
   userId: string,
   trialExpiresAt: Date | string | null | undefined,
@@ -38,6 +44,31 @@ export async function checkAccess(
   if (sub) return { ok: true, reason: "subscription" };
 
   return { ok: false, reason: "trial-expired" };
+}
+
+export async function getAccessInfo(
+  userId: string,
+  trialExpiresAt: Date | string | null | undefined,
+): Promise<AccessInfo> {
+  const now = new Date();
+
+  if (trialExpiresAt && new Date(trialExpiresAt) > now) {
+    return { type: "trial", expiresAt: new Date(trialExpiresAt) };
+  }
+
+  const [sub] = await db
+    .select()
+    .from(subscription)
+    .where(and(
+      eq(subscription.userId, userId),
+      eq(subscription.status, "active"),
+      gt(subscription.expiresAt, now),
+    ))
+    .limit(1);
+
+  if (sub) return { type: "premium", expiresAt: sub.expiresAt!, plan: sub.plan as Plan };
+
+  return { type: "expired" };
 }
 
 /** Berapa milidetik sisa trial. Negatif = sudah habis. */

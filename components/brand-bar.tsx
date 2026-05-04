@@ -4,46 +4,24 @@ import { t, useLocale, type Locale } from "@/lib/i18n";
 import { useSession, signOut } from "@/lib/auth-client";
 import { useEffect, useState } from "react";
 
-function trialMsRemaining(trialExpiresAt: Date | string | null | undefined): number {
-  if (!trialExpiresAt) return -1;
-  return new Date(trialExpiresAt).getTime() - Date.now();
+type AccessInfo =
+  | { type: "trial";   expiresAt: string }
+  | { type: "premium"; expiresAt: string; plan: string }
+  | { type: "expired" }
+  | { type: "no-session" }
+  | null; // not yet loaded
+
+function trialMsRemaining(expiresAt: string): number {
+  return new Date(expiresAt).getTime() - Date.now();
 }
 
-/** Eight-point star with halal checkmark — the Intel Halal brand mark */
-export function BrandMark({ size = 28, color = "#2C4A3E" }: { size?: number; color?: string }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 40 40" style={{ flexShrink: 0 }}>
-      <path
-        d="M20 2 L24.5 14 L37 18 L24.5 22 L20 36 L15.5 22 L3 18 L15.5 14 Z"
-        fill={color} stroke={color} strokeWidth="1.2" strokeLinejoin="round"
-      />
-      <path
-        d="M14.5 19.5 L18.5 23 L25.5 15.5"
-        fill="none" stroke="#F7F5F0" strokeWidth="2.4"
-        strokeLinecap="round" strokeLinejoin="round"
-      />
-    </svg>
-  );
+function formatDate(d: string): string {
+  return new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric" }).format(new Date(d));
 }
 
-/** Full wordmark: star + "Intel·Halal" in Fraunces */
-export function BrandLogo({ height = 22 }: { height?: number }) {
-  return (
-    <div style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-      <BrandMark size={height + 6} color="#2C4A3E" />
-      <span
-        className="serif"
-        style={{ fontSize: height, fontWeight: 600, letterSpacing: -0.4, color: "#1B1B19", lineHeight: 1 }}
-      >
-        Intel<span style={{ color: "#2C4A3E" }}>·</span>Halal
-      </span>
-    </div>
-  );
-}
+const PLAN_LABEL: Record<string, string> = { "7day": "7 Hari", "30day": "1 Bulan" };
 
-const LOCALE_LABELS: Record<Locale, string> = { id: "ID", en: "EN" };
-
-function formatRemaining(ms: number): string {
+function formatTrialRemaining(ms: number): string {
   if (ms <= 0) return t("trial.expired");
   const totalSec = Math.floor(ms / 1000);
   const h = Math.floor(totalSec / 3600);
@@ -53,122 +31,165 @@ function formatRemaining(ms: number): string {
   return `<1m ${t("trial.remaining")}`;
 }
 
-function TrialPill({ onUpgrade }: { onUpgrade: () => void }) {
-  const { data: session } = useSession();
-  const [msLeft, setMsLeft] = useState<number | null>(null);
-  const devSkip = process.env.NEXT_PUBLIC_DEV_SKIP_AUTH === "true";
+/** Eight-point star with halal checkmark — the Intel Halal brand mark */
+export function BrandMark({ size = 28, color = "#2C4A3E" }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 40 40" style={{ flexShrink: 0 }}>
+      <path d="M20 2 L24.5 14 L37 18 L24.5 22 L20 36 L15.5 22 L3 18 L15.5 14 Z"
+        fill={color} stroke={color} strokeWidth="1.2" strokeLinejoin="round"/>
+      <path d="M14.5 19.5 L18.5 23 L25.5 15.5"
+        fill="none" stroke="#F7F5F0" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
 
+export function BrandLogo({ height = 22 }: { height?: number }) {
+  return (
+    <div style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+      <BrandMark size={height + 6} color="#2C4A3E" />
+      <span className="serif" style={{ fontSize: height, fontWeight: 600, letterSpacing: -0.4, color: "#1B1B19", lineHeight: 1 }}>
+        Intel<span style={{ color: "#2C4A3E" }}>·</span>Halal
+      </span>
+    </div>
+  );
+}
+
+const LOCALE_LABELS: Record<Locale, string> = { id: "ID", en: "EN" };
+
+function AccessPill({ accessInfo, onUpgrade }: { accessInfo: AccessInfo; onUpgrade: () => void }) {
+  const [msLeft, setMsLeft] = useState<number>(0);
+
+  // Countdown for trial only
   useEffect(() => {
-    const mockAt = devSkip ? new Date(Date.now() + 2 * 60 * 60 * 1000) : null;
-    const trialAt = mockAt
-      ?? (session?.user as { trialExpiresAt?: string | Date } | undefined)?.trialExpiresAt;
-    if (!trialAt) return;
-
-    const tick = () => setMsLeft(trialMsRemaining(trialAt));
+    if (accessInfo?.type !== "trial") return;
+    const tick = () => setMsLeft(trialMsRemaining(accessInfo.expiresAt));
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [session, devSkip]);
+  }, [accessInfo]);
 
-  if (msLeft === null) return null;
-  const expired = msLeft <= 0;
+  if (!accessInfo || accessInfo.type === "no-session") return null;
 
+  if (accessInfo.type === "premium") {
+    return (
+      <div style={{
+        display: "inline-flex", alignItems: "center", gap: 5,
+        background: "#DFE8DA", color: "#1F362D",
+        borderRadius: 999, padding: "5px 10px 5px 8px",
+      }}>
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" fill="#2C4A3E"/>
+        </svg>
+        <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, fontWeight: 600, letterSpacing: 0.4, whiteSpace: "nowrap" }}>
+          Premium · {PLAN_LABEL[accessInfo.plan] ?? accessInfo.plan}
+        </span>
+      </div>
+    );
+  }
+
+  if (accessInfo.type === "trial") {
+    const expired = msLeft <= 0;
+    return (
+      <button onClick={onUpgrade} className="tap" style={{
+        display: "inline-flex", alignItems: "center", gap: 5,
+        background: expired ? "#B85C3C" : "#FDE68A",
+        color: expired ? "#fff" : "#78350F",
+        border: "none", borderRadius: 999, padding: "5px 10px 5px 8px", cursor: "pointer",
+        boxShadow: expired ? "0 4px 10px -4px rgba(184,92,60,0.5)" : "none",
+      }}>
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"
+            fill={expired ? "#fff" : "#78350F"}/>
+        </svg>
+        <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, fontWeight: 600, letterSpacing: 0.4, whiteSpace: "nowrap" }}>
+          {expired ? t("trial.upgrade") : formatTrialRemaining(msLeft)}
+        </span>
+      </button>
+    );
+  }
+
+  // expired
   return (
     <button onClick={onUpgrade} className="tap" style={{
       display: "inline-flex", alignItems: "center", gap: 5,
-      background: expired ? "#B85C3C" : "#FDE68A",
-      color: expired ? "#fff" : "#78350F",
-      border: "none", borderRadius: 999,
-      padding: "5px 10px 5px 8px", cursor: "pointer",
-      boxShadow: expired ? "0 4px 10px -4px rgba(184,92,60,0.5)" : "none",
+      background: "#B85C3C", color: "#fff",
+      border: "none", borderRadius: 999, padding: "5px 10px 5px 8px", cursor: "pointer",
+      boxShadow: "0 4px 10px -4px rgba(184,92,60,0.5)",
     }}>
       <svg width="10" height="10" viewBox="0 0 24 24" fill="none">
-        <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"
-          fill={expired ? "#fff" : "#78350F"} />
+        <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" fill="#fff"/>
       </svg>
-      <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, fontWeight: 600, letterSpacing: 0.4, whiteSpace: "nowrap" }}>
-        {expired ? t("trial.upgrade") : formatRemaining(msLeft)}
+      <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, fontWeight: 600, letterSpacing: 0.4 }}>
+        {t("trial.upgrade")}
       </span>
     </button>
   );
 }
 
-function UserSheet({ name, email, image, onClose }: {
-  name: string; email: string; image?: string | null; onClose: () => void;
+function UserSheet({ name, email, image, accessInfo, onClose }: {
+  name: string; email: string; image?: string | null;
+  accessInfo: AccessInfo; onClose: () => void;
 }) {
   const initials = name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 
   const handleLogout = async () => {
-    if (process.env.NEXT_PUBLIC_DEV_SKIP_AUTH === "true") {
-      // Dev mode: just close the sheet
-      onClose(); return;
-    }
+    if (process.env.NEXT_PUBLIC_DEV_SKIP_AUTH === "true") { onClose(); return; }
     await signOut({ fetchOptions: { onSuccess: () => window.location.reload() } });
   };
 
+  const accessLabel = () => {
+    if (!accessInfo || accessInfo.type === "no-session") return null;
+    if (accessInfo.type === "premium") return { text: `Premium · Hingga ${formatDate(accessInfo.expiresAt)}`, color: "#2C4A3E", bg: "#DFE8DA" };
+    if (accessInfo.type === "trial")   return { text: `Trial · Habis ${formatDate(accessInfo.expiresAt)}`, color: "#78350F", bg: "#FDE68A" };
+    if (accessInfo.type === "expired") return { text: "Akses habis", color: "#6B2F1D", bg: "#F1D5C7" };
+    return null;
+  };
+  const label = accessLabel();
+
   return (
-    <div
-      className="animate-fade-in"
-      onClick={onClose}
-      style={{
-        position: "fixed", inset: 0, zIndex: 80,
-        maxWidth: 430, margin: "0 auto",
-        background: "rgba(27,27,25,0.5)",
-        backdropFilter: "blur(4px)",
-        display: "flex", flexDirection: "column", justifyContent: "flex-end",
-      }}
-    >
-      <div
-        className="animate-fade-up"
-        onClick={(e) => e.stopPropagation()}
-        style={{
-          background: "#F7F5F0", borderRadius: "22px 22px 0 0",
-          padding: "20px 22px 48px",
-          boxShadow: "0 -8px 40px rgba(27,27,25,0.15)",
-        }}
-      >
+    <div className="animate-fade-in" onClick={onClose} style={{
+      position: "fixed", inset: 0, zIndex: 80,
+      maxWidth: 430, margin: "0 auto",
+      background: "rgba(27,27,25,0.5)", backdropFilter: "blur(4px)",
+      display: "flex", flexDirection: "column", justifyContent: "flex-end",
+    }}>
+      <div className="animate-fade-up" onClick={(e) => e.stopPropagation()} style={{
+        background: "#F7F5F0", borderRadius: "22px 22px 0 0",
+        padding: "20px 22px 48px",
+        boxShadow: "0 -8px 40px rgba(27,27,25,0.15)",
+      }}>
         <div style={{ width: 36, height: 4, borderRadius: 99, background: "#D8D2C4", margin: "0 auto 20px" }} />
 
         {/* User info */}
-        <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 20 }}>
-          {image ? (
+        <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 16 }}>
+          {image
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={image} alt={name} style={{ width: 48, height: 48, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
-          ) : (
-            <div style={{
-              width: 48, height: 48, borderRadius: "50%",
-              background: "#2C4A3E", color: "#fff",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontFamily: "var(--font-jakarta)", fontSize: 16, fontWeight: 700, flexShrink: 0,
-            }}>
-              {initials}
-            </div>
-          )}
+            ? <img src={image} alt={name} style={{ width: 48, height: 48, borderRadius: "50%", objectFit: "cover", flexShrink: 0 }} />
+            : <div style={{ width: 48, height: 48, borderRadius: "50%", background: "#2C4A3E", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-jakarta)", fontSize: 16, fontWeight: 700, flexShrink: 0 }}>{initials}</div>
+          }
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontFamily: "var(--font-jakarta)", fontSize: 15, fontWeight: 700, color: "#1B1B19", marginBottom: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-              {name}
-            </div>
-            <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "#6B6A63", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-              {email}
-            </div>
+            <div style={{ fontFamily: "var(--font-jakarta)", fontSize: 15, fontWeight: 700, color: "#1B1B19", marginBottom: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{name}</div>
+            <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "#6B6A63", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{email}</div>
           </div>
         </div>
 
-        {/* Divider */}
+        {/* Access badge */}
+        {label && (
+          <div style={{ padding: "9px 14px", background: label.bg, borderRadius: 10, marginBottom: 16, fontFamily: "var(--font-jakarta)", fontSize: 12.5, fontWeight: 600, color: label.color }}>
+            {label.text}
+          </div>
+        )}
+
         <div style={{ height: "0.5px", background: "#E8E3D6", marginBottom: 16 }} />
 
         {/* Logout */}
-        <button
-          onClick={handleLogout}
-          className="tap"
-          style={{
-            width: "100%", height: 52, border: "none",
-            background: "#F1D5C7", color: "#6B2F1D",
-            borderRadius: 14, cursor: "pointer",
-            fontFamily: "var(--font-jakarta)", fontSize: 14, fontWeight: 600,
-            display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-          }}
-        >
+        <button onClick={handleLogout} className="tap" style={{
+          width: "100%", height: 52, border: "none",
+          background: "#F1D5C7", color: "#6B2F1D",
+          borderRadius: 14, cursor: "pointer",
+          fontFamily: "var(--font-jakarta)", fontSize: 14, fontWeight: 600,
+          display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+        }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
             <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             <path d="M16 17l5-5-5-5M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -183,12 +204,7 @@ function UserSheet({ name, email, image, onClose }: {
 function UserAvatar({ name, image }: { name: string; image?: string | null }) {
   const initials = name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
   return (
-    <div style={{
-      width: 30, height: 30, borderRadius: "50%", overflow: "hidden", flexShrink: 0,
-      border: "1.5px solid #E8E3D6",
-      background: "#2C4A3E",
-      display: "flex", alignItems: "center", justifyContent: "center",
-    }}>
+    <div style={{ width: 30, height: 30, borderRadius: "50%", overflow: "hidden", flexShrink: 0, border: "1.5px solid #E8E3D6", background: "#2C4A3E", display: "flex", alignItems: "center", justifyContent: "center" }}>
       {image
         // eslint-disable-next-line @next/next/no-img-element
         ? <img src={image} alt={name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
@@ -198,18 +214,32 @@ function UserAvatar({ name, image }: { name: string; image?: string | null }) {
   );
 }
 
-/** Fixed top brand bar with language toggle + trial countdown + user avatar */
+/** Fixed top brand bar */
 export default function BrandBar({ onUpgrade }: { onUpgrade?: () => void }) {
   const [locale, setLocale] = useLocale();
   const { data: session } = useSession();
   const [showUserSheet, setShowUserSheet] = useState(false);
+  const [accessInfo, setAccessInfo] = useState<AccessInfo>(null);
   const next: Locale = locale === "id" ? "en" : "id";
 
   const devSkip = process.env.NEXT_PUBLIC_DEV_SKIP_AUTH === "true";
-  const hasUser = devSkip || !!session?.user;
   const user = devSkip
     ? { name: "Dev User", email: "dev@intelhalal.app", image: null }
     : session?.user ?? null;
+
+  // Fetch access info once (and when session changes)
+  useEffect(() => {
+    if (devSkip) {
+      // Mock trial in dev mode
+      setAccessInfo({ type: "trial", expiresAt: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString() });
+      return;
+    }
+    if (!session?.user) return;
+    fetch("/api/user/access")
+      .then((r) => r.json())
+      .then((info) => setAccessInfo(info))
+      .catch(() => null);
+  }, [session, devSkip]);
 
   return (
     <>
@@ -224,7 +254,7 @@ export default function BrandBar({ onUpgrade }: { onUpgrade?: () => void }) {
         <BrandLogo height={18} />
 
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          {hasUser && onUpgrade && <TrialPill onUpgrade={onUpgrade} />}
+          {user && onUpgrade && <AccessPill accessInfo={accessInfo} onUpgrade={onUpgrade} />}
 
           {/* Language toggle */}
           <button onClick={() => setLocale(next)} className="tap" aria-label={`Switch to ${next.toUpperCase()}`} style={{
@@ -247,10 +277,10 @@ export default function BrandBar({ onUpgrade }: { onUpgrade?: () => void }) {
             ))}
           </button>
 
-          {/* User avatar — only if real session (not dev mock) */}
-          {user && (
+          {/* Avatar — real session only */}
+          {session?.user && (
             <button onClick={() => setShowUserSheet(true)} className="tap" style={{ background: "none", border: "none", padding: 0, cursor: "pointer" }}>
-              <UserAvatar name={user.name} image={user.image} />
+              <UserAvatar name={session.user.name} image={session.user.image} />
             </button>
           )}
         </div>
@@ -261,6 +291,7 @@ export default function BrandBar({ onUpgrade }: { onUpgrade?: () => void }) {
           name={user.name}
           email={user.email}
           image={user.image}
+          accessInfo={accessInfo}
           onClose={() => setShowUserSheet(false)}
         />
       )}
