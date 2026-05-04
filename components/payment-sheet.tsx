@@ -17,15 +17,17 @@ function formatRupiah(amount: number): string {
 }
 
 function QRCode({ data }: { data: string }) {
+  // AmsholPay returns 200×323 image
+  const w = 220, h = Math.round(220 * (323 / 200));
   return (
     <div style={{
-      width: 220, height: 220, margin: "0 auto",
+      width: w, height: h, margin: "0 auto",
       borderRadius: 16, overflow: "hidden",
       border: "0.5px solid #E8E3D6",
       boxShadow: "0 4px 16px -4px rgba(27,27,25,0.12)",
     }}>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={data} alt="QRIS" width={220} height={220} style={{ display: "block" }} />
+      <img src={data} alt="QRIS" width={w} height={h} style={{ display: "block", width: "100%", height: "100%" }} />
     </div>
   );
 }
