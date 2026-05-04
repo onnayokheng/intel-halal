@@ -3,7 +3,11 @@
 import { t, useLocale, type Locale } from "@/lib/i18n";
 import { useSession } from "@/lib/auth-client";
 import { useEffect, useState } from "react";
-import { trialMsRemaining } from "@/lib/access";
+
+function trialMsRemaining(trialExpiresAt: Date | string | null | undefined): number {
+  if (!trialExpiresAt) return -1;
+  return new Date(trialExpiresAt).getTime() - Date.now();
+}
 
 /** Eight-point star with halal checkmark — the Intel Halal brand mark */
 export function BrandMark({ size = 28, color = "#2C4A3E" }: { size?: number; color?: string }) {
