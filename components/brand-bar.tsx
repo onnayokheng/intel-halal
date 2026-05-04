@@ -188,10 +188,12 @@ function UserSheet({ name, email, image, accessInfo, onClose }: {
 
         {/* Logout */}
         <button onClick={handleLogout} className="tap" style={{
-          background: "none", border: "none", padding: "8px 0",
+          background: "none", border: "none", padding: "12px 0",
+          width: "100%", textAlign: "center",
           color: "#B85C3C", cursor: "pointer",
           fontFamily: "var(--font-jakarta)", fontSize: 14, fontWeight: 500,
           textDecoration: "underline", textUnderlineOffset: 3,
+          display: "block",
         }}>
           Logout
         </button>
