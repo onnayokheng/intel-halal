@@ -25,12 +25,7 @@ export async function checkAccess(
 ): Promise<AccessStatus> {
   const now = new Date();
 
-  // Trial masih aktif
-  if (trialExpiresAt && new Date(trialExpiresAt) > now) {
-    return { ok: true, reason: "trial" };
-  }
-
-  // Cek subscription aktif
+  // Cek subscription aktif dulu
   const [sub] = await db
     .select()
     .from(subscription)
@@ -43,6 +38,11 @@ export async function checkAccess(
 
   if (sub) return { ok: true, reason: "subscription" };
 
+  // Fallback ke trial
+  if (trialExpiresAt && new Date(trialExpiresAt) > now) {
+    return { ok: true, reason: "trial" };
+  }
+
   return { ok: false, reason: "trial-expired" };
 }
 
@@ -52,10 +52,7 @@ export async function getAccessInfo(
 ): Promise<AccessInfo> {
   const now = new Date();
 
-  if (trialExpiresAt && new Date(trialExpiresAt) > now) {
-    return { type: "trial", expiresAt: new Date(trialExpiresAt) };
-  }
-
+  // Cek subscription aktif dulu — premium diutamakan dari trial
   const [sub] = await db
     .select()
     .from(subscription)
@@ -67,6 +64,11 @@ export async function getAccessInfo(
     .limit(1);
 
   if (sub) return { type: "premium", expiresAt: sub.expiresAt!, plan: sub.plan as Plan };
+
+  // Fallback ke trial
+  if (trialExpiresAt && new Date(trialExpiresAt) > now) {
+    return { type: "trial", expiresAt: new Date(trialExpiresAt) };
+  }
 
   return { type: "expired" };
 }
