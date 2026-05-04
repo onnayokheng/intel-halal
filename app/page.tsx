@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import BottomNav, { type Tab } from "@/components/bottom-nav";
 import BrandBar from "@/components/brand-bar";
+import Onboarding from "@/components/onboarding";
 import { t, useLocale } from "@/lib/i18n";
 
 const PrayerSchedule = dynamic(() => import("@/components/prayer"),     { ssr: false });
@@ -14,7 +15,8 @@ const FindPlace      = dynamic(() => import("@/components/find-place"), { ssr: f
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<Tab>("cek-halal");
-  const [locale] = useLocale();   // re-renders when language switches
+  const [locale] = useLocale();
+  const [showOnboarding, setShowOnboarding] = useState<boolean | null>(null);
 
   const TAB_NAV_KEY: Record<Tab, string> = {
     "sholat":     "nav.sholat",
@@ -25,12 +27,21 @@ export default function Home() {
   };
 
   useEffect(() => {
+    setShowOnboarding(localStorage.getItem("onboarding_done") !== "1");
+  }, []);
+
+  useEffect(() => {
     document.title = `${t("brand.name")} — ${t(TAB_NAV_KEY[activeTab])}`;
   }, [activeTab, locale]);
 
+  // Wait for localStorage check before rendering (avoids flash)
+  if (showOnboarding === null) return null;
+
+  if (showOnboarding) {
+    return <Onboarding onDone={() => setShowOnboarding(false)} />;
+  }
+
   return (
-    // key=locale forces full re-mount of all screens when language changes
-    // so module-level t() calls inside components get fresh values
     <div key={locale}>
       <BrandBar />
       <div className={activeTab === "sholat"     ? "block" : "hidden"}><PrayerSchedule /></div>
