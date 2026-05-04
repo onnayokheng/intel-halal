@@ -388,9 +388,11 @@ export default function Onboarding({ onDone }: { onDone: () => void }) {
         color: C.text,
       }}
     >
-      {step === 0 && <Screen1 onNext={() => setStep(1)} onSkip={goToLogin} />}
-      {step === 1 && <Screen2 onNext={() => setStep(2)} onSkip={goToLogin} />}
-      {step === 2 && <Screen3 onDone={finish} />}
+      <div key={step} className="animate-slide-in" style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
+        {step === 0 && <Screen1 onNext={() => setStep(1)} onSkip={goToLogin} />}
+        {step === 1 && <Screen2 onNext={() => setStep(2)} onSkip={goToLogin} />}
+        {step === 2 && <Screen3 onDone={finish} />}
+      </div>
     </div>
   );
 }

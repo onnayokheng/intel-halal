@@ -243,6 +243,7 @@ body {
 /* ── Animations ── */
 @keyframes fadeUp   { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeIn   { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideIn  { from { opacity: 0; transform: translateX(24px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes spin     { to { transform: rotate(360deg); } }
 @keyframes scanline { 0% { top: 8%; } 50% { top: 88%; } 100% { top: 8%; } }
 @keyframes pulse    { 0%, 100% { opacity: .5; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
@@ -251,6 +252,7 @@ body {
 
 .animate-fade-up    { animation: fadeUp 320ms cubic-bezier(.2,.7,.2,1) both; }
 .animate-fade-in    { animation: fadeIn 240ms ease-out both; }
+.animate-slide-in   { animation: slideIn 280ms cubic-bezier(.2,.7,.2,1) both; }
 .animate-scanline   { animation: scanline 2.4s ease-in-out infinite; }
 .animate-spin-slow  { animation: spin .9s linear infinite; }
 .animate-pulse-ring { animation: pulse 1.6s ease-in-out infinite; }

@@ -208,7 +208,7 @@ export default function FindPlace() {
         {activeCat && (
           <div className="animate-fade-up">
             <div className="mono" style={{ fontSize: 10.5, fontWeight: 500, letterSpacing: 1.4, textTransform: "uppercase", color: "#6B6A63", marginBottom: 10 }}>
-              Pilih Spesifik
+              {t("findPlace.search.subCategoryLabel")}
             </div>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
               {activeCat.subs.map((sub) => {
