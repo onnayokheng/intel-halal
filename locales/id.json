@@ -183,7 +183,7 @@
     "hisabSettings": {
       "label": "Pengaturan",
       "title": "Metode Hisab",
-      "desc": "Pilih metode perhitungan waktu sholat. Default: Kemenag RI untuk warga Indonesia.",
+      "desc": "Pilih metode perhitungan waktu sholat. Default: Muslim World League.",
       "doneBtn": "Selesai",
       "methods": {
         "kemenag": "Kemenag RI",

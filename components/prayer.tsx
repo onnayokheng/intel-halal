@@ -29,7 +29,7 @@ const cacheKey = (date: Date, hisab: string) => {
 };
 
 export default function PrayerSchedule() {
-  const [hisab, setHisab] = useState("kemenag");
+  const [hisab, setHisab] = useState("mwl");
   const [showSettings, setShowSettings] = useState(false);
 
   const [coords, setCoords]             = useState<{ lat: number; lng: number } | null>(null);

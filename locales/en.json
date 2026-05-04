@@ -183,7 +183,7 @@
     "hisabSettings": {
       "label": "Settings",
       "title": "Calculation Method",
-      "desc": "Choose the prayer time calculation method. Default: Kemenag RI for Indonesian citizens.",
+      "desc": "Choose the prayer time calculation method. Default: Muslim World League.",
       "doneBtn": "Done",
       "methods": {
         "kemenag": "Kemenag RI",
