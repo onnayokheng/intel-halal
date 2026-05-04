@@ -1,10 +1,11 @@
-import { pgTable, uuid, text, integer, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, integer, timestamp, boolean, primaryKey } from "drizzle-orm/pg-core";
 
+// ── Product cache ─────────────────────────────────────────────
 export const productCache = pgTable("product_cache", {
   id:         uuid("id").defaultRandom().primaryKey(),
-  lookupKey:  text("lookup_key").unique().notNull(),   // barcode number or normalized product name
+  lookupKey:  text("lookup_key").unique().notNull(),
   resultHtml: text("result_html").notNull(),
-  status:     text("status").notNull(),                // 'halal' | 'syubhat' | 'haram' | 'idle'
+  status:     text("status").notNull(),
   hitCount:   integer("hit_count").default(1).notNull(),
   createdAt:  timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   expiresAt:  timestamp("expires_at", { withTimezone: true }).notNull(),
@@ -12,3 +13,60 @@ export const productCache = pgTable("product_cache", {
 
 export type ProductCache = typeof productCache.$inferSelect;
 export type NewProductCache = typeof productCache.$inferInsert;
+
+// ── Auth tables (better-auth) ─────────────────────────────────
+export const user = pgTable("user", {
+  id:            text("id").primaryKey(),
+  name:          text("name").notNull(),
+  email:         text("email").notNull().unique(),
+  emailVerified: boolean("email_verified").notNull(),
+  image:         text("image"),
+  createdAt:     timestamp("created_at").notNull(),
+  updatedAt:     timestamp("updated_at").notNull(),
+});
+
+export const session = pgTable("session", {
+  id:        text("id").primaryKey(),
+  expiresAt: timestamp("expires_at").notNull(),
+  token:     text("token").notNull().unique(),
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  userId:    text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+});
+
+export const account = pgTable("account", {
+  id:                    text("id").primaryKey(),
+  accountId:             text("account_id").notNull(),
+  providerId:            text("provider_id").notNull(),
+  userId:                text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  accessToken:           text("access_token"),
+  refreshToken:          text("refresh_token"),
+  idToken:               text("id_token"),
+  accessTokenExpiresAt:  timestamp("access_token_expires_at"),
+  refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
+  scope:                 text("scope"),
+  password:              text("password"),
+  createdAt:             timestamp("created_at").notNull(),
+  updatedAt:             timestamp("updated_at").notNull(),
+});
+
+export const verification = pgTable("verification", {
+  id:         text("id").primaryKey(),
+  identifier: text("identifier").notNull(),
+  value:      text("value").notNull(),
+  expiresAt:  timestamp("expires_at").notNull(),
+  createdAt:  timestamp("created_at"),
+  updatedAt:  timestamp("updated_at"),
+});
+
+// ── Scan quota (free tier: 3 scans/day) ──────────────────────
+export const scanQuota = pgTable("scan_quota", {
+  userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
+  date:   text("date").notNull(),   // YYYY-MM-DD
+  count:  integer("count").default(0).notNull(),
+}, (t) => [primaryKey({ columns: [t.userId, t.date] })]);
+
+export type User = typeof user.$inferSelect;
+export type ScanQuota = typeof scanQuota.$inferSelect;
