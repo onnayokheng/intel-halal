@@ -16,7 +16,7 @@ function trialMsRemaining(expiresAt: string): number {
 }
 
 function formatDate(d: string): string {
-  return new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric" }).format(new Date(d));
+  return new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }).format(new Date(d));
 }
 
 const PLAN_LABEL: Record<string, string> = { "7day": "7 Hari", "30day": "1 Bulan" };
@@ -81,7 +81,7 @@ function AccessPill({ accessInfo, onUpgrade }: { accessInfo: AccessInfo; onUpgra
           <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" fill="#2C4A3E"/>
         </svg>
         <span style={{ fontFamily: "var(--font-mono)", fontSize: 9, fontWeight: 600, letterSpacing: 0.4, whiteSpace: "nowrap" }}>
-          Premium · {PLAN_LABEL[accessInfo.plan] ?? accessInfo.plan}
+          Premium
         </span>
       </div>
     );
