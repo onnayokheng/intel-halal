@@ -4,9 +4,8 @@ import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import * as schema from "@/db/schema";
 
-// Strip channel_binding — parameter TCP-only, tidak dikenal HTTP endpoint Neon
-const dbUrl = (process.env.DATABASE_URL ?? "").replace(/[&?]channel_binding=[^&]*/g, "");
-const sql = neon(dbUrl);
+// Neon HTTP API butuh endpoint non-pooler (DATABASE_URL_UNPOOLED)
+const sql = neon(process.env.DATABASE_URL_UNPOOLED ?? process.env.DATABASE_URL!);
 const authDb = drizzle(sql, { schema });
 
 const TRIAL_HOURS = 12;
