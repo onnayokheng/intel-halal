@@ -57,7 +57,7 @@ export default function Home() {
       <div className={activeTab === "cek-halal"  ? "block" : "hidden"}>
         <CekHalal isActive={activeTab === "cek-halal"} onShowPaywall={() => setShowPaywall(true)} />
       </div>
-      <div className={activeTab === "trip-plan"  ? "block" : "hidden"}><TripPlan /></div>
+      <div className={activeTab === "trip-plan"  ? "block" : "hidden"}><TripPlan onShowPaywall={() => setShowPaywall(true)} /></div>
       <div className={activeTab === "find-place" ? "block" : "hidden"}><FindPlace /></div>
 
       <BottomNav active={activeTab} onChange={setActiveTab} />

@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { checkAccess } from "@/lib/access";
 
 const GEMINI_URL =
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
@@ -7,6 +9,18 @@ export async function POST(req: NextRequest) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     return NextResponse.json({ error: "API key not configured" }, { status: 500 });
+  }
+
+  // ── Access check (skip in local dev) ──
+  if (process.env.DEV_SKIP_AUTH !== "true") {
+    const session = await auth.api.getSession({ headers: req.headers });
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized", code: "NO_SESSION" }, { status: 401 });
+    }
+    const access = await checkAccess(session.user.id, (session.user as { trialExpiresAt?: Date }).trialExpiresAt);
+    if (!access.ok) {
+      return NextResponse.json({ error: "Access expired", code: "ACCESS_EXPIRED" }, { status: 403 });
+    }
   }
 
   try {

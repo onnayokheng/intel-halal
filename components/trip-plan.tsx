@@ -5,7 +5,7 @@ import { t, getLocale } from "@/lib/i18n";
 import { useState } from "react";
 import DOMPurify from "dompurify";
 
-export default function TripPlan() {
+export default function TripPlan({ onShowPaywall }: { onShowPaywall?: () => void }) {
   const [origin, setOrigin]           = useState("");
   const [destination, setDestination] = useState("");
   const [isLoading, setIsLoading]     = useState(false);
@@ -23,6 +23,7 @@ export default function TripPlan() {
         body: JSON.stringify({ origin, destination, locale: getLocale() }),
       });
       const data = await res.json();
+      if (res.status === 401 || res.status === 403) { onShowPaywall?.(); return; }
       if (!res.ok) throw new Error(t("common.errorGeneral"));
       setResultHtml(DOMPurify.sanitize(data.result, {
         ADD_ATTR: ["target", "rel"],
