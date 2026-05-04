@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { productCache } from "@/db/schema";
-import { eq, gt } from "drizzle-orm";
+import { eq, gt, and } from "drizzle-orm";
 
 const GEMINI_URL =
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
@@ -116,10 +116,10 @@ export async function POST(req: NextRequest) {
       const cached = await db
         .select()
         .from(productCache)
-        .where(
-          eq(productCache.lookupKey, lookupKey) &&
+        .where(and(
+          eq(productCache.lookupKey, lookupKey),
           gt(productCache.expiresAt, new Date())
-        )
+        ))
         .limit(1);
 
       if (cached.length > 0) {

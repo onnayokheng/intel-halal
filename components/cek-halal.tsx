@@ -499,11 +499,11 @@ export default function CekHalal({ isActive }: { isActive: boolean }) {
                 display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
               }}
             >
-              Analisa Komposisi
+              {t("cekHalal.preview.analyzeBtn")}
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
             <button onClick={reset} className="tap" style={{ border: "none", background: "transparent", color: "#6B6A63", fontSize: 13, fontWeight: 500, padding: 8, cursor: "pointer" }}>
-              Foto ulang
+              {t("cekHalal.preview.retakeBtn")}
             </button>
           </div>
         )}
