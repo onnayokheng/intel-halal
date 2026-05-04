@@ -31,6 +31,7 @@ export default function Home() {
   };
 
   useEffect(() => {
+    if (process.env.NEXT_PUBLIC_DEV_SKIP_AUTH === "true") { setShowOnboarding(false); return; }
     if (session) { setShowOnboarding(false); return; }
     if (!sessionLoading) {
       setShowOnboarding(localStorage.getItem("onboarding_done") !== "1");
@@ -41,7 +42,8 @@ export default function Home() {
     document.title = `${t("brand.name")} — ${t(TAB_NAV_KEY[activeTab])}`;
   }, [activeTab, locale]);
 
-  if (showOnboarding === null || sessionLoading) return null;
+  const devSkip = process.env.NEXT_PUBLIC_DEV_SKIP_AUTH === "true";
+  if (!devSkip && (showOnboarding === null || sessionLoading)) return null;
 
   if (showOnboarding) {
     return <Onboarding onDone={() => setShowOnboarding(false)} />;

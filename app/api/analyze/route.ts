@@ -80,14 +80,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "API key not configured" }, { status: 500 });
   }
 
-  // ── Access check ──
-  const session = await auth.api.getSession({ headers: req.headers });
-  if (!session?.user) {
-    return NextResponse.json({ error: "Unauthorized", code: "NO_SESSION" }, { status: 401 });
-  }
-  const access = await checkAccess(session.user.id, (session.user as { trialExpiresAt?: Date }).trialExpiresAt);
-  if (!access.ok) {
-    return NextResponse.json({ error: "Access expired", code: "ACCESS_EXPIRED" }, { status: 403 });
+  // ── Access check (skip in local dev) ──
+  if (process.env.DEV_SKIP_AUTH !== "true") {
+    const session = await auth.api.getSession({ headers: req.headers });
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized", code: "NO_SESSION" }, { status: 401 });
+    }
+    const access = await checkAccess(session.user.id, (session.user as { trialExpiresAt?: Date }).trialExpiresAt);
+    if (!access.ok) {
+      return NextResponse.json({ error: "Access expired", code: "ACCESS_EXPIRED" }, { status: 403 });
+    }
   }
 
   try {
