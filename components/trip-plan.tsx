@@ -2,8 +2,10 @@
 
 import { t, getLocale } from "@/lib/i18n";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DOMPurify from "dompurify";
+import TripHistory from "@/components/trip-history";
+import { getTripHistory, saveTripHistory, type TripHistoryItem } from "@/lib/history";
 
 export default function TripPlan({ onShowPaywall }: { onShowPaywall?: () => void }) {
   const [origin, setOrigin]           = useState("");
@@ -11,6 +13,10 @@ export default function TripPlan({ onShowPaywall }: { onShowPaywall?: () => void
   const [isLoading, setIsLoading]     = useState(false);
   const [resultHtml, setResultHtml]   = useState<string | null>(null);
   const [error, setError]             = useState<string | null>(null);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyItems, setHistoryItems] = useState<TripHistoryItem[]>([]);
+
+  useEffect(() => { setHistoryItems(getTripHistory()); }, []);
 
   const go = async () => {
     if (!origin.trim() || !destination.trim()) return;
@@ -24,10 +30,11 @@ export default function TripPlan({ onShowPaywall }: { onShowPaywall?: () => void
       });
       const data = await res.json();
       if (res.status === 401 || res.status === 403) { onShowPaywall?.(); return; }
-      if (!res.ok) throw new Error(t("common.errorGeneral"));
-      setResultHtml(DOMPurify.sanitize(data.result, {
-        ADD_ATTR: ["target", "rel"],
-      }));
+      if (!res.ok) throw new Error(data.error || t("common.errorGeneral"));
+      const sanitized = DOMPurify.sanitize(data.result, { ADD_ATTR: ["target", "rel"] });
+      setResultHtml(sanitized);
+      saveTripHistory({ origin, destination, resultHtml: sanitized });
+      setHistoryItems(getTripHistory());
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : t("common.errorRoute"));
     } finally {
@@ -54,6 +61,22 @@ export default function TripPlan({ onShowPaywall }: { onShowPaywall?: () => void
       </div>
 
       <div style={{ padding: "0 22px", display: "flex", flexDirection: "column", gap: 14 }}>
+
+        {/* Riwayat Rute — tampil hanya saat idle dan ada history */}
+        {historyItems.length > 0 && !resultHtml && !isLoading && (
+          <button
+            onClick={() => setHistoryOpen(true)}
+            className="tap"
+            style={{
+              background: "none", border: "none", width: "100%",
+              textAlign: "right", cursor: "pointer",
+              fontFamily: "var(--font-jakarta)", fontSize: 13, fontWeight: 600,
+              color: "#2C4A3E", padding: "0 0 4px",
+            }}
+          >
+            {t("tripHistory.btn")} →
+          </button>
+        )}
 
         {/* Input card */}
         <div style={{ background: "#fff", border: "0.5px solid #E8E3D6", borderRadius: 18, overflow: "hidden", boxShadow: "var(--shadow-card)" }}>
@@ -185,6 +208,14 @@ export default function TripPlan({ onShowPaywall }: { onShowPaywall?: () => void
           </div>
         )}
       </div>
+
+      {historyOpen && (
+        <TripHistory
+          items={historyItems}
+          onClose={() => setHistoryOpen(false)}
+          onItemsChange={(updated) => setHistoryItems(updated)}
+        />
+      )}
     </div>
   );
 }

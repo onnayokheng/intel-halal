@@ -1,5 +1,40 @@
 import { compressImage } from "@/lib/utils";
 
+// ── Trip Plan history ─────────────────────────────────────────
+const TRIP_KEY = "intel-halal-trip-history";
+
+export interface TripHistoryItem {
+  id: string;
+  timestamp: number;
+  origin: string;
+  destination: string;
+  resultHtml: string;
+}
+
+export function getTripHistory(): TripHistoryItem[] {
+  try { return JSON.parse(localStorage.getItem(TRIP_KEY) ?? "[]"); } catch { return []; }
+}
+
+export function saveTripHistory(params: { origin: string; destination: string; resultHtml: string }): void {
+  const item: TripHistoryItem = {
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    timestamp: Date.now(),
+    ...params,
+  };
+  const updated = [item, ...getTripHistory()].slice(0, MAX_ITEMS);
+  localStorage.setItem(TRIP_KEY, JSON.stringify(updated));
+}
+
+export function deleteTripHistoryItem(id: string): TripHistoryItem[] {
+  const updated = getTripHistory().filter((h) => h.id !== id);
+  localStorage.setItem(TRIP_KEY, JSON.stringify(updated));
+  return updated;
+}
+
+export function clearTripHistory(): void {
+  localStorage.removeItem(TRIP_KEY);
+}
+
 const STORAGE_KEY = "intel-halal-scan-history";
 const MAX_ITEMS = 30;
 

@@ -531,6 +531,12 @@
       "30day": { "label": "1 Month", "price": "Rp 35,000", "originalPrice": "Rp 100,000", "desc": "Full access for 30 days" }
     }
   },
+  "tripHistory": {
+    "btn": "Route History",
+    "title": "Route History",
+    "empty": "No route history yet",
+    "emptyDesc": "Trip plans will be saved here automatically"
+  },
   "history": {
     "btn": "Scan History",
     "title": "Scan History",
