@@ -1,6 +1,6 @@
 "use client";
 
-import { t } from "@/lib/i18n";
+import { t, useLocale, type Locale } from "@/lib/i18n";
 
 /** Eight-point star with halal checkmark — the Intel Halal brand mark */
 export function BrandMark({ size = 28, color = "#2C4A3E" }: { size?: number; color?: string }) {
@@ -26,52 +26,64 @@ export function BrandLogo({ height = 22 }: { height?: number }) {
       <BrandMark size={height + 6} color="#2C4A3E" />
       <span
         className="serif"
-        style={{
-          fontSize: height,
-          fontWeight: 600,
-          letterSpacing: -0.4,
-          color: "#1B1B19",
-          lineHeight: 1,
-        }}
+        style={{ fontSize: height, fontWeight: 600, letterSpacing: -0.4, color: "#1B1B19", lineHeight: 1 }}
       >
-        {t("brand.name").split("·")[0]}<span style={{ color: "#2C4A3E" }}>·</span>{t("brand.name").split("·")[1]}
+        Intel<span style={{ color: "#2C4A3E" }}>·</span>Halal
       </span>
     </div>
   );
 }
 
-/** Fixed top brand bar — shared across all screens */
+const LOCALE_LABELS: Record<Locale, string> = { id: "ID", en: "EN" };
+
+/** Fixed top brand bar with language toggle */
 export default function BrandBar() {
+  const [locale, setLocale] = useLocale();
+  const next: Locale = locale === "id" ? "en" : "id";
+
   return (
     <div
       style={{
         position: "fixed",
-        top: 0,
-        left: "50%",
-        transform: "translateX(-50%)",
-        width: "100%",
-        maxWidth: 430,
-        zIndex: 30,
+        top: 0, left: "50%", transform: "translateX(-50%)",
+        width: "100%", maxWidth: 430, zIndex: 30,
         padding: "18px 20px 16px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
         background: "linear-gradient(to bottom, #F7F5F0 0%, #F7F5F0 75%, rgba(247,245,240,0) 100%)",
       }}
     >
       <BrandLogo height={18} />
-      <span
-        className="mono"
+
+      {/* Language toggle pill */}
+      <button
+        onClick={() => setLocale(next)}
+        className="tap"
+        aria-label={`Switch to ${next.toUpperCase()}`}
         style={{
-          fontSize: 9.5,
-          fontWeight: 500,
-          letterSpacing: 1.4,
-          color: "#9B998F",
-          textTransform: "uppercase",
+          display: "inline-flex", alignItems: "center", gap: 0,
+          background: "#EFEBE2", border: "0.5px solid #D8D2C4",
+          borderRadius: 999, padding: 2,
+          cursor: "pointer",
+          boxShadow: "0 1px 0 rgba(43,32,15,.04)",
         }}
       >
-        {t("brand.locale")}
-      </span>
+        {(["id", "en"] as Locale[]).map((l) => (
+          <span
+            key={l}
+            style={{
+              fontFamily: "var(--font-jetbrains)",
+              fontSize: 9.5, fontWeight: 600, letterSpacing: 1.2,
+              padding: "4px 8px", borderRadius: 999,
+              background: locale === l ? "#2C4A3E" : "transparent",
+              color: locale === l ? "#fff" : "#9B998F",
+              textTransform: "uppercase",
+              transition: "background 180ms ease, color 180ms ease",
+            }}
+          >
+            {LOCALE_LABELS[l]}
+          </span>
+        ))}
+      </button>
     </div>
   );
 }

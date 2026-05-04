@@ -1,0 +1,247 @@
+{
+  "brand": {
+    "name": "Intel Halal",
+    "tagline": "Your Personal Muslim Companion in Japan",
+    "locale": "JP · EN"
+  },
+  "nav": {
+    "sholat": "Prayer",
+    "beaImpor": "Import Tax",
+    "cekHalal": "Halal Check",
+    "tripPlan": "Trip Plan",
+    "findPlace": "Find Place"
+  },
+  "cekHalal": {
+    "title": "Halal Check",
+    "subtitle": "Photo Japanese product packaging. AI reads ingredients and gives a halal, syubhat, or haram verdict.",
+    "scan": {
+      "sectionLabel": "Start Scanning",
+      "camera": "Camera",
+      "cameraHint": "take photo",
+      "barcode": "Barcode",
+      "barcodeHint": "JAN code",
+      "gallery": "Gallery",
+      "galleryHint": "from photo"
+    },
+    "onboarding": {
+      "howTo": "How to use",
+      "step1Title": "Choose source",
+      "step1Desc": "Camera, barcode, or photo from gallery.",
+      "step2Title": "Photo the label",
+      "step2Desc": "Make sure the ingredient list/原材料名 is clearly visible.",
+      "step3Title": "AI Analysis",
+      "step3Desc": "System checks ingredients against the halal database.",
+      "disclaimer": "AI is indicative. For products with MUI/JAKIM labels, always prioritize official certification.",
+      "kamusTitle": "View Halal Kanji Dictionary",
+      "kamusDesc": "Learn common ingredient kanji without scanning first"
+    },
+    "preview": {
+      "readyLabel": "Image ready to analyze",
+      "photoCount": "photo(s)",
+      "analyzeBtn": "Analyze Ingredients",
+      "retakeBtn": "Retake photo"
+    },
+    "analyzing": {
+      "title": "Analyzing…",
+      "subtitle": "Reading ingredients, cross-checking halal database.",
+      "step1": "Extracting text from image",
+      "step2": "Identifying ingredients",
+      "step3": "Checking halal status"
+    },
+    "verdict": {
+      "label": "VERDICT",
+      "halal": "HALAL",
+      "halalSub": "Safe to consume",
+      "syubhat": "DOUBTFUL",
+      "syubhatSub": "Status unclear — needs further verification",
+      "haram": "HARAM",
+      "haramSub": "Contains non-halal ingredients",
+      "scanAgain": "Scan again",
+      "disclaimer": "AI Analysis · indicative · not a substitute for MUI / JAKIM certification"
+    }
+  },
+  "beaImpor": {
+    "title": "Import Tax",
+    "subtitle": "Calculate IMEI phone tax for items bought in Japan before reaching Indonesian customs.",
+    "form": {
+      "sectionLabel": "Purchase Details",
+      "currencyLabel": "Currency",
+      "priceLabel": "Phone Price",
+      "pricePlaceholder": "Example: 150000",
+      "npwpLabel": "Have NPWP?",
+      "npwpHintYes": "Lower PPh 22 rate (10%)",
+      "npwpHintNo": "Higher PPh 22 rate (20%)",
+      "calculateBtn": "Calculate Import Tax",
+      "loadingKurs": "Loading exchange rate…"
+    },
+    "result": {
+      "estimasiLabel": "TAX ESTIMATE",
+      "bebasPajak": "Tax Free",
+      "bebasPajakNote": "Price below the $500 limit — all clear!",
+      "taxableNote": "Taxed on the difference of",
+      "modalLabel": "Total Capital (IDR)",
+      "modalNote": "*Includes phone price, tax & bank fee (Rp 25,000)",
+      "kursLabel": "Reference Rate (Realtime)",
+      "rincianLabel": "Calculation Breakdown",
+      "nilaiBarang": "Item Value (USD)",
+      "pembebasanBea": "Duty Exemption",
+      "dasarPajak": "Tax Base (NDPZ)",
+      "beaMasuk": "1. Import Duty (10%)",
+      "ppn": "2. VAT (11%)",
+      "nilaiImpor": "Import Value (NDPZ + Duty)",
+      "disclaimerText": "Estimate uses Ministry of Finance rate logic. Declare at",
+      "disclaimerBold": "Red Lane",
+      "disclaimerSuffix": "to get the $500 free limit."
+    },
+    "loading": "Calculating tax…",
+    "loadingNote": "Checking realtime rates + customs tariffs."
+  },
+  "tripPlan": {
+    "title": "Trip Plan",
+    "subtitle": "AI creates a story-style guide for Japan's trains and buses — so you won't get lost on the Shinkansen.",
+    "form": {
+      "sectionLabel": "Where to?",
+      "fromLabel": "From",
+      "fromPlaceholder": "Shinjuku Station",
+      "toLabel": "To",
+      "toPlaceholder": "Tokyo Tower",
+      "goBtn": "GO"
+    },
+    "loading": "Analyzing stations & routes…",
+    "loadingNote": "Finding the best train and bus combination for you.",
+    "newPlanBtn": "New plan",
+    "error": "Failed to build route. Please check your internet connection."
+  },
+  "findPlace": {
+    "title": "Find Place",
+    "subtitle": "Find mosques, halal restaurants, hotels, and important places near you.",
+    "location": {
+      "detected": "Location Detected",
+      "detect": "Detect Now",
+      "detecting": "Detecting location…",
+      "detectDesc": "The app will retrieve location data from your device.",
+      "update": "Update",
+      "error": "Failed to get location. Try turning off VPN."
+    },
+    "search": {
+      "categoryLabel": "Select Category",
+      "subCategoryLabel": "Select Specific Place",
+      "categoryPlaceholder": "— Please Select Category —",
+      "subCategoryPlaceholder": "— Select Place Detail —",
+      "searchBtn": "Search on Google Maps",
+      "tip": "When Search is tapped, Google Maps will find locations within a ±3.2 km radius from your reference point."
+    },
+    "categoryLabels": {
+      "akomodasi": "Accommodation",
+      "kuliner": "Food & Dining",
+      "transport": "Transportation",
+      "belanja": "Shopping & Retail",
+      "wisata": "Tourism & Attractions",
+      "lifestyle": "Relaxation",
+      "layanan": "Services & Health",
+      "ibadah": "Places of Worship"
+    }
+  },
+  "sholat": {
+    "title": "Prayer Times",
+    "subtitle": "Prayer times based on your current location.",
+    "settings": "Settings",
+    "nextPrayer": "Next Prayer",
+    "soonCopy": "Coming up soon",
+    "lagi": "remaining",
+    "currentLabel": "Current Prayer",
+    "activeCopy": "Time to perform",
+    "activeNote": "Praying at the earliest time is more virtuous",
+    "hisabMethod": "Calculation method",
+    "aladhanAttr": "Aladhan API",
+    "chipNow": "Now",
+    "chipNext": "Next",
+    "prayers": {
+      "Fajr": "Fajr",
+      "Dhuhr": "Dhuhr",
+      "Asr": "Asr",
+      "Maghrib": "Maghrib",
+      "Isha": "Isha"
+    },
+    "arabic": {
+      "Fajr": "الفجر",
+      "Dhuhr": "الظهر",
+      "Asr": "العصر",
+      "Maghrib": "المغرب",
+      "Isha": "العشاء"
+    },
+    "hijriMonths": ["", "Muharram", "Safar", "Rabi al-Awwal", "Rabi al-Thani", "Jumada al-Awwal", "Jumada al-Thani", "Rajab", "Sha'ban", "Ramadhan", "Shawwal", "Dhul Qa'dah", "Dhul Hijjah"],
+    "loading": {
+      "title": "Detecting location…",
+      "desc": "Getting GPS, then calculating today's prayer times."
+    },
+    "denied": {
+      "title": "Cannot access location",
+      "desc": "Without GPS, we cannot calculate accurate prayer times for your location.",
+      "retryBtn": "Check Location Now"
+    },
+    "hisabSettings": {
+      "label": "Settings",
+      "title": "Calculation Method",
+      "desc": "Choose the prayer time calculation method. Default: Kemenag RI for Indonesian citizens.",
+      "doneBtn": "Done",
+      "methods": {
+        "kemenag": "Kemenag RI",
+        "mwl": "Muslim World League",
+        "egyptian": "Egyptian Authority"
+      },
+      "meta": {
+        "kemenag": "Fajr 20° · Isha 18°",
+        "mwl": "Fajr 18° · Isha 17°",
+        "egyptian": "Fajr 19.5° · Isha 17.5°"
+      }
+    }
+  },
+  "kanji": {
+    "title": "Halal Kanji Dictionary",
+    "ref": "Reference",
+    "wordCount": "words",
+    "searchPlaceholder": "Search kanji, romaji, or meaning...",
+    "filters": {
+      "all": "All",
+      "haram": "Haram",
+      "syubhat": "Doubtful",
+      "halal": "Halal-safe"
+    },
+    "browseLabel": "Browse by category",
+    "vocabCount": "vocabulary",
+    "allVocab": "All vocabulary",
+    "meaning": "Meaning",
+    "foundIn": "Commonly found in",
+    "tips": "Tips",
+    "related": "Related kanji",
+    "favAdd": "Add to favorites",
+    "favAdded": "Saved to favorites",
+    "empty": {
+      "title": "Not in dictionary yet",
+      "desc": "The vocabulary you searched for isn't here yet. Try scanning directly via Halal Check — AI can read any kanji on packaging.",
+      "scanBtn": "Try scanning via Halal Check"
+    },
+    "categories": {
+      "pork": "Pork & derivatives",
+      "alcohol": "Alcohol & fermentation",
+      "additive": "Doubtful additives",
+      "meat": "Meat to verify",
+      "seafood": "Halal seafood",
+      "plant": "Safe plant-based",
+      "sweets": "Sweets & desserts",
+      "sauce": "Sauces & seasonings"
+    },
+    "verdicts": {
+      "halal": "Halal",
+      "syubhat": "Doubtful",
+      "haram": "Haram"
+    }
+  },
+  "common": {
+    "retry": "Try Again",
+    "reset": "Start Over",
+    "back": "Back",
+    "done": "Done"
+  }
+}

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import BottomNav, { type Tab } from "@/components/bottom-nav";
 import BrandBar from "@/components/brand-bar";
-import { t } from "@/lib/i18n";
+import { t, useLocale, initLocale } from "@/lib/i18n";
 
 const PrayerSchedule = dynamic(() => import("@/components/prayer"),     { ssr: false });
 const CekHalal       = dynamic(() => import("@/components/cek-halal"),  { ssr: false });
@@ -12,23 +12,21 @@ const BeaImpor       = dynamic(() => import("@/components/bea-impor"),  { ssr: f
 const TripPlan       = dynamic(() => import("@/components/trip-plan"),  { ssr: false });
 const FindPlace      = dynamic(() => import("@/components/find-place"), { ssr: false });
 
-const TITLES: Record<Tab, string> = {
-  "sholat":     `${t("nav.sholat")} — ${t("sholat.title")}`,
-  "bea-impor":  `${t("nav.beaImpor")} — ${t("beaImpor.title")}`,
-  "cek-halal":  `${t("brand.name")} — AI Scanner`,
-  "trip-plan":  `${t("nav.tripPlan")} — ${t("tripPlan.title")}`,
-  "find-place": `${t("nav.findPlace")} — ${t("findPlace.title")}`,
-};
-
 export default function Home() {
   const [activeTab, setActiveTab] = useState<Tab>("cek-halal");
+  const [locale]   = useLocale();   // re-renders when language switches
+
+  // Init locale from localStorage on first mount
+  useEffect(() => { initLocale(); }, []);
 
   useEffect(() => {
-    document.title = TITLES[activeTab];
-  }, [activeTab]);
+    document.title = `${t("brand.name")} — ${t(`nav.${activeTab.replace("-", "")}`) || activeTab}`;
+  }, [activeTab, locale]);
 
   return (
-    <>
+    // key=locale forces full re-mount of all screens when language changes
+    // so module-level t() calls inside components get fresh values
+    <div key={locale}>
       <BrandBar />
       <div className={activeTab === "sholat"     ? "block" : "hidden"}><PrayerSchedule /></div>
       <div className={activeTab === "bea-impor"  ? "block" : "hidden"}><BeaImpor /></div>
@@ -37,6 +35,6 @@ export default function Home() {
       <div className={activeTab === "find-place" ? "block" : "hidden"}><FindPlace /></div>
 
       <BottomNav active={activeTab} onChange={setActiveTab} />
-    </>
+    </div>
   );
 }
