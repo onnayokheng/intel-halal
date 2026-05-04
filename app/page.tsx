@@ -19,8 +19,16 @@ export default function Home() {
   // Init locale from localStorage on first mount
   useEffect(() => { initLocale(); }, []);
 
+  const TAB_NAV_KEY: Record<Tab, string> = {
+    "sholat":     "nav.sholat",
+    "bea-impor":  "nav.beaImpor",
+    "cek-halal":  "nav.cekHalal",
+    "trip-plan":  "nav.tripPlan",
+    "find-place": "nav.findPlace",
+  };
+
   useEffect(() => {
-    document.title = `${t("brand.name")} — ${t(`nav.${activeTab.replace("-", "")}`) || activeTab}`;
+    document.title = `${t("brand.name")} — ${t(TAB_NAV_KEY[activeTab])}`;
   }, [activeTab, locale]);
 
   return (
