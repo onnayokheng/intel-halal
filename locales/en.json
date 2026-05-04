@@ -514,6 +514,23 @@
       }
     }
   },
+  "trial": {
+    "remaining": "remaining",
+    "expired": "Trial Expired",
+    "upgrade": "Upgrade"
+  },
+  "paywall": {
+    "badge": "Access Expired",
+    "title": "Continue with Premium",
+    "subtitle": "Choose a plan to keep scanning halal products in Japan.",
+    "later": "Maybe later",
+    "choose": "Choose Plan",
+    "soon": "Coming Soon",
+    "plans": {
+      "7day":  { "label": "7 Days",  "price": "Rp 15,000", "desc": "Full access for 7 days" },
+      "30day": { "label": "1 Month", "price": "Rp 35,000", "desc": "Full access for 30 days" }
+    }
+  },
   "common": {
     "retry": "Try Again",
     "reset": "Start Over",

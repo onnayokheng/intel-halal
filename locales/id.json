@@ -514,6 +514,23 @@
       }
     }
   },
+  "trial": {
+    "remaining": "sisa",
+    "expired": "Trial Habis",
+    "upgrade": "Upgrade"
+  },
+  "paywall": {
+    "badge": "Akses Habis",
+    "title": "Lanjut dengan Premium",
+    "subtitle": "Pilih paket untuk tetap bisa scan produk halal di Jepang.",
+    "later": "Nanti saja",
+    "choose": "Pilih Paket",
+    "soon": "Segera",
+    "plans": {
+      "7day":  { "label": "7 Hari",  "price": "Rp 15.000", "desc": "Akses penuh selama 7 hari" },
+      "30day": { "label": "1 Bulan", "price": "Rp 35.000", "desc": "Akses penuh selama 30 hari" }
+    }
+  },
   "common": {
     "retry": "Coba Lagi",
     "reset": "Mulai Baru",

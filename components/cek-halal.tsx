@@ -174,7 +174,7 @@ function VerdictCard({ verdict, resultHtml, onReset }: { verdict: Status; result
   );
 }
 
-export default function CekHalal({ isActive }: { isActive: boolean }) {
+export default function CekHalal({ isActive, onShowPaywall }: { isActive: boolean; onShowPaywall?: () => void }) {
   const [images, setImages]             = useState<ImageItem[]>([]);
   const [isAnalyzing, setIsAnalyzing]   = useState(false);
   const [resultHtml, setResultHtml]     = useState<string | null>(null);
@@ -268,6 +268,10 @@ export default function CekHalal({ isActive }: { isActive: boolean }) {
         body: JSON.stringify({ images: images.map(({ base64Data, mimeType }) => ({ base64Data, mimeType })), locale: getLocale() }),
       });
       const data = await res.json();
+      if (res.status === 401 || res.status === 403) {
+        onShowPaywall?.();
+        return;
+      }
       if (!res.ok) throw new Error(t("common.errorGeneral"));
       const { status: parsed, cleaned } = parseStatus(data.result);
       setStatus(parsed);

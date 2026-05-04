@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import BottomNav, { type Tab } from "@/components/bottom-nav";
 import BrandBar from "@/components/brand-bar";
 import Onboarding from "@/components/onboarding";
+import Paywall from "@/components/paywall";
 import { t, useLocale } from "@/lib/i18n";
 import { useSession } from "@/lib/auth-client";
 
@@ -18,6 +19,7 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<Tab>("cek-halal");
   const [locale] = useLocale();
   const [showOnboarding, setShowOnboarding] = useState<boolean | null>(null);
+  const [showPaywall, setShowPaywall] = useState(false);
   const { data: session, isPending: sessionLoading } = useSession();
 
   const TAB_NAV_KEY: Record<Tab, string> = {
@@ -29,7 +31,6 @@ export default function Home() {
   };
 
   useEffect(() => {
-    // Logged-in users skip onboarding entirely
     if (session) { setShowOnboarding(false); return; }
     if (!sessionLoading) {
       setShowOnboarding(localStorage.getItem("onboarding_done") !== "1");
@@ -40,7 +41,6 @@ export default function Home() {
     document.title = `${t("brand.name")} — ${t(TAB_NAV_KEY[activeTab])}`;
   }, [activeTab, locale]);
 
-  // Wait until session + localStorage check both resolve
   if (showOnboarding === null || sessionLoading) return null;
 
   if (showOnboarding) {
@@ -49,14 +49,18 @@ export default function Home() {
 
   return (
     <div key={locale}>
-      <BrandBar />
+      <BrandBar onUpgrade={() => setShowPaywall(true)} />
       <div className={activeTab === "sholat"     ? "block" : "hidden"}><PrayerSchedule /></div>
       <div className={activeTab === "bea-impor"  ? "block" : "hidden"}><BeaImpor /></div>
-      <div className={activeTab === "cek-halal"  ? "block" : "hidden"}><CekHalal isActive={activeTab === "cek-halal"} /></div>
+      <div className={activeTab === "cek-halal"  ? "block" : "hidden"}>
+        <CekHalal isActive={activeTab === "cek-halal"} onShowPaywall={() => setShowPaywall(true)} />
+      </div>
       <div className={activeTab === "trip-plan"  ? "block" : "hidden"}><TripPlan /></div>
       <div className={activeTab === "find-place" ? "block" : "hidden"}><FindPlace /></div>
 
       <BottomNav active={activeTab} onChange={setActiveTab} />
+
+      {showPaywall && <Paywall onClose={() => setShowPaywall(false)} />}
     </div>
   );
 }
